@@ -400,7 +400,7 @@ If you use `diversify` in your research, we are happy about a citation (placehol
 
 ```bibtex
 @misc{wegmann2026diversify,
-    title = {\texttt{diversify-text}: A {P}ython Package for Stylistically Diversifying Text},
+    title = {\texttt{diversify-text}: A {P}ython Package for Diversifying the Style of Text},
     author = {Wegmann, Anna and Velayuthan, Menan and Calò, Eduardo},
     howpublished = {\url{https://github.com/AnnaWegmann/diversify_text}},
     year = {2026},
