@@ -12,7 +12,7 @@ pip install diversify-text
 
 <!-- quickstart-start -->
 
-Generate paraphrases of a sentence in several styles — or pass a list of sentences to paraphrase each one:
+Generate paraphrases of a sentence in several styles; or pass a list of sentences to paraphrase each one:
 
 ```python
 from diversify_text import diversify
@@ -33,7 +33,7 @@ results = diversify("The experiment was conducted in a controlled lab setting.")
 }]
 ```
 
-Pick target styles by name — the [styles page](https://annawegmann.github.io/diversify_text/styles.html) lists every available style with example texts:
+Pick target styles by name. The  [styles page](https://annawegmann.github.io/diversify_text/styles.html) lists every available style with example texts:
 
 ```python
 results = diversify(
