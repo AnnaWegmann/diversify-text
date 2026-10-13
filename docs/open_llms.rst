@@ -39,7 +39,7 @@ or to the method constructor:
 
 ``model`` works for the ``prompting`` and ``zero_shot`` methods; the
 ``tinystyler`` method has a fixed model, so passing ``model`` with it
-raises an error. See :ref:`which-model` below for models we have tried.
+raises an error. See :ref:`which-model` below for insights into which models to use based on our practical experience.
 
 Instruct-tuned models are recommended. Chat templates are applied automatically
 when the tokenizer provides one.
@@ -147,15 +147,12 @@ style. An instruction can place the input text itself with
 Which model?
 ------------
 
-These notes are based on manually trying the models on a small set of
-sentences and styles — first impressions, not a systematic evaluation.
-Which model works best can change with your texts, styles, and
-hardware.
+.. note::
 
-Generation speed depends mostly on model size: producing a token
-requires reading all model weights from memory once, so on the same
-machine, expect speed to scale roughly with one over the parameter
-count.
+    These notes are based on manually trying the models on a small set of sentences and styles, not a systematic evaluation.
+    We tried well-known small models up to 5B, following the insight from [The Synthetic Data Playbook](https://huggingface.co/spaces/HuggingFaceFW/finephrase) that small models are effective at paraphrasing tasks.
+    Which model works best can change with your texts, styles, and hardware.
+
 
 .. list-table::
    :header-rows: 1
@@ -171,17 +168,21 @@ count.
      - 3B
      - Outputs often contain commentary
        and formatting ("Here's a paraphrase: ..."). Not recommended.
+   * - `Qwen3-4B-Instruct-2507 <https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507>`_
+     - 4B
+     - Best 4B. Mostly faithful to the input and concise.
    * - `Qwen3.5-4B <https://huggingface.co/Qwen/Qwen3.5-4B>`_
      - 4B
      - Similar to Qwen3-4B-Instruct-2507. Occasionally repeats an
        emoji many times.
-   * - `Qwen3-4B-Instruct-2507 <https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507>`_
-     - 4B
-     - Best 4B. Mostly faithful to the input and concise.
    * - `gemma-4-E2B-it <https://huggingface.co/google/gemma-4-E2B-it>`_
      - 5B
      - Best 5B. Best of tested **overall**. The most natural-sounding outputs. Some emoji repetitions happening though.
 
+Generation speed depends mostly on model size: producing a token
+requires reading all model weights from memory once, so on the same
+machine, expect speed to scale roughly with one over the parameter
+count.
 
 Some bank styles exceed what models of this size can do:
 ``old_english``, for example, produces Old-English-looking text with
