@@ -122,7 +122,9 @@ Every paraphrase is produced by transferring the input text into a target
 style, and each target style is defined by a set of example texts. Select
 built-in styles from the style bank with ``styles`` (by name and/or
 0-based index), or define your own with ``style_texts``; both can be
-combined in one call. One paraphrase is generated per style:
+combined in one call. Indices follow bank order, which may change
+between releases as the bank is curated — names are the stable way to
+pin a style. One paraphrase is generated per style:
 
 .. code-block:: python
 
