@@ -42,7 +42,7 @@ results = diversify(
 )
 ```
 
-Change the model with `model=` — this selects the prompting method (see [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations):
+Change the model with `model=`. If no method is selected, it is then set to the prompting method (see [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations):
 
 ```python
 results = diversify(
