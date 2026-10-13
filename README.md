@@ -399,10 +399,10 @@ open docs/_build/html/index.html
 If you use `diversify` in your research, we are happy about a citation (placeholder currently).
 
 ```bibtex
-@inproceedings{wegmann2026diversify,
-    title = {diversify_text: An Amazing Library for Text Diversification},
-    author = {Wegmann, Anna and Others},
-    url={https://github.com/AnnaWegmann/diversify_text},
+@misc{wegmann2026diversify,
+    title = {\texttt{diversify-text}: A {P}ython Package for Diversifying the Style of Text},
+    author = {Wegmann, Anna and Velayuthan, Menan and Calò, Eduardo},
+    howpublished = {\url{https://github.com/AnnaWegmann/diversify_text}},
     year = {2026},
 }
 ```
