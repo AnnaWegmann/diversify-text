@@ -146,8 +146,13 @@ class TestModelSelection(unittest.TestCase):
         self.assertEqual(
             str(cm.exception),
             "The 'tinystyler' method does not accept a model choice "
-            "(it uses a fixed model).",
+            "(it uses a fixed model). Use method='prompting' or "
+            "method='zero_shot' to choose a model.",
         )
+
+    def test_model_without_method_selects_prompting(self):
+        div = Diversifier(model="my/model")
+        self.assertEqual(div._method.name, "prompting")
 
     def test_model_given_twice_raises(self):
         with self.assertRaises(ValueError) as cm:

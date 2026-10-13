@@ -33,6 +33,14 @@ _SENTINEL = object()
 _default_seed_applied: bool = False
 
 
+def _default_method(model: str | None) -> str:
+    """A model choice without a method choice selects the prompting method."""
+    if model is not None:
+        logger.info("Using the prompting method for model %r.", model)
+        return "prompting"
+    return _DEFAULT_METHOD
+
+
 class Diversifier:
     """Generate stylistic paraphrases using a pluggable method.
 
@@ -73,7 +81,7 @@ class Diversifier:
     ) -> None:
         self.device = device
         if method is None:
-            method = _DEFAULT_METHOD
+            method = _default_method(model)
         self._method = DEFAULT_METHOD_REGISTRY.resolve(
             method, model=model, device=device
         )
@@ -462,7 +470,7 @@ def diversify(
             "method_kwargs, not both."
         )
     resolved_method = DEFAULT_METHOD_REGISTRY.resolve(
-        method if method is not None else _DEFAULT_METHOD,
+        method if method is not None else _default_method(model),
         model=model,
         **resolve_kwargs,
     )

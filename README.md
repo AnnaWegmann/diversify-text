@@ -42,12 +42,11 @@ results = diversify(
 )
 ```
 
-Change the model with `model=` (works with the prompting and zero-shot methods — see [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations):
+Change the model with `model=` — this selects the prompting method (see [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations):
 
 ```python
 results = diversify(
     "The experiment was conducted in a controlled lab setting.",
-    method="prompting",
     model="Qwen/Qwen3-4B-Instruct-2507",
 )
 ```
