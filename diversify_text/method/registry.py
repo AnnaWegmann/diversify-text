@@ -83,7 +83,9 @@ class MethodRegistry:
                 if "model" not in inspect.signature(method_class).parameters:
                     raise ValueError(
                         f"The '{method}' method does not accept a model "
-                        "choice (it uses a fixed model)."
+                        "choice (it uses a fixed model). Use "
+                        "method='prompting' or method='zero_shot' to "
+                        "choose a model."
                     )
                 kwargs["model"] = model
             init_kwargs = _build_init_kwargs(method_class, kwargs)

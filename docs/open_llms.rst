@@ -37,9 +37,10 @@ or to the method constructor:
    method = PromptingMethod(model="mistralai/Mistral-7B-Instruct-v0.3")
    results = Diversifier(method=method).diversify("The cat sat on the mat.")
 
-``model`` works for the ``prompting`` and ``zero_shot`` methods; the
-``tinystyler`` method has a fixed model, so passing ``model`` with it
-raises an error. See :ref:`which-model` below for insights into which models to use based on our practical experience.
+``model`` works for the ``prompting`` and ``zero_shot`` methods. If no
+method is given, passing ``model`` selects the ``prompting`` method.
+The ``tinystyler`` method has a fixed model, so passing ``model`` with
+it raises an error. See :ref:`which-model` below for insights into which models to use based on our practical experience.
 
 Instruct-tuned models are recommended. Chat templates are applied automatically
 when the tokenizer provides one.
