@@ -191,8 +191,7 @@ much of the content lost, with every model above.
 Example outputs
 ^^^^^^^^^^^^^^^
 
-Outputs are shown as generated. For dialect styles we can not judge
-how authentic the outputs are — the examples only show how differently
+Outputs are shown as generated. The examples show how differently
 the models behave.
 
 ``all_caps`` — input: *She graduated from MIT in 2019 and now works as
