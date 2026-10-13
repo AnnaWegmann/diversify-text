@@ -9,12 +9,17 @@ pip install diversify-text
 ## Usage
 
 <!-- The usage content lives in README.md (between the
-     quickstart-start/quickstart-end markers) so it is maintained
-     in exactly one place. -->
+     quickstart-start/quickstart-end and usage-start/usage-end
+     markers) so it is maintained in exactly one place. -->
 
 ```{include} ../README.md
 :start-after: <!-- quickstart-start -->
 :end-before: <!-- quickstart-end -->
+```
+
+```{include} ../README.md
+:start-after: <!-- usage-start -->
+:end-before: <!-- usage-end -->
 ```
 
 ## Semantic filter
