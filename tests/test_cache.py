@@ -50,7 +50,7 @@ class TestMISFilterCache(_CacheTestBase):
 
 class TestEngineCache(_CacheTestBase):
 
-    @unittest.mock.patch("diversify_text.method.llm.PromptingModel.load")
+    @unittest.mock.patch("diversify_text.method.llm.TransformersBackend.load")
     def test_same_configuration_shares_one_engine(self, _mock_load):
         """Two method instances with the same configuration share one loaded engine."""
         from diversify_text.method.prompting import PromptingMethod
@@ -58,7 +58,7 @@ class TestEngineCache(_CacheTestBase):
         engine_b = PromptingMethod()._ensure_model()
         self.assertIs(engine_a, engine_b)
 
-    @unittest.mock.patch("diversify_text.method.llm.PromptingModel.load")
+    @unittest.mock.patch("diversify_text.method.llm.TransformersBackend.load")
     def test_clear_cache_drops_engines(self, _mock_load):
         from diversify_text.method.prompting import PromptingMethod
         engine_before = PromptingMethod()._ensure_model()
