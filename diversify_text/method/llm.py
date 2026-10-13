@@ -1,10 +1,18 @@
-"""Shared causal language model for prompt-based methods.
+"""Shared language model backends for prompt-based methods.
 
-:class:`PromptingModel` wraps the model itself (load + generate);
 :class:`CausalLMMethod` is the shared base class for methods that
-generate through it.  Uses the ``transformers`` library
-(``AutoModelForCausalLM``, with a fallback to
-``AutoModelForImageTextToText`` for multimodal wrapper configs).
+generate from prompts.  It hands the prompts to one of two backends,
+both of which expose the same ``generate_text`` interface:
+
+* :class:`PromptingModel` runs an open model locally with the
+  ``transformers`` library (``AutoModelForCausalLM``, with a fallback
+  to ``AutoModelForImageTextToText`` for multimodal wrapper configs).
+* :class:`ApiModel` queries a proprietary model through its provider's
+  API with the ``litellm`` library.
+
+Which backend is used follows from the model id: an id found on the
+HuggingFace Hub runs locally, anything else is treated as a provider
+model name (see :func:`_load_llm`).
 
 .. note:: vLLM support is planned for a future release.
 """
@@ -29,6 +37,8 @@ _DEFAULT_TOP_P = 0.9
 _MAX_NEW_TOKENS_FACTOR = 2.0
 _MAX_NEW_TOKENS_FLOOR = 10
 _MAX_NEW_TOKENS_CAP = 2048
+#: How often a failed API request is retried before giving up.
+_API_RETRIES = 3
 
 
 def _load_text_generation_model(model_id: str, **load_kwargs):
@@ -122,17 +132,39 @@ class PromptingModel:
         return mapping[self.precision]
 
     def load(self) -> None:
-        """Download and load the model."""
+        """Load the (already downloaded) model."""
         # TODO: add vLLM backend support in a future release.
         self._load_transformers()
+
+    def token_budgets(self, texts: list[str]) -> list[int]:
+        """Default ``max_new_tokens`` for each input text.
+
+        Each text gets a budget scaled from its own token count
+        (factor ``_MAX_NEW_TOKENS_FACTOR``, clamped between
+        ``_MAX_NEW_TOKENS_FLOOR`` and ``_MAX_NEW_TOKENS_CAP``).
+        """
+        token_counts = [
+            len(ids)
+            for ids in self._tokenizer(texts, truncation=True)["input_ids"]
+        ]
+        # TODO: decide what to do with thinking models
+        # if self._is_thinking_model:
+        #     return [_MAX_NEW_TOKENS_CAP] * len(texts)
+        return [
+            max(
+                _MAX_NEW_TOKENS_FLOOR,
+                min(int(count * _MAX_NEW_TOKENS_FACTOR), _MAX_NEW_TOKENS_CAP),
+            )
+            for count in token_counts
+        ]
 
     def generate_text(
         self,
         prompts: list[str],
         *,
-        max_new_tokens_per_prompt: list[int],
-        temperature: float,
-        top_p: float,
+        max_new_tokens_per_prompt: list[int | None],
+        temperature: float | None,
+        top_p: float | None,
     ) -> list[str]:
         """Generate completions for a list of prompts.
 
@@ -145,10 +177,14 @@ class PromptingModel:
             Prompts to generate completions for.
         max_new_tokens_per_prompt : list[int]
             Maximum tokens to generate for each prompt (same length
-            as *prompts*).
+            as *prompts*).  Local generation always needs a budget;
+            use :meth:`token_budgets` for the defaults.
         temperature, top_p
-            Sampling parameters forwarded to the backend.
+            Sampling parameters; ``None`` uses the defaults
+            (``_DEFAULT_TEMPERATURE``, ``_DEFAULT_TOP_P``).
         """
+        temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
+        top_p = top_p if top_p is not None else _DEFAULT_TOP_P
         # TODO: add batching and vLLM backend support in a future release.
         results: list[str] = []
         for prompt, max_new_tokens in zip(prompts, max_new_tokens_per_prompt):
@@ -163,11 +199,9 @@ class PromptingModel:
         return results
 
     def _load_transformers(self) -> None:
-        """Download weights (if needed) and load the model into memory."""
+        """Load the model into memory."""
         from transformers import AutoTokenizer
 
-        with spinner(f"Downloading {self.model_id}"):
-            snapshot_download(self.model_id)
         with spinner(f"Loading {self.model_id} (transformers, {self.device})"):
             with suppress_hf_load_noise():
                 self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)
@@ -257,20 +291,154 @@ class PromptingModel:
         return prompts
 
 
+class ApiModel:
+    """Queries a proprietary model through its provider's API.
+
+    Requests go through the ``litellm`` library, which supports OpenAI,
+    Anthropic, Google Gemini, Mistral and many other providers.  The
+    provider's API key is read from the environment (for example
+    ``OPENAI_API_KEY``, ``ANTHROPIC_API_KEY``, ``GEMINI_API_KEY``).
+
+    Each prompt is sent as a single user message, exactly as it would
+    be given to a local model.  Sampling parameters and the output
+    length are only sent when set explicitly; otherwise the provider's
+    defaults apply.  Failed requests are retried ``_API_RETRIES`` times.
+    """
+
+    def __init__(self, model_id: str) -> None:
+        """Initialise the API model wrapper.
+
+        Parameters
+        ----------
+        model_id : str
+            Provider model name as ``litellm`` expects it, for example
+            ``"gpt-5-mini"``, ``"anthropic/claude-haiku-4-5"`` or
+            ``"gemini/gemini-2.5-flash"``.
+        """
+        self.model_id = model_id
+
+    def load(self) -> None:
+        """Check that ``litellm`` recognises the model name.
+
+        Raises
+        ------
+        ValueError
+            If the model name cannot be mapped to a provider.
+        """
+        import litellm
+
+        litellm.suppress_debug_info = True  # no "Give Feedback" banner on errors
+        try:
+            litellm.get_llm_provider(self.model_id)
+        except litellm.exceptions.BadRequestError as error:
+            raise ValueError(_unknown_model_message(self.model_id)) from error
+        logger.info("Using %r through its provider's API.", self.model_id)
+
+    def token_budgets(self, texts: list[str]) -> list[None]:
+        """No default output cap for API models (``None`` per text).
+
+        The provider's default applies, so paraphrases are never cut
+        short by an estimated budget.
+        """
+        return [None] * len(texts)
+
+    def generate_text(
+        self,
+        prompts: list[str],
+        *,
+        max_new_tokens_per_prompt: list[int | None],
+        temperature: float | None,
+        top_p: float | None,
+    ) -> list[str]:
+        """Send each prompt to the provider and return the replies.
+
+        Parameters
+        ----------
+        prompts : list[str]
+            Prompts, each sent as one user message.
+        max_new_tokens_per_prompt : list[int or None]
+            Output cap per prompt; ``None`` leaves the provider default.
+        temperature, top_p
+            Sampling parameters; ``None`` leaves the provider default.
+        """
+        import litellm
+
+        results: list[str] = []
+        for prompt, max_new_tokens in zip(prompts, max_new_tokens_per_prompt):
+            request: dict = {}
+            if max_new_tokens is not None:
+                request["max_tokens"] = max_new_tokens
+            if temperature is not None:
+                request["temperature"] = temperature
+            if top_p is not None:
+                request["top_p"] = top_p
+            response = litellm.completion(
+                model=self.model_id,
+                messages=[{"role": "user", "content": prompt}],
+                num_retries=_API_RETRIES,
+                **request,
+            )
+            results.append(response.choices[0].message.content or "")
+        return results
+
+
+def _unknown_model_message(model_id: str) -> str:
+    return (
+        f"Model {model_id!r} was not found on the HuggingFace Hub and is "
+        "not a model name litellm recognises. Pass a HuggingFace model id "
+        "(e.g. 'Qwen/Qwen3-4B-Instruct-2507') or a provider model name "
+        "(e.g. 'gpt-5-mini', 'anthropic/claude-haiku-4-5', "
+        "'gemini/gemini-2.5-flash'). For a private HuggingFace "
+        "repository, log in with `hf auth login` first."
+    )
+
+
+def _is_on_hub(model_id: str) -> bool:
+    """Download *model_id* from the HuggingFace Hub if it exists there.
+
+    Returns ``False`` when the Hub has no repository with that id, or
+    the id is not a valid repository id at all; the model is then
+    treated as a provider model name.  Errors for gated repositories
+    propagate.
+    """
+    from huggingface_hub.errors import HFValidationError, RepositoryNotFoundError
+
+    try:
+        with spinner(f"Fetching {model_id} from the HuggingFace Hub"):
+            snapshot_download(model_id)
+    except (RepositoryNotFoundError, HFValidationError):
+        return False
+    return True
+
+
 @model_cache
 def _load_llm(
     model_id: str,
     device: str,
     precision: str | None,
-) -> PromptingModel:
-    """Load a causal language model (cached, shared across methods)."""
-    llm = PromptingModel(model_id=model_id, device=device, precision=precision)
+) -> PromptingModel | ApiModel:
+    """Load a language model (cached, shared across methods).
+
+    A model id found on the HuggingFace Hub is loaded locally; any
+    other id is treated as a provider model name and queried through
+    the provider's API, for which *device* and *precision* do not
+    apply.
+    """
+    if _is_on_hub(model_id):
+        llm = PromptingModel(model_id=model_id, device=device, precision=precision)
+    else:
+        logger.info(
+            "%r is not on the HuggingFace Hub; treating it as a provider "
+            "model name. The device and precision settings do not apply.",
+            model_id,
+        )
+        llm = ApiModel(model_id=model_id)
     llm.load()
     return llm
 
 
 class CausalLMMethod(DiversificationMethod):
-    """Shared base for methods that generate via a causal language model.
+    """Shared base for methods that generate via a language model.
 
     Handles the model configuration and lazy loading; subclasses
     implement :meth:`generate`.
@@ -287,24 +455,29 @@ class CausalLMMethod(DiversificationMethod):
         Parameters
         ----------
         model : str
-            HuggingFace model identifier.
+            HuggingFace model identifier of an open model to run
+            locally, or the name of a proprietary model to query
+            through its provider's API (e.g. ``"gpt-5-mini"``,
+            ``"anthropic/claude-haiku-4-5"``; see :class:`ApiModel`).
         device : str or None
             Torch device (e.g. ``"cpu"``, ``"mps"``, ``"cuda"``).
             Defaults to auto-detection via :func:`default_device`.
+            Does not apply to API models.
         precision : str or None
             Model weight precision: ``"auto"`` (bfloat16), ``"float16"``,
-            ``"bfloat16"``, or ``None`` (float32).
+            ``"bfloat16"``, or ``None`` (float32).  Does not apply to
+            API models.
         """
         self.model_id = model
         self.device = device
         self.precision = precision
-        self._model: PromptingModel | None = None
+        self._model: PromptingModel | ApiModel | None = None
 
     def prepare(self) -> None:
         """Download and load the underlying language model."""
         self._ensure_model()
 
-    def _ensure_model(self) -> PromptingModel:
+    def _ensure_model(self) -> PromptingModel | ApiModel:
         """Fetch the shared model on first use."""
         if self._model is None:
             self._model = _load_llm(
@@ -317,44 +490,22 @@ class CausalLMMethod(DiversificationMethod):
         texts: list[str],
         n: int,
         max_new_tokens: int | None,
-    ) -> list[int]:
+    ) -> list[int | None]:
         """Compute per-prompt max_new_tokens for the full n × texts grid.
 
         When *max_new_tokens* is explicit, every prompt gets that value.
-        Otherwise each text gets a budget scaled from its own token count
-        (factor ``_MAX_NEW_TOKENS_FACTOR``, clamped between
-        ``_MAX_NEW_TOKENS_FLOOR`` and ``_MAX_NEW_TOKENS_CAP``).
+        Otherwise the backend chooses a default per text
+        (``token_budgets``): a budget scaled from the text's token
+        count for local models, no cap for API models.
 
         Returns a flat list of length ``n * len(texts)`` in the same
         order as the prompt loop: for each style index *i*, for each
         text *j*.
         """
-        total = n * len(texts)
         if max_new_tokens is not None:
-            return [max_new_tokens] * total
-
-        # Tokenize once to get per-text token counts.
-        model = self._ensure_model()
-        token_counts = [
-            len(ids)
-            for ids in model._tokenizer(texts, truncation=True)["input_ids"]
-        ]
-        # TODO: decide what to do with thinking models
-        # is_thinking = getattr(model, "_is_thinking_model", False) is True
-
-        # Build flat list matching the prompt loop order.
-        result: list[int] = []
-        for _i in range(n):
-            for count in token_counts:
-                budget = max(
-                    _MAX_NEW_TOKENS_FLOOR,
-                    min(int(count * _MAX_NEW_TOKENS_FACTOR), _MAX_NEW_TOKENS_CAP),
-                )
-                # TODO: decide what to do with thinking models
-                # if is_thinking:
-                #     budget = _MAX_NEW_TOKENS_CAP
-                result.append(budget)
-        return result
+            return [max_new_tokens] * (n * len(texts))
+        budgets = self._ensure_model().token_budgets(texts)
+        return budgets * n
 
     def _run_prompts(
         self,
@@ -369,14 +520,12 @@ class CausalLMMethod(DiversificationMethod):
 
         *all_prompts* must be built style by style, texts within each
         style (so it holds ``n * len(texts)`` prompts for n styles).
-        Applies the sampling defaults, computes per-prompt token
-        budgets, generates, and returns for each input text one string
-        per style, in prompt order.
+        Computes per-prompt token budgets, generates (the backend
+        fills in defaults for unset sampling parameters), and returns
+        for each input text one string per style, in prompt order.
         """
         num_texts = len(texts)
         n = len(all_prompts) // num_texts
-        temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
-        top_p = top_p if top_p is not None else _DEFAULT_TOP_P
         all_max_new_tokens = self._compute_max_new_tokens(texts, n, max_new_tokens)
         model = self._ensure_model()
 

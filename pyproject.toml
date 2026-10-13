@@ -37,6 +37,7 @@ dependencies = [
     "mutual-implication-score",
     "pysbd>=0.3.4",
     "accelerate>=1.14.0",
+    "litellm>=1.105.0",
 ]
 
 [project.urls]
