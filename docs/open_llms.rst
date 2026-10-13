@@ -163,9 +163,7 @@ Which model?
      - Notes
    * - `gemma-3-1b-it <https://huggingface.co/google/gemma-3-1b-it>`_
      - 1B
-     - Fastest, but unreliable: often invents content or copies the
-       style examples instead of transforming the input. Not
-       recommended.
+     - Fast, but unreliable. Invents content and does not rephrase the input at times.
    * - `SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
      - 3B
      - The **default** because fastest. Quality ok-ish. Tends to add info that is not in the input. Sometimes starts replies with "Here\'s a paraphrased version of the document in the same style as the examples provided:"
@@ -228,8 +226,7 @@ a data scientist.*
    :widths: 25 75
 
    * - gemma-3-1b-it
-     - “That movie was amazing, truly. But the ending… it felt a
-       little too quick. I’m still processing it all.”
+     - “That movie was amazing! 😭 I really enjoyed it, but the ending felt a little bit too quick.
    * - SmolLM3-3B
      - OMG, I just watched that flick and it was so good, but the
        ending was like a roller coaster - too fast, too much. I was
@@ -253,7 +250,7 @@ Friday?*
    :widths: 25 75
 
    * - gemma-3-1b-it
-     - “Could ye send me the report afore Friday, please?”
+     - “Could ye send me that report afore Friday, please?”
    * - SmolLM3-3B
      - Ye'll want tae send me that report afore Friday, that's for sure.
    * - Ministral-3-3B
