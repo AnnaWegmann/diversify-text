@@ -9,7 +9,7 @@ Prompting
 
 The ``prompting`` method generates paraphrases by sending input texts to a
 local HuggingFace causal language model with a prompt template. The default
-model is `SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
+model is `HuggingFaceTB/SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
 using insights from `The Synthetic Data Playbook <https://huggingface.co/spaces/HuggingFaceFW/finephrase>`_.
 
 .. code-block:: python
@@ -47,7 +47,7 @@ when the tokenizer provides one.
 
 .. note::
 
-   Thinking/reasoning models (e.g. SmolLM3-3B) are detected automatically and
+   Thinking/reasoning models (e.g. HuggingFaceTB/SmolLM3-3B) are detected automatically and
    have their thinking mode turned off (``enable_thinking=False``) during
    generation. Thinking tokens add overhead without improving paraphrase
    quality in this setting.
@@ -162,24 +162,24 @@ Which model?
    * - Model
      - Parameters
      - Notes
-   * - `gemma-3-1b-it <https://huggingface.co/google/gemma-3-1b-it>`_
+   * - `google/gemma-3-1b-it <https://huggingface.co/google/gemma-3-1b-it>`_
      - 1B
      - Fast, but unreliable. Invents content and does not rephrase the input at times.
-   * - `SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
+   * - `HuggingFaceTB/SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
      - 3B
      - The **default** because fastest. Quality ok-ish. Tends to add info that is not in the input. Sometimes starts replies with "Here\'s a paraphrased version of the document in the same style as the examples provided:"
-   * - `Ministral-3-3B-Instruct-2512 <https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512>`_
+   * - `mistralai/Ministral-3-3B-Instruct-2512 <https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512>`_
      - 3B
      - Outputs often contain commentary
        and formatting ("Here's a paraphrase: ..."). Not recommended.
-   * - `Qwen3-4B-Instruct-2507 <https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507>`_
+   * - `Qwen/Qwen3-4B-Instruct-2507 <https://huggingface.co/Qwen/Qwen3-4B-Instruct-2507>`_
      - 4B
      - Best 4B. Mostly faithful to the input and concise.
-   * - `Qwen3.5-4B <https://huggingface.co/Qwen/Qwen3.5-4B>`_
+   * - `Qwen/Qwen3.5-4B <https://huggingface.co/Qwen/Qwen3.5-4B>`_
      - 4B
-     - Similar to Qwen3-4B-Instruct-2507. Occasionally repeats an
+     - Similar to Qwen/Qwen3-4B-Instruct-2507. Occasionally repeats an
        emoji many times.
-   * - `gemma-4-E2B-it <https://huggingface.co/google/gemma-4-E2B-it>`_
+   * - `google/gemma-4-E2B-it <https://huggingface.co/google/gemma-4-E2B-it>`_
      - 5B
      - Best 5B. Best of tested **overall**. The most natural-sounding outputs. Some emoji repetitions happening though.
 
@@ -204,19 +204,19 @@ a data scientist.*
 .. list-table::
    :widths: 25 75
 
-   * - gemma-3-1b-it
+   * - google/gemma-3-1b-it
      - “I CANNOT BELIEVE THIS IS HAPPENING RIGHT NOW!”
-   * - SmolLM3-3B
+   * - HuggingFaceTB/SmolLM3-3B
      - THE WOMAN WHO CAME FROM MIT IN 2019 IS NOW A DATA SCIENTIST.
-   * - Ministral-3-3B
+   * - mistralai/Ministral-3-3B-Instruct-2512
      - I DIDN'T EXPECT SHE WOULD GET THIS FAR IN HER CAREER SO
        QUICKLY—GRADUATING FROM MIT IN 2019 IS A MAJOR ACHIEVEMENT.
        NOW, AS A DATA SCIENTIST, SHE IS
-   * - Qwen3.5-4B
+   * - Qwen/Qwen3.5-4B
      - SHE GRADUATED FROM MIT IN 2019 AND NOW WORKS AS A DATA SCIENTIST.
-   * - Qwen3-4B-Instruct-2507
+   * - Qwen/Qwen3-4B-Instruct-2507
      - SHE GRADUATED FROM MIT IN 2019 AND NOW WORKS AS A DATA SCIENTIST.
-   * - gemma-4-E2B-it
+   * - google/gemma-4-E2B-it
      - SHE GRADUATED FROM MIT IN TWO THOUSAND NINETEEN AND NOW WORKS AS
        A DATA SCIENTIST.
 
@@ -226,22 +226,22 @@ a data scientist.*
 .. list-table::
    :widths: 25 75
 
-   * - gemma-3-1b-it
+   * - google/gemma-3-1b-it
      - “That movie was amazing! 😭 I really enjoyed it, but the ending felt a little bit too quick.
-   * - SmolLM3-3B
+   * - HuggingFaceTB/SmolLM3-3B
      - OMG, I just watched that flick and it was so good, but the
        ending was like a roller coaster - too fast, too much. I was
        like "WTF, where's the drama?" But the whole movie was worth
        it! [...]
-   * - Ministral-3-3B
+   * - mistralai/Ministral-3-3B-Instruct-2512
      - ☁️❤️❤️❤️❤️❤️ Ohhh, I *knew* this film was gonna steal my
        heart—until... well, that last act? *Whew.*
-   * - Qwen3.5-4B
+   * - Qwen/Qwen3.5-4B
      - i loved the movie but the ending felt so rushed 🌑🌑🌑🌑🌑
-   * - Qwen3-4B-Instruct-2507
+   * - Qwen/Qwen3-4B-Instruct-2507
      - omg i absolutely loved the movie 💛 but the ending? so fast 🙈
        like i didn't even get to breathe before it was over. 🌌
-   * - gemma-4-E2B-it
+   * - google/gemma-4-E2B-it
      - omg the movie was fire 🔥 but the ending kinda rushed me 😩
 
 ``scottish_english`` — input: *Could you send me the report before
@@ -250,18 +250,18 @@ Friday?*
 .. list-table::
    :widths: 25 75
 
-   * - gemma-3-1b-it
+   * - google/gemma-3-1b-it
      - “Could ye send me that report afore Friday, please?”
-   * - SmolLM3-3B
+   * - HuggingFaceTB/SmolLM3-3B
      - Ye'll want tae send me that report afore Friday, that's for sure.
-   * - Ministral-3-3B
+   * - mistralai/Ministral-3-3B-Instruct-2512
      - The report's due by Friday afore. — Aye, I'll send it to you
        befo' Friday proper.
-   * - Qwen3.5-4B
+   * - Qwen/Qwen3.5-4B
      - Could you post the report to me before Friday?
-   * - Qwen3-4B-Instruct-2507
+   * - Qwen/Qwen3-4B-Instruct-2507
      - Could ye send me the report before Friday?
-   * - gemma-4-E2B-it
+   * - google/gemma-4-E2B-it
      - Could ye send oot the report afore Friday?
 
 Development
