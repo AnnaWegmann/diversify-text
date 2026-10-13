@@ -2,28 +2,12 @@
 
 from __future__ import annotations
 
-from diversify_text._cache import model_cache
 from diversify_text._utils import default_device
+from diversify_text.llm import LLMBackend, load_backend
 from diversify_text.method.base import DiversificationMethod
-from diversify_text.method.llm.base import LLMBackend
-from diversify_text.method.llm.transformers_backend import TransformersBackend
 
 #: Default causal language model for prompt-based methods.
 _DEFAULT_LLM = "HuggingFaceTB/SmolLM3-3B"
-
-
-@model_cache
-def _load_llm(
-    model_id: str,
-    device: str,
-    precision: str | None,
-) -> LLMBackend:
-    """Load the backend for a model (cached, shared across methods)."""
-    backend = TransformersBackend(
-        model_id=model_id, device=device, precision=precision
-    )
-    backend.load()
-    return backend
 
 
 class CausalLMMethod(DiversificationMethod):
@@ -65,7 +49,7 @@ class CausalLMMethod(DiversificationMethod):
     def _ensure_model(self) -> LLMBackend:
         """Fetch the shared backend on first use."""
         if self._model is None:
-            self._model = _load_llm(
+            self._model = load_backend(
                 self.model_id, self.device or default_device(), self.precision
             )
         return self._model

@@ -15,7 +15,7 @@ import torch
 from huggingface_hub import snapshot_download
 
 from diversify_text._utils import default_device, spinner, suppress_hf_load_noise
-from diversify_text.method.llm.base import LLMBackend
+from diversify_text.llm.base import LLMBackend
 
 logger = logging.getLogger(__name__)
 

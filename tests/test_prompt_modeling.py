@@ -111,9 +111,9 @@ class TestGenerateFromStyleDict(unittest.TestCase):
 
 class TestTransformersBackend(unittest.TestCase):
 
-    @patch("diversify_text.method.llm.TransformersBackend._generate_transformers")
+    @patch("diversify_text.llm.TransformersBackend._generate_transformers")
     def test_unset_sampling_params_get_the_defaults(self, mock_generate):
-        from diversify_text.method.llm import TransformersBackend
+        from diversify_text.llm import TransformersBackend
 
         mock_generate.return_value = ["out"]
         backend = TransformersBackend(model_id="test-model", device="cpu")
@@ -128,9 +128,9 @@ class TestTransformersBackend(unittest.TestCase):
             (call_kwargs["temperature"], call_kwargs["top_p"]), (0.7, 0.9)
         )
 
-    @patch("diversify_text.method.llm.TransformersBackend._load_transformers")
+    @patch("diversify_text.llm.TransformersBackend._load_transformers")
     def test_load_calls_transformers(self, mock_load_tf):
-        from diversify_text.method.llm import TransformersBackend
+        from diversify_text.llm import TransformersBackend
 
         model = TransformersBackend(model_id="test-model", device="cpu")
         model.load()
