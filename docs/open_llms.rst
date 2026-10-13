@@ -150,7 +150,7 @@ Which model?
 .. note::
 
     These notes are based on manually trying the models on a small set of sentences and styles, not a systematic evaluation.
-    We tried well-known small models up to 5B, following the insight from [The Synthetic Data Playbook](https://huggingface.co/spaces/HuggingFaceFW/finephrase) that small models are effective at paraphrasing tasks.
+    We tried well-known small models up to 5B, following the insight from `The Synthetic Data Playbook <https://huggingface.co/spaces/HuggingFaceFW/finephrase>`_ that small models are effective at paraphrasing tasks.
     Which model works best can change with your texts, styles, and hardware.
 
 
@@ -161,6 +161,11 @@ Which model?
    * - Model
      - Parameters
      - Notes
+   * - `gemma-3-1b-it <https://huggingface.co/google/gemma-3-1b-it>`_
+     - 1B
+     - Fastest, but unreliable: often invents content or copies the
+       style examples instead of transforming the input. Not
+       recommended.
    * - `SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
      - 3B
      - The **default** because fastest. Quality ok-ish. Tends to add info that is not in the input. Sometimes starts replies with "Here\'s a paraphrased version of the document in the same style as the examples provided:"
@@ -200,6 +205,8 @@ a data scientist.*
 .. list-table::
    :widths: 25 75
 
+   * - gemma-3-1b-it
+     - “I CANNOT BELIEVE THIS IS HAPPENING RIGHT NOW!”
    * - SmolLM3-3B
      - THE WOMAN WHO CAME FROM MIT IN 2019 IS NOW A DATA SCIENTIST.
    * - Ministral-3-3B
@@ -220,6 +227,9 @@ a data scientist.*
 .. list-table::
    :widths: 25 75
 
+   * - gemma-3-1b-it
+     - “That movie was amazing, truly. But the ending… it felt a
+       little too quick. I’m still processing it all.”
    * - SmolLM3-3B
      - OMG, I just watched that flick and it was so good, but the
        ending was like a roller coaster - too fast, too much. I was
@@ -242,6 +252,8 @@ Friday?*
 .. list-table::
    :widths: 25 75
 
+   * - gemma-3-1b-it
+     - “Could ye send me the report afore Friday, please?”
    * - SmolLM3-3B
      - Ye'll want tae send me that report afore Friday, that's for sure.
    * - Ministral-3-3B
