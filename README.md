@@ -213,7 +213,7 @@ results = diversify(
 )
 ```
 
-This works for the prompting and zero-shot methods; TinyStyler has a fixed model, so passing `model` with it raises an error. See [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for notes on models we have tried.
+This works for the prompting and zero-shot methods; TinyStyler has a fixed model, so passing `model` with it raises an error. See [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations and insights into which models to use based on our practical experience.
 
 ### Zero-shot method
 
