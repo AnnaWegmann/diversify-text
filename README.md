@@ -12,7 +12,7 @@ pip install diversify-text
 
 <!-- quickstart-start -->
 
-Generate paraphrases of a sentence in several styles; or pass a list of sentences to paraphrase each one:
+Generate paraphrases of a text in several styles; or pass a list of texts to paraphrase each one:
 
 ```python
 from diversify_text import diversify
