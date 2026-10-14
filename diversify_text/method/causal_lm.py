@@ -1,4 +1,4 @@
-"""Shared base class for methods that generate from prompts."""
+"""Shared base class for methods that generate from causal LMs."""
 
 from __future__ import annotations
 
