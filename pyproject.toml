@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "diversify-text"
 version = "0.3.0"
-description = "Generate stylistic paraphrases of texts using local transformer models."
+description = "Generate stylistic paraphrases of texts using local transformer models or proprietary LLM APIs."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
