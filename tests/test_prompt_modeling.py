@@ -28,7 +28,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         mock_model = MagicMock()
         mock_model.generate_text.return_value = responses
         # The backend chooses the default output budget per text.
-        mock_model.token_budgets.side_effect = lambda texts: [10] * len(texts)
+        mock_model.default_token_budgets.side_effect = lambda texts: [10] * len(texts)
         method._backend = mock_model
         return method
 
@@ -41,7 +41,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
             (call_kwargs["temperature"], call_kwargs["top_p"]), (None, None)
         )
 
-    def test_generate_uses_the_backend_token_budgets(self):
+    def test_generate_uses_the_backend_default_token_budgets(self):
         method = self._make_method_with_mock_model(["out"])
         method.generate(["text"], {"casual": ["hey there"]})
         call_kwargs = method._backend.generate_text.call_args.kwargs
@@ -148,7 +148,7 @@ class TestTransformersBackend(unittest.TestCase):
         self.assertEqual(
             str(cm.exception),
             "TransformersBackend needs a max_new_tokens value for every "
-            "prompt; use token_budgets() for the defaults.",
+            "prompt; use default_token_budgets() for the defaults.",
         )
 
     @patch("diversify_text.llm.TransformersBackend._load_transformers")

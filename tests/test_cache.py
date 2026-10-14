@@ -61,6 +61,16 @@ class TestBackendCache(_CacheTestBase):
 
     @unittest.mock.patch("diversify_text.llm._is_on_hub", return_value=True)
     @unittest.mock.patch("diversify_text.llm.TransformersBackend.load")
+    def test_default_device_shares_the_explicit_device_backend(self, _mock_load, _mock_hub):
+        """Leaving the device unset and naming the default device hit one cache entry."""
+        from diversify_text._utils import default_device
+        from diversify_text.llm import load_backend
+        backend_a = load_backend("HuggingFaceTB/SmolLM3-3B")
+        backend_b = load_backend("HuggingFaceTB/SmolLM3-3B", device=default_device())
+        self.assertIs(backend_a, backend_b)
+
+    @unittest.mock.patch("diversify_text.llm._is_on_hub", return_value=True)
+    @unittest.mock.patch("diversify_text.llm.TransformersBackend.load")
     def test_clear_cache_drops_backends(self, _mock_load, _mock_hub):
         from diversify_text.method.prompting import PromptingMethod
         backend_before = PromptingMethod()._ensure_backend()

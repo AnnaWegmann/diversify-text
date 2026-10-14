@@ -55,8 +55,8 @@ class Diversifier:
         A built-in method name (default ``"tinystyler"``) or a
         pre-built method instance.
     model : str, optional
-        Model for methods that let you choose one (``"prompting"``,
-        ``"zero_shot"``): a HuggingFace model identifier of an open
+        Model identifier for methods that let you choose one
+        (``"prompting"``, ``"zero_shot"``): a HuggingFace identifier of an open
         model to run locally, or the name of a proprietary model to
         query through its provider's API (e.g. ``"gpt-5-mini"``,
         ``"anthropic/claude-haiku-4-5"``, with the API key in the
@@ -429,8 +429,8 @@ def diversify(
         A built-in method name (default ``"tinystyler"``) or a
         pre-built method instance.
     model : str, optional
-        Model for methods that let you choose one (``"prompting"``,
-        ``"zero_shot"``): a HuggingFace model identifier of an open
+        Model identifier for methods that let you choose one
+        (``"prompting"``, ``"zero_shot"``): a HuggingFace identifier of an open
         model to run locally, or the name of a proprietary model to
         query through its provider's API (e.g. ``"gpt-5-mini"``,
         ``"anthropic/claude-haiku-4-5"``, with the API key in the

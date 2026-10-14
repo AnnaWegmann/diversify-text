@@ -12,6 +12,7 @@ from __future__ import annotations
 import logging
 
 import torch
+from huggingface_hub import snapshot_download
 
 from diversify_text._utils import default_device, spinner, suppress_hf_load_noise
 from diversify_text.llm.base import LLMBackend
@@ -112,11 +113,11 @@ class TransformersBackend(LLMBackend):
         return mapping[self.precision]
 
     def load(self) -> None:
-        """Load the model into memory."""
+        """Download and load the model."""
         # TODO: add vLLM backend support in a future release.
         self._load_transformers()
 
-    def token_budgets(self, texts: list[str]) -> list[int]:
+    def default_token_budgets(self, texts: list[str]) -> list[int]:
         """Default ``max_new_tokens`` for each input text.
 
         Each text gets a budget scaled from its own token count
@@ -151,14 +152,14 @@ class TransformersBackend(LLMBackend):
         Each prompt is processed individually with its own
         ``max_new_tokens`` value.  Local generation always needs a
         cap, so every entry of *max_new_tokens_per_prompt* must be an
-        integer (see :meth:`token_budgets` for the defaults); ``None``
+        integer (see :meth:`default_token_budgets` for the defaults); ``None``
         raises a ``ValueError``.  Unset sampling parameters fall back
         to ``_DEFAULT_TEMPERATURE`` and ``_DEFAULT_TOP_P``.
         """
         if any(cap is None for cap in max_new_tokens_per_prompt):
             raise ValueError(
                 "TransformersBackend needs a max_new_tokens value for every "
-                "prompt; use token_budgets() for the defaults."
+                "prompt; use default_token_budgets() for the defaults."
             )
         temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
         top_p = top_p if top_p is not None else _DEFAULT_TOP_P
@@ -176,9 +177,11 @@ class TransformersBackend(LLMBackend):
         return results
 
     def _load_transformers(self) -> None:
-        """Load the model into memory."""
+        """Download weights (if needed) and load the model into memory."""
         from transformers import AutoTokenizer
 
+        with spinner(f"Downloading {self.model_id}"):
+            snapshot_download(self.model_id)
         with spinner(f"Loading {self.model_id} (transformers, {self.device})"):
             with suppress_hf_load_noise():
                 self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)

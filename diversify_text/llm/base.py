@@ -19,7 +19,7 @@ class LLMBackend(ABC):
         """Make the model ready for generation (download, load into memory)."""
 
     @abstractmethod
-    def token_budgets(self, texts: list[str]) -> list[int | None]:
+    def default_token_budgets(self, texts: list[str]) -> list[int | None]:
         """Default ``max_new_tokens`` for each input text.
 
         Used when the caller does not set ``max_new_tokens``.  ``None``

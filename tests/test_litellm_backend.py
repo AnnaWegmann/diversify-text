@@ -3,8 +3,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-import diversify_text._cache as _cache
-from diversify_text.llm import LiteLLMBackend, TransformersBackend, load_backend
+from diversify_text.llm import LiteLLMBackend
 
 
 def _reply(text: str) -> MagicMock:
@@ -12,24 +11,6 @@ def _reply(text: str) -> MagicMock:
     response = MagicMock()
     response.choices[0].message.content = text
     return response
-
-
-class TestBackendSelection(unittest.TestCase):
-
-    def setUp(self):
-        _cache.clear_cache()
-
-    @patch("diversify_text.llm.LiteLLMBackend.load")
-    @patch("diversify_text.llm._is_on_hub", return_value=False)
-    def test_model_not_on_hub_is_queried_through_the_api(self, _hub, _load):
-        backend = load_backend("gpt-5-mini", "cpu", "auto")
-        self.assertIsInstance(backend, LiteLLMBackend)
-
-    @patch("diversify_text.llm.TransformersBackend.load")
-    @patch("diversify_text.llm._is_on_hub", return_value=True)
-    def test_model_on_hub_runs_locally(self, _hub, _load):
-        backend = load_backend("Qwen/Qwen3-4B-Instruct-2507", "cpu", "auto")
-        self.assertIsInstance(backend, TransformersBackend)
 
 
 class TestLiteLLMBackend(unittest.TestCase):
@@ -65,7 +46,7 @@ class TestLiteLLMBackend(unittest.TestCase):
 
     @patch("litellm.completion")
     def test_unset_parameters_are_left_to_the_provider(self, mock_completion):
-        mock_completion.return_value = _reply("out")
+        mock_completion.return_value = _reply("MOCK REPLY")
         LiteLLMBackend("gpt-5-mini").generate_text(
             ["Paraphrase: The cat sat on the mat."],
             max_new_tokens_per_prompt=[None],
@@ -77,7 +58,7 @@ class TestLiteLLMBackend(unittest.TestCase):
 
     @patch("litellm.completion")
     def test_explicit_parameters_are_forwarded(self, mock_completion):
-        mock_completion.return_value = _reply("out")
+        mock_completion.return_value = _reply("MOCK REPLY")
         LiteLLMBackend("gpt-5-mini").generate_text(
             ["Paraphrase: The cat sat on the mat."],
             max_new_tokens_per_prompt=[64],
@@ -91,7 +72,7 @@ class TestLiteLLMBackend(unittest.TestCase):
         )
 
     def test_no_default_output_cap(self):
-        budgets = LiteLLMBackend("gpt-5-mini").token_budgets(
+        budgets = LiteLLMBackend("gpt-5-mini").default_token_budgets(
             ["The cat sat on the mat.", "It was a dark and stormy night."]
         )
         self.assertEqual(budgets, [None, None])

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from diversify_text._utils import default_device
 from diversify_text.llm import LLMBackend, load_backend
 from diversify_text.method.base import DiversificationMethod
 
@@ -59,7 +58,7 @@ class CausalLMMethod(DiversificationMethod):
         """Fetch the shared backend on first use."""
         if self._backend is None:
             self._backend = load_backend(
-                self.model_id, self.device or default_device(), self.precision
+                self.model_id, self.device, self.precision
             )
         return self._backend
 
@@ -73,7 +72,7 @@ class CausalLMMethod(DiversificationMethod):
 
         When *max_new_tokens* is explicit, every prompt gets that value.
         Otherwise the backend chooses a default per text
-        (:meth:`LLMBackend.token_budgets`).
+        (:meth:`LLMBackend.default_token_budgets`).
 
         Returns a flat list of length ``n * len(texts)`` in the same
         order as the prompt loop: for each style index *i*, for each
@@ -81,7 +80,7 @@ class CausalLMMethod(DiversificationMethod):
         """
         if max_new_tokens is not None:
             return [max_new_tokens] * (n * len(texts))
-        budgets = self._ensure_backend().token_budgets(texts)
+        budgets = self._ensure_backend().default_token_budgets(texts)
         return budgets * n
 
     def _run_prompts(

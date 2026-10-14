@@ -19,10 +19,10 @@ from __future__ import annotations
 
 import logging
 
-from huggingface_hub import snapshot_download
+from huggingface_hub import repo_exists
 
 from diversify_text._cache import model_cache
-from diversify_text._utils import spinner
+from diversify_text._utils import default_device
 from diversify_text.llm.base import LLMBackend
 from diversify_text.llm.litellm_backend import LiteLLMBackend
 from diversify_text.llm.transformers_backend import TransformersBackend
@@ -38,42 +38,71 @@ __all__ = [
 
 
 def _is_on_hub(model_id: str) -> bool:
-    """Download *model_id* from the HuggingFace Hub if it exists there.
+    """Whether the HuggingFace Hub has a model repository *model_id*.
 
-    Returns ``False`` when the Hub has no repository with that id, or
-    the id is not a valid repository id at all.  Errors for gated
-    repositories propagate.
+    A metadata lookup, no download.  Gated repositories count as
+    existing.  ``False`` when there is no such repository or the id is
+    not a valid repository id.  When the Hub cannot be reached (for
+    example offline), the id is assumed to be a Hub model, so cached
+    models keep working.
     """
-    from huggingface_hub.errors import HFValidationError, RepositoryNotFoundError
+    from huggingface_hub.errors import HFValidationError
 
     try:
-        with spinner(f"Fetching {model_id} from the HuggingFace Hub"):
-            snapshot_download(model_id)
-    except (RepositoryNotFoundError, HFValidationError):
+        return repo_exists(model_id)
+    except HFValidationError:
         return False
-    return True
+    except Exception as error:  # no network, Hub down, ...
+        logger.warning(
+            "Could not reach the HuggingFace Hub (%s); assuming %r is a "
+            "model there.",
+            error,
+            model_id,
+        )
+        return True
+
+
+def load_backend(
+    model_id: str,
+    device: str | None = None,
+    precision: str | None = "auto",
+) -> LLMBackend:
+    """Return the backend for a model (cached, shared across methods).
+
+    A model id found on the HuggingFace Hub is run locally; any other
+    id is treated as a provider model name and queried through the
+    provider's API.  Defaults are filled in here, before the cache
+    lookup, so one effective configuration maps to one cached backend.
+
+    Parameters
+    ----------
+    model_id : str
+        HuggingFace model identifier or provider model name.
+    device : str or None
+        Torch device for local models; ``None`` resolves to
+        :func:`default_device`.
+    precision : str or None
+        Weight precision for local models; see
+        :class:`TransformersBackend`.
+    """
+    return _load_backend(model_id, device or default_device(), precision)
 
 
 @model_cache
-def load_backend(
+def _load_backend(
     model_id: str,
     device: str,
     precision: str | None,
 ) -> LLMBackend:
-    """Load the backend for a model (cached, shared across methods).
-
-    A model id found on the HuggingFace Hub is run locally; any other
-    id is treated as a provider model name and queried through the
-    provider's API, for which *device* and *precision* do not apply.
-    """
+    """Load the backend for a model (expensive, cached)."""
     if _is_on_hub(model_id):
         backend: LLMBackend = TransformersBackend(
             model_id=model_id, device=device, precision=precision
         )
     else:
         logger.info(
-            "%r is not on the HuggingFace Hub; treating it as a provider "
-            "model name. The device and precision settings do not apply.",
+            "%r is not on the HuggingFace Hub; querying it through its "
+            "provider's API.",
             model_id,
         )
         backend = LiteLLMBackend(model_id=model_id)

@@ -4,8 +4,6 @@ Requests go through the ``litellm`` library, which supports OpenAI,
 Anthropic, Google Gemini, Mistral and many other providers.  The
 provider's API key is read from the environment (for example
 ``OPENAI_API_KEY``, ``ANTHROPIC_API_KEY``, ``GEMINI_API_KEY``).
-
-This module does not depend on ``torch`` or ``transformers``.
 """
 
 from __future__ import annotations
@@ -56,9 +54,8 @@ class LiteLLMBackend(LLMBackend):
             litellm.get_llm_provider(self.model_id)
         except litellm.exceptions.BadRequestError as error:
             raise ValueError(unknown_model_message(self.model_id)) from error
-        logger.info("Using %r through its provider's API.", self.model_id)
 
-    def token_budgets(self, texts: list[str]) -> list[None]:
+    def default_token_budgets(self, texts: list[str]) -> list[None]:
         """No default output cap (``None`` per text): the provider's default applies."""
         return [None] * len(texts)
 
