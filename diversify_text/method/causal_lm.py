@@ -9,6 +9,9 @@ from diversify_text.method.base import DiversificationMethod
 #: Default causal language model for prompt-based methods.
 _DEFAULT_LLM = "HuggingFaceTB/SmolLM3-3B"
 
+#: Placeholder in prompt texts where the input text is inserted.
+PLACEHOLDER_TEXT = "[DOCUMENT SEGMENT]"
+
 
 class CausalLMMethod(DiversificationMethod):
     """Shared base for methods that generate via a causal language model.

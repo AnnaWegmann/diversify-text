@@ -12,12 +12,11 @@ backend lives in its own module and knows nothing about the others:
 from __future__ import annotations
 
 from diversify_text._cache import model_cache
-from diversify_text.llm.base import PLACEHOLDER_TEXT, LLMBackend
+from diversify_text.llm.base import LLMBackend
 from diversify_text.llm.transformers_backend import TransformersBackend
 
 __all__ = [
     "LLMBackend",
-    "PLACEHOLDER_TEXT",
     "TransformersBackend",
     "load_backend",
 ]

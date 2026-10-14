@@ -4,9 +4,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-#: Placeholder in prompt texts where the input text is inserted.
-PLACEHOLDER_TEXT = "[DOCUMENT SEGMENT]"
-
 
 class LLMBackend(ABC):
     """One way of running prompts through a language model.
