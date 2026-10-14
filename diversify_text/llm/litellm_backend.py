@@ -27,6 +27,8 @@ class LiteLLMBackend(LLMBackend):
     defaults apply.  Failed requests are retried ``_API_RETRIES`` times.
     """
 
+    seedable = False  # the provider samples; a local seed has no effect
+
     def __init__(self, model_id: str) -> None:
         """Initialise the backend.
 
@@ -51,9 +53,10 @@ class LiteLLMBackend(LLMBackend):
 
         litellm.suppress_debug_info = True  # no "Give Feedback" banner on errors
         try:
-            litellm.get_llm_provider(self.model_id)
+            _, provider, _, _ = litellm.get_llm_provider(self.model_id)
         except litellm.exceptions.BadRequestError as error:
             raise ValueError(unknown_model_message(self.model_id)) from error
+        logger.info("Querying %r through the %s API.", self.model_id, provider)
 
     def default_token_budgets(self, texts: list[str]) -> list[None]:
         """No default output cap (``None`` per text): the provider's default applies."""

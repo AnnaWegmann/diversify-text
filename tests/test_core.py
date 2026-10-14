@@ -4,6 +4,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from diversify_text import Diversifier, diversify
 from diversify_text.styles.bank import _BANK_ORDER
@@ -143,6 +144,34 @@ class TestDiversifyFunction(unittest.TestCase):
         self.assertEqual(len(results), 2)
         for r in results:
             self.assertEqual(len(r["paraphrases"]), 2)
+
+
+class _UnseedableMethod(PrefixMethod):
+    """A method whose output a random seed cannot affect."""
+
+    seedable = False
+
+
+class TestSeeding(unittest.TestCase):
+
+    @patch("diversify_text.core.Diversifier._apply_seed")
+    def test_seed_is_skipped_for_unseedable_methods(self, mock_apply_seed):
+        div = Diversifier(method=_UnseedableMethod("p"))
+        div.diversify("It was a dark and stormy night.", n=1, seed=7)
+        mock_apply_seed.assert_not_called()
+
+    def test_explicit_seed_warns_for_unseedable_methods(self):
+        div = Diversifier(method=_UnseedableMethod("p"))
+        with self.assertLogs("diversify_text.core", level="WARNING") as logs:
+            div.diversify("It was a dark and stormy night.", n=1, seed=7)
+        self.assertEqual(
+            logs.output,
+            [
+                "WARNING:diversify_text.core:seed=7 has no effect: the output "
+                "of this method is not seedable (e.g. a model queried "
+                "through an API)."
+            ],
+        )
 
 
 if __name__ == "__main__":
