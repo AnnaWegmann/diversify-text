@@ -3,6 +3,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
+import litellm
+
 from diversify_text.llm import LiteLLMBackend
 
 
@@ -70,6 +72,37 @@ class TestLiteLLMBackend(unittest.TestCase):
             (sent["max_tokens"], sent["temperature"], sent["top_p"]),
             (64, 0.5, 0.8),
         )
+
+    @patch("litellm.completion")
+    def test_wrong_api_key_is_not_retried(self, mock_completion):
+        mock_completion.side_effect = litellm.exceptions.AuthenticationError(
+            message="Incorrect API key provided", llm_provider="openai", model="gpt-5-mini"
+        )
+        with self.assertRaises(litellm.exceptions.AuthenticationError):
+            LiteLLMBackend("gpt-5-mini").generate_text(
+                ["Paraphrase: The cat sat on the mat."],
+                max_new_tokens_per_prompt=[None],
+                temperature=None,
+                top_p=None,
+            )
+        self.assertEqual(mock_completion.call_count, 1)
+
+    @patch("diversify_text.llm.litellm_backend.time.sleep")
+    @patch("litellm.completion")
+    def test_rate_limit_is_retried(self, mock_completion, _sleep):
+        mock_completion.side_effect = [
+            litellm.exceptions.RateLimitError(
+                message="Rate limit reached", llm_provider="openai", model="gpt-5-mini"
+            ),
+            _reply("MOCK REPLY"),
+        ]
+        replies = LiteLLMBackend("gpt-5-mini").generate_text(
+            ["Paraphrase: The cat sat on the mat."],
+            max_new_tokens_per_prompt=[None],
+            temperature=None,
+            top_p=None,
+        )
+        self.assertEqual(replies, ["MOCK REPLY"])
 
     def test_no_default_output_cap(self):
         budgets = LiteLLMBackend("gpt-5-mini").default_token_budgets(

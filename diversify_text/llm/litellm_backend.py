@@ -9,12 +9,15 @@ provider's API key is read from the environment (for example
 from __future__ import annotations
 
 import logging
+import time
 
 from diversify_text.llm.base import LLMBackend
 
 logger = logging.getLogger(__name__)
 
-#: How often a failed API request is retried before giving up.
+#: How often a request that failed for a transient reason (rate limit,
+#: connection problem, timeout, server error) is retried before giving up.
+#: Other failures, such as a wrong API key, are raised at once.
 _API_RETRIES = 3
 
 
@@ -24,7 +27,8 @@ class LiteLLMBackend(LLMBackend):
     Each prompt is sent as a single user message, exactly as it would
     be given to a local model.  Sampling parameters and the output
     length are only sent when set explicitly; otherwise the provider's
-    defaults apply.  Failed requests are retried ``_API_RETRIES`` times.
+    defaults apply.  Requests that fail for a transient reason are
+    retried ``_API_RETRIES`` times with increasing waits.
     """
 
     seedable = False  # the provider samples; a local seed has no effect
@@ -81,8 +85,6 @@ class LiteLLMBackend(LLMBackend):
         temperature, top_p
             Sampling parameters; ``None`` leaves the provider default.
         """
-        import litellm
-
         results: list[str] = []
         for prompt, max_new_tokens in zip(prompts, max_new_tokens_per_prompt):
             request: dict = {}
@@ -92,14 +94,42 @@ class LiteLLMBackend(LLMBackend):
                 request["temperature"] = temperature
             if top_p is not None:
                 request["top_p"] = top_p
-            response = litellm.completion(
-                model=self.model_id,
-                messages=[{"role": "user", "content": prompt}],
-                num_retries=_API_RETRIES,
-                **request,
-            )
-            results.append(response.choices[0].message.content or "")
+            results.append(self._complete(prompt, request))
         return results
+
+    def _complete(self, prompt: str, request: dict) -> str:
+        """Send one prompt, retrying transient failures."""
+        import litellm
+
+        transient_errors = (
+            litellm.exceptions.RateLimitError,
+            litellm.exceptions.APIConnectionError,
+            litellm.exceptions.Timeout,
+            litellm.exceptions.ServiceUnavailableError,
+            litellm.exceptions.InternalServerError,
+            litellm.exceptions.BadGatewayError,
+        )
+        for attempt in range(_API_RETRIES + 1):
+            try:
+                response = litellm.completion(
+                    model=self.model_id,
+                    messages=[{"role": "user", "content": prompt}],
+                    **request,
+                )
+            except transient_errors as error:
+                if attempt == _API_RETRIES:
+                    raise
+                wait = 2**attempt
+                logger.warning(
+                    "Request to %r failed (%s); retrying in %d s.",
+                    self.model_id,
+                    type(error).__name__,
+                    wait,
+                )
+                time.sleep(wait)
+            else:
+                return response.choices[0].message.content or ""
+        raise AssertionError("unreachable")
 
 
 def unknown_model_message(model_id: str) -> str:
