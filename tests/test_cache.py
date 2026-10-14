@@ -44,27 +44,39 @@ class TestMISFilterCache(_CacheTestBase):
 
 
 # ------------------------------------------------------------------
-# Causal LM engine cache (prompt-based methods)
+# Causal LM backend cache (prompt-based methods)
 # ------------------------------------------------------------------
 
 
-class TestEngineCache(_CacheTestBase):
+class TestBackendCache(_CacheTestBase):
 
+    @unittest.mock.patch("diversify_text.llm._is_on_hub", return_value=True)
     @unittest.mock.patch("diversify_text.llm.TransformersBackend.load")
-    def test_same_configuration_shares_one_engine(self, _mock_load):
-        """Two method instances with the same configuration share one loaded engine."""
+    def test_same_configuration_shares_one_backend(self, _mock_load, _mock_hub):
+        """Two method instances with the same configuration share one loaded backend."""
         from diversify_text.method.prompting import PromptingMethod
-        engine_a = PromptingMethod()._ensure_model()
-        engine_b = PromptingMethod()._ensure_model()
-        self.assertIs(engine_a, engine_b)
+        backend_a = PromptingMethod()._ensure_backend()
+        backend_b = PromptingMethod()._ensure_backend()
+        self.assertIs(backend_a, backend_b)
 
+    @unittest.mock.patch("diversify_text.llm._is_on_hub", return_value=True)
     @unittest.mock.patch("diversify_text.llm.TransformersBackend.load")
-    def test_clear_cache_drops_engines(self, _mock_load):
+    def test_default_device_shares_the_explicit_device_backend(self, _mock_load, _mock_hub):
+        """Leaving the device unset and naming the default device hit one cache entry."""
+        from diversify_text._utils import default_device
+        from diversify_text.llm import load_backend
+        backend_a = load_backend("HuggingFaceTB/SmolLM3-3B")
+        backend_b = load_backend("HuggingFaceTB/SmolLM3-3B", device=default_device())
+        self.assertIs(backend_a, backend_b)
+
+    @unittest.mock.patch("diversify_text.llm._is_on_hub", return_value=True)
+    @unittest.mock.patch("diversify_text.llm.TransformersBackend.load")
+    def test_clear_cache_drops_backends(self, _mock_load, _mock_hub):
         from diversify_text.method.prompting import PromptingMethod
-        engine_before = PromptingMethod()._ensure_model()
+        backend_before = PromptingMethod()._ensure_backend()
         _cache.clear_cache()
-        engine_after = PromptingMethod()._ensure_model()
-        self.assertIsNot(engine_before, engine_after)
+        backend_after = PromptingMethod()._ensure_backend()
+        self.assertIsNot(backend_before, backend_after)
 
 
 # ------------------------------------------------------------------

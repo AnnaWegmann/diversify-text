@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from diversify_text._utils import default_device
 from diversify_text.llm import LLMBackend, load_backend
 from diversify_text.method.base import DiversificationMethod
 
@@ -33,30 +32,35 @@ class CausalLMMethod(DiversificationMethod):
         ----------
         model : str
             Model identifier; :func:`~diversify_text.llm.load_backend`
-            decides which backend runs it.
+            decides which backend runs it: a HuggingFace model id runs
+            locally, a provider model name (e.g. ``"gpt-5-mini"``,
+            ``"anthropic/claude-haiku-4-5"``) is queried through the
+            provider's API.
         device : str or None
             Torch device (e.g. ``"cpu"``, ``"mps"``, ``"cuda"``).
             Defaults to auto-detection via :func:`default_device`.
+            Does not apply to API models.
         precision : str or None
             Model weight precision: ``"auto"`` (bfloat16), ``"float16"``,
-            ``"bfloat16"``, or ``None`` (float32).
+            ``"bfloat16"``, or ``None`` (float32).  Does not apply to
+            API models.
         """
         self.model_id = model
         self.device = device
         self.precision = precision
-        self._model: LLMBackend | None = None
+        self._backend: LLMBackend | None = None
 
     def prepare(self) -> None:
-        """Download and load the underlying language model."""
-        self._ensure_model()
+        """Load the backend for the configured model."""
+        self._ensure_backend()
 
-    def _ensure_model(self) -> LLMBackend:
+    def _ensure_backend(self) -> LLMBackend:
         """Fetch the shared backend on first use."""
-        if self._model is None:
-            self._model = load_backend(
-                self.model_id, self.device or default_device(), self.precision
+        if self._backend is None:
+            self._backend = load_backend(
+                self.model_id, self.device, self.precision
             )
-        return self._model
+        return self._backend
 
     def _compute_max_new_tokens(
         self,
@@ -68,7 +72,7 @@ class CausalLMMethod(DiversificationMethod):
 
         When *max_new_tokens* is explicit, every prompt gets that value.
         Otherwise the backend chooses a default per text
-        (:meth:`LLMBackend.token_budgets`).
+        (:meth:`LLMBackend.default_token_budgets`).
 
         Returns a flat list of length ``n * len(texts)`` in the same
         order as the prompt loop: for each style index *i*, for each
@@ -76,7 +80,7 @@ class CausalLMMethod(DiversificationMethod):
         """
         if max_new_tokens is not None:
             return [max_new_tokens] * (n * len(texts))
-        budgets = self._ensure_model().token_budgets(texts)
+        budgets = self._ensure_backend().default_token_budgets(texts)
         return budgets * n
 
     def _run_prompts(
@@ -99,10 +103,10 @@ class CausalLMMethod(DiversificationMethod):
         num_texts = len(texts)
         n = len(all_prompts) // num_texts
         all_max_new_tokens = self._compute_max_new_tokens(texts, n, max_new_tokens)
-        model = self._ensure_model()
+        backend = self._ensure_backend()
 
         # Generate one prompt at a time (each with its own max_new_tokens).
-        flat_results = model.generate_text(
+        flat_results = backend.generate_text(
             all_prompts,
             max_new_tokens_per_prompt=all_max_new_tokens,
             temperature=temperature,

@@ -117,7 +117,7 @@ class TransformersBackend(LLMBackend):
         # TODO: add vLLM backend support in a future release.
         self._load_transformers()
 
-    def token_budgets(self, texts: list[str]) -> list[int]:
+    def default_token_budgets(self, texts: list[str]) -> list[int]:
         """Default ``max_new_tokens`` for each input text.
 
         Each text gets a budget scaled from its own token count
@@ -152,14 +152,14 @@ class TransformersBackend(LLMBackend):
         Each prompt is processed individually with its own
         ``max_new_tokens`` value.  Local generation always needs a
         cap, so every entry of *max_new_tokens_per_prompt* must be an
-        integer (see :meth:`token_budgets` for the defaults); ``None``
+        integer (see :meth:`default_token_budgets` for the defaults); ``None``
         raises a ``ValueError``.  Unset sampling parameters fall back
         to ``_DEFAULT_TEMPERATURE`` and ``_DEFAULT_TOP_P``.
         """
         if any(cap is None for cap in max_new_tokens_per_prompt):
             raise ValueError(
                 "TransformersBackend needs a max_new_tokens value for every "
-                "prompt; use token_budgets() for the defaults."
+                "prompt; use default_token_budgets() for the defaults."
             )
         temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
         top_p = top_p if top_p is not None else _DEFAULT_TOP_P

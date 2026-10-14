@@ -48,7 +48,7 @@ class TestGenerate(unittest.TestCase):
             ]
 
         mock_model.generate_text.side_effect = fake_generate
-        method._model = mock_model
+        method._backend = mock_model
 
         # Explicit max_new_tokens skips the automatic token budget,
         # which would otherwise need the model's tokenizer.
