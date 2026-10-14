@@ -14,6 +14,9 @@ class LLMBackend(ABC):
     (see :mod:`diversify_text._cache`).
     """
 
+    #: Whether a random seed affects the generated text.
+    seedable: bool = True
+
     @abstractmethod
     def load(self) -> None:
         """Make the model ready for generation (download, load into memory)."""

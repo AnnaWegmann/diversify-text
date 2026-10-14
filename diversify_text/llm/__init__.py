@@ -100,11 +100,6 @@ def _load_backend(
             model_id=model_id, device=device, precision=precision
         )
     else:
-        logger.info(
-            "%r is not on the HuggingFace Hub; querying it through its "
-            "provider's API.",
-            model_id,
-        )
         backend = LiteLLMBackend(model_id=model_id)
     backend.load()
     return backend

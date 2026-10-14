@@ -54,6 +54,11 @@ class CausalLMMethod(DiversificationMethod):
         """Load the backend for the configured model."""
         self._ensure_backend()
 
+    @property
+    def seedable(self) -> bool:
+        """Whether a random seed affects the output; decided by the backend."""
+        return self._ensure_backend().seedable
+
     def _ensure_backend(self) -> LLMBackend:
         """Fetch the shared backend on first use."""
         if self._backend is None:
