@@ -26,7 +26,7 @@ class LLMBackend(ABC):
         """Default ``max_new_tokens`` for each input text.
 
         Used when the caller does not set ``max_new_tokens``.  ``None``
-        for a text means no cap.
+        for a text means backend default.
         """
 
     @abstractmethod
@@ -46,7 +46,7 @@ class LLMBackend(ABC):
             Prompts to generate completions for.
         max_new_tokens_per_prompt : list[int or None]
             Maximum tokens to generate for each prompt (same length
-            as *prompts*); ``None`` means no cap.
+            as *prompts*); ``None`` means backend default.
         temperature, top_p
             Sampling parameters; ``None`` means the backend's default.
         """
