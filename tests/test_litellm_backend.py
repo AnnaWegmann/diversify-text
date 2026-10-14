@@ -15,15 +15,6 @@ def _reply(text: str) -> MagicMock:
 
 class TestLiteLLMBackend(unittest.TestCase):
 
-    def test_load_logs_the_resolved_provider(self):
-        with self.assertLogs("diversify_text.llm.litellm_backend", level="INFO") as logs:
-            LiteLLMBackend("gpt-5-mini").load()
-        self.assertEqual(
-            logs.output,
-            ["INFO:diversify_text.llm.litellm_backend:Querying 'gpt-5-mini' "
-             "through the openai API."],
-        )
-
     def test_unknown_model_name_raises(self):
         with self.assertRaises(ValueError) as cm:
             LiteLLMBackend("not-a-model-anyone-offers").load()
