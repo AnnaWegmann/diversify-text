@@ -4,7 +4,6 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
 from diversify_text import Diversifier, diversify
 from diversify_text.styles.bank import _BANK_ORDER
