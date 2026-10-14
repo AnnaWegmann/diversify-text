@@ -1,8 +1,10 @@
-Open LLMs
-=========
+Open and proprietary LLMs
+=========================
 
-The ``prompting`` and ``zero_shot`` methods generate paraphrases with an
-open general-purpose language model that runs locally.
+The ``prompting`` and ``zero_shot`` methods generate paraphrases with a
+general-purpose language model: an open model that runs locally, or a
+proprietary model queried through its provider's API (see
+:ref:`api-models`).
 
 Prompting
 ---------
@@ -16,8 +18,9 @@ using insights from `The Synthetic Data Playbook <https://huggingface.co/spaces/
 
    results = diversify("The cat sat on the mat.", method="prompting")
 
-**Choosing a model.** Any HuggingFace causal LM can be used. Pass the model
-identifier directly to :func:`~diversify_text.diversify`:
+**Choosing a model.** Any HuggingFace causal LM can be used, as can a
+proprietary model such as ``gpt-5-mini`` (see :ref:`api-models`). Pass
+the model identifier directly to :func:`~diversify_text.diversify`:
 
 .. code-block:: python
 
@@ -52,8 +55,8 @@ when the tokenizer provides one.
    generation. Thinking tokens add overhead without improving paraphrase
    quality in this setting.
 
-**Inference backend.** The method currently uses the ``transformers`` library
-for inference.
+**Inference backend.** Open models run through the ``transformers``
+library; proprietary models are queried through ``litellm``.
 
 .. note::
 
@@ -143,6 +146,70 @@ style. An instruction can place the input text itself with
        style_texts={"pirate": ["Rewrite the text as an old-timey pirate would say it."]},
    )
 
+.. _api-models:
+
+Proprietary models via API
+--------------------------
+
+Instead of a HuggingFace identifier, ``model`` can be the name of a
+proprietary model. A name that is not on the HuggingFace Hub is sent to
+the model's provider through the `litellm <https://docs.litellm.ai/docs/providers>`_
+library, which supports OpenAI, Anthropic, Google Gemini, Mistral and
+many more. The same prompts are used as for open models. Set the
+provider's API key as an environment variable before running Python:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 20 30 50
+
+   * - Provider
+     - Environment variable
+     - Model name, for example
+   * - OpenAI
+     - ``OPENAI_API_KEY``
+     - ``gpt-5-mini``
+   * - Anthropic
+     - ``ANTHROPIC_API_KEY``
+     - ``anthropic/claude-haiku-4-5``
+   * - Google Gemini
+     - ``GEMINI_API_KEY``
+     - ``gemini/gemini-2.5-flash`` (not tested by us)
+
+.. code-block:: bash
+
+   export OPENAI_API_KEY="sk-..."
+
+.. code-block:: python
+
+   results = diversify(
+       "The cat sat on the mat.",
+       method="prompting",
+       model="gpt-5-mini",
+   )
+
+Other providers and their name formats are listed in the
+`litellm provider docs <https://docs.litellm.ai/docs/providers>`_. A
+name that neither the HuggingFace Hub nor ``litellm`` recognises raises
+an error that says so.
+
+A few things work differently for API models:
+
+* ``temperature``, ``top_p`` and ``max_new_tokens`` are only sent when
+  you set them; otherwise the provider's defaults apply. In particular,
+  there is no default output cap, so paraphrases are never cut short by
+  an estimated budget.
+* ``seed`` has no effect: the provider does the sampling. Passing one
+  explicitly logs a warning.
+* ``device`` and ``precision`` do not apply.
+* Each paraphrase is one request to the provider, sent one after the
+  other. Requests that fail for a transient reason (rate limit,
+  connection problem, timeout, server error) are retried three times
+  with increasing waits; other errors, such as a wrong API key, are
+  raised at once.
+* Keep an eye on cost: with ``n`` styles and ``repeats``, the number of
+  requests is ``n * repeats`` per input text (times ``n_candidates``
+  with the semantic filter on).
+
 .. _which-model:
 
 Which model?
@@ -151,7 +218,7 @@ Which model?
 .. note::
 
     These notes are based on manually trying the models on a small set of sentences and styles, not a systematic evaluation.
-    We tried well-known small models up to 5B, following the insight from `The Synthetic Data Playbook <https://huggingface.co/spaces/HuggingFaceFW/finephrase>`_ that small models are effective at paraphrasing tasks.
+    We tried well-known small models up to 5B, following the insight from `The Synthetic Data Playbook <https://huggingface.co/spaces/HuggingFaceFW/finephrase>`_ that small models are effective at paraphrasing tasks, and two small proprietary models through their API.
     Which model works best can change with your texts, styles, and hardware.
 
 
@@ -182,11 +249,23 @@ Which model?
    * - `google/gemma-4-E2B-it <https://huggingface.co/google/gemma-4-E2B-it>`_
      - 5B
      - Best 5B. Best of tested **overall**. The most natural-sounding outputs. Some emoji repetitions happening though.
+   * - ``gpt-5-mini`` (OpenAI API)
+     - API
+     - Faithful and concise on most styles. Pads short inputs with
+       repetitions on some styles (``lyrical``, ``scottish_english``),
+       and declines to imitate a named person's exact voice: the
+       ``arianagrande`` output starts with a disclaimer before the
+       paraphrase. About 5 s per paraphrase in our runs.
+   * - ``anthropic/claude-haiku-4-5`` (Anthropic API)
+     - API
+     - Natural-sounding and faithful; on the ``informational`` style it
+       added content that is not in the input. About 1 s per paraphrase
+       in our runs.
 
-Generation speed depends mostly on model size: producing a token
-requires reading all model weights from memory once, so on the same
-machine, expect speed to scale roughly with one over the parameter
-count.
+For local models, generation speed depends mostly on model size:
+producing a token requires reading all model weights from memory once,
+so on the same machine, expect speed to scale roughly with one over the
+parameter count. For API models it depends on the provider.
 
 Some bank styles exceed what models of this size can do:
 ``old_english``, for example, produces Old-English-looking text with
@@ -219,6 +298,12 @@ a data scientist.*
    * - google/gemma-4-E2B-it
      - SHE GRADUATED FROM MIT IN TWO THOUSAND NINETEEN AND NOW WORKS AS
        A DATA SCIENTIST.
+   * - gpt-5-mini
+     - IN 2019 SHE EARNED HER DEGREE FROM MIT AND IS CURRENTLY EMPLOYED
+       AS A DATA SCIENTIST.
+   * - anthropic/claude-haiku-4-5
+     - SHE COMPLETED HER DEGREE AT MIT BACK IN 2019 AND IS CURRENTLY
+       EMPLOYED AS A DATA SCIENTIST.
 
 ``arianagrande`` (from the bank's individual-styles group) — input:
 *I loved the movie, but the ending felt rushed.*
@@ -243,6 +328,15 @@ a data scientist.*
        like i didn't even get to breathe before it was over. 🌌
    * - google/gemma-4-E2B-it
      - omg the movie was fire 🔥 but the ending kinda rushed me 😩
+   * - gpt-5-mini
+     - Sorry—I can't write in Ariana Grande's exact voice, but I can
+       write a paraphrase that captures her style:
+
+       omg i loved the movie sooo much ✨ but the ending felt kinda
+       rushed and i wanted more 💔
+   * - anthropic/claude-haiku-4-5
+     - omg the movie was sooo good but ngl that ending just felt like
+       it went by way too fast 🌙 they coulda slowed it down a lil bit ♡
 
 ``scottish_english`` — input: *Could you send me the report before
 Friday?*
@@ -263,6 +357,10 @@ Friday?*
      - Could ye send me the report before Friday?
    * - google/gemma-4-E2B-it
      - Could ye send oot the report afore Friday?
+   * - gpt-5-mini
+     - Could ye send it tae me afore Friday?
+   * - anthropic/claude-haiku-4-5
+     - Could ye no send me yon report afore the Friday, like?
 
 Development
 -----------
