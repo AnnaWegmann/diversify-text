@@ -6,7 +6,7 @@ import logging
 # import re  # TODO: decide what to do with thinking models
 from typing import Any
 
-from diversify_text.method.llm import CausalLMMethod
+from diversify_text.method.causal_lm import CausalLMMethod
 from diversify_text.method.prompting.prompts import (
     DEFAULT_PROMPT,
     PLACEHOLDER_STYLE_EXAMPLES,

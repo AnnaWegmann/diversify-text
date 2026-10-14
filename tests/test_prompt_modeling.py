@@ -1,4 +1,4 @@
-"""Tests for the PromptingMethod constructor, generation, and model backend dispatch."""
+"""Tests for the PromptingMethod constructor, generation, and the transformers backend."""
 
 import unittest
 from unittest.mock import MagicMock, patch
@@ -27,24 +27,24 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         method = PromptingMethod()
         mock_model = MagicMock()
         mock_model.generate_text.return_value = responses
-        # Mock tokenizer: returns fake token IDs (3 tokens per text)
-        # so max_new_tokens can be computed.
-        mock_tokenizer = MagicMock()
-        mock_tokenizer.side_effect = lambda texts, **kw: {
-            "input_ids": [[1, 2, 3]] * len(texts)
-        }
-        mock_model._tokenizer = mock_tokenizer
+        # The backend chooses the default output budget per text.
+        mock_model.token_budgets.side_effect = lambda texts: [10] * len(texts)
         method._model = mock_model
         return method
 
-    def test_generate_applies_defaults_for_none_params(self):
+    def test_generate_leaves_unset_sampling_params_to_the_backend(self):
         method = self._make_method_with_mock_model(["out"])
         method.generate(["text"], {"casual": ["hey there"]})
         # .kwargs holds the keyword arguments of the generate_text call.
         call_kwargs = method._model.generate_text.call_args.kwargs
-        self.assertEqual(call_kwargs["temperature"], 0.7)
-        self.assertEqual(call_kwargs["top_p"], 0.9)
-        # Mock tokenizer returns 3 tokens → max(10, min(3*2, 2048)) = 10.
+        self.assertEqual(
+            (call_kwargs["temperature"], call_kwargs["top_p"]), (None, None)
+        )
+
+    def test_generate_uses_the_backend_token_budgets(self):
+        method = self._make_method_with_mock_model(["out"])
+        method.generate(["text"], {"casual": ["hey there"]})
+        call_kwargs = method._model.generate_text.call_args.kwargs
         self.assertEqual(call_kwargs["max_new_tokens_per_prompt"], [10])
 
     def test_generate_uses_selected_prompt_key(self):
@@ -115,13 +115,47 @@ class TestGenerateFromStyleDict(unittest.TestCase):
         self.assertEqual(result, [["casual reply", "formal reply"]])
 
 
-class TestPromptingModelLoad(unittest.TestCase):
+class TestTransformersBackend(unittest.TestCase):
 
-    @patch("diversify_text.method.llm.PromptingModel._load_transformers")
+    @patch("diversify_text.llm.TransformersBackend._generate_transformers")
+    def test_unset_sampling_params_get_the_defaults(self, mock_generate):
+        from diversify_text.llm import TransformersBackend
+
+        mock_generate.return_value = ["out"]
+        backend = TransformersBackend(model_id="test-model", device="cpu")
+        backend.generate_text(
+            ["Rewrite this."],
+            max_new_tokens_per_prompt=[32],
+            temperature=None,
+            top_p=None,
+        )
+        call_kwargs = mock_generate.call_args.kwargs
+        self.assertEqual(
+            (call_kwargs["temperature"], call_kwargs["top_p"]), (0.7, 0.9)
+        )
+
+    def test_missing_output_cap_raises(self):
+        from diversify_text.llm import TransformersBackend
+
+        backend = TransformersBackend(model_id="test-model", device="cpu")
+        with self.assertRaises(ValueError) as cm:
+            backend.generate_text(
+                ["Rewrite this."],
+                max_new_tokens_per_prompt=[None],
+                temperature=None,
+                top_p=None,
+            )
+        self.assertEqual(
+            str(cm.exception),
+            "TransformersBackend needs a max_new_tokens value for every "
+            "prompt; use token_budgets() for the defaults.",
+        )
+
+    @patch("diversify_text.llm.TransformersBackend._load_transformers")
     def test_load_calls_transformers(self, mock_load_tf):
-        from diversify_text.method.llm import PromptingModel
+        from diversify_text.llm import TransformersBackend
 
-        model = PromptingModel(model_id="test-model", device="cpu")
+        model = TransformersBackend(model_id="test-model", device="cpu")
         model.load()
         mock_load_tf.assert_called_once()
 

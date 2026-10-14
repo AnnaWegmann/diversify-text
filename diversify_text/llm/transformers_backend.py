@@ -1,10 +1,8 @@
-"""Shared causal language model for prompt-based methods.
+"""Backend that runs an open model locally with the ``transformers`` library.
 
-:class:`PromptingModel` wraps the model itself (load + generate);
-:class:`CausalLMMethod` is the shared base class for methods that
-generate through it.  Uses the ``transformers`` library
-(``AutoModelForCausalLM``, with a fallback to
-``AutoModelForImageTextToText`` for multimodal wrapper configs).
+Loads the model with ``AutoModelForCausalLM`` (falling back to
+``AutoModelForImageTextToText`` for multimodal wrapper configs) and
+generates with its ``generate()`` API.
 
 .. note:: vLLM support is planned for a future release.
 """
@@ -16,14 +14,11 @@ import logging
 import torch
 from huggingface_hub import snapshot_download
 
-from diversify_text._cache import model_cache
 from diversify_text._utils import default_device, spinner, suppress_hf_load_noise
-from diversify_text.method.base import DiversificationMethod
+from diversify_text.llm.base import LLMBackend
 
 logger = logging.getLogger(__name__)
 
-#: Default causal language model for prompt-based methods.
-_DEFAULT_LLM = "HuggingFaceTB/SmolLM3-3B"
 _DEFAULT_TEMPERATURE = 0.7
 _DEFAULT_TOP_P = 0.9
 _MAX_NEW_TOKENS_FACTOR = 2.0
@@ -65,12 +60,8 @@ def _max_context_window(config) -> int | None:
     return getattr(config, "max_position_embeddings", None)
 
 
-#: Placeholder in prompt texts where the input text is inserted.
-PLACEHOLDER_TEXT = "[DOCUMENT SEGMENT]"
-
-
-class PromptingModel:
-    """Manages a causal LM for prompt-based generation."""
+class TransformersBackend(LLMBackend):
+    """Runs a causal LM locally through ``transformers``."""
 
     def __init__(
         self,
@@ -78,7 +69,7 @@ class PromptingModel:
         device: str | None = None,
         precision: str | None = "auto",
     ) -> None:
-        """Initialise the model wrapper.
+        """Initialise the backend.
 
         Parameters
         ----------
@@ -126,29 +117,52 @@ class PromptingModel:
         # TODO: add vLLM backend support in a future release.
         self._load_transformers()
 
+    def token_budgets(self, texts: list[str]) -> list[int]:
+        """Default ``max_new_tokens`` for each input text.
+
+        Each text gets a budget scaled from its own token count
+        (factor ``_MAX_NEW_TOKENS_FACTOR``, clamped between
+        ``_MAX_NEW_TOKENS_FLOOR`` and ``_MAX_NEW_TOKENS_CAP``).
+        """
+        token_counts = [
+            len(ids)
+            for ids in self._tokenizer(texts, truncation=True)["input_ids"]
+        ]
+        # TODO: decide what to do with thinking models
+        # if self._is_thinking_model:
+        #     return [_MAX_NEW_TOKENS_CAP] * len(texts)
+        return [
+            max(
+                _MAX_NEW_TOKENS_FLOOR,
+                min(int(count * _MAX_NEW_TOKENS_FACTOR), _MAX_NEW_TOKENS_CAP),
+            )
+            for count in token_counts
+        ]
+
     def generate_text(
         self,
         prompts: list[str],
         *,
-        max_new_tokens_per_prompt: list[int],
-        temperature: float,
-        top_p: float,
+        max_new_tokens_per_prompt: list[int | None],
+        temperature: float | None,
+        top_p: float | None,
     ) -> list[str]:
         """Generate completions for a list of prompts.
 
         Each prompt is processed individually with its own
-        ``max_new_tokens`` value.
-
-        Parameters
-        ----------
-        prompts : list[str]
-            Prompts to generate completions for.
-        max_new_tokens_per_prompt : list[int]
-            Maximum tokens to generate for each prompt (same length
-            as *prompts*).
-        temperature, top_p
-            Sampling parameters forwarded to the backend.
+        ``max_new_tokens`` value.  Local generation always needs a
+        cap, so every entry of *max_new_tokens_per_prompt* must be an
+        integer (see :meth:`token_budgets` for the defaults); ``None``
+        raises a ``ValueError``.  Unset sampling parameters fall back
+        to ``_DEFAULT_TEMPERATURE`` and ``_DEFAULT_TOP_P``.
         """
+        if any(cap is None for cap in max_new_tokens_per_prompt):
+            raise ValueError(
+                "TransformersBackend needs a max_new_tokens value for every "
+                "prompt; use token_budgets() for the defaults."
+            )
+        temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
+        top_p = top_p if top_p is not None else _DEFAULT_TOP_P
         # TODO: add batching and vLLM backend support in a future release.
         results: list[str] = []
         for prompt, max_new_tokens in zip(prompts, max_new_tokens_per_prompt):
@@ -188,11 +202,6 @@ class PromptingModel:
             and self._tokenizer.chat_template is not None
             and "<think>" in self._tokenizer.chat_template
         )
-
-    # -- vLLM backend ---------------------------------------------------------
-    # TBD
-
-    # -- transformers backend -------------------------------------------------
 
     def _generate_transformers(
         self,
@@ -255,145 +264,3 @@ class PromptingModel:
                 **kwargs,
             )
         return prompts
-
-
-@model_cache
-def _load_llm(
-    model_id: str,
-    device: str,
-    precision: str | None,
-) -> PromptingModel:
-    """Load a causal language model (cached, shared across methods)."""
-    llm = PromptingModel(model_id=model_id, device=device, precision=precision)
-    llm.load()
-    return llm
-
-
-class CausalLMMethod(DiversificationMethod):
-    """Shared base for methods that generate via a causal language model.
-
-    Handles the model configuration and lazy loading; subclasses
-    implement :meth:`generate`.
-    """
-
-    def __init__(
-        self,
-        model: str = _DEFAULT_LLM,
-        device: str | None = None,
-        precision: str | None = "auto",
-    ) -> None:
-        """Initialise the method.
-
-        Parameters
-        ----------
-        model : str
-            HuggingFace model identifier.
-        device : str or None
-            Torch device (e.g. ``"cpu"``, ``"mps"``, ``"cuda"``).
-            Defaults to auto-detection via :func:`default_device`.
-        precision : str or None
-            Model weight precision: ``"auto"`` (bfloat16), ``"float16"``,
-            ``"bfloat16"``, or ``None`` (float32).
-        """
-        self.model_id = model
-        self.device = device
-        self.precision = precision
-        self._model: PromptingModel | None = None
-
-    def prepare(self) -> None:
-        """Download and load the underlying language model."""
-        self._ensure_model()
-
-    def _ensure_model(self) -> PromptingModel:
-        """Fetch the shared model on first use."""
-        if self._model is None:
-            self._model = _load_llm(
-                self.model_id, self.device or default_device(), self.precision
-            )
-        return self._model
-
-    def _compute_max_new_tokens(
-        self,
-        texts: list[str],
-        n: int,
-        max_new_tokens: int | None,
-    ) -> list[int]:
-        """Compute per-prompt max_new_tokens for the full n × texts grid.
-
-        When *max_new_tokens* is explicit, every prompt gets that value.
-        Otherwise each text gets a budget scaled from its own token count
-        (factor ``_MAX_NEW_TOKENS_FACTOR``, clamped between
-        ``_MAX_NEW_TOKENS_FLOOR`` and ``_MAX_NEW_TOKENS_CAP``).
-
-        Returns a flat list of length ``n * len(texts)`` in the same
-        order as the prompt loop: for each style index *i*, for each
-        text *j*.
-        """
-        total = n * len(texts)
-        if max_new_tokens is not None:
-            return [max_new_tokens] * total
-
-        # Tokenize once to get per-text token counts.
-        model = self._ensure_model()
-        token_counts = [
-            len(ids)
-            for ids in model._tokenizer(texts, truncation=True)["input_ids"]
-        ]
-        # TODO: decide what to do with thinking models
-        # is_thinking = getattr(model, "_is_thinking_model", False) is True
-
-        # Build flat list matching the prompt loop order.
-        result: list[int] = []
-        for _i in range(n):
-            for count in token_counts:
-                budget = max(
-                    _MAX_NEW_TOKENS_FLOOR,
-                    min(int(count * _MAX_NEW_TOKENS_FACTOR), _MAX_NEW_TOKENS_CAP),
-                )
-                # TODO: decide what to do with thinking models
-                # if is_thinking:
-                #     budget = _MAX_NEW_TOKENS_CAP
-                result.append(budget)
-        return result
-
-    def _run_prompts(
-        self,
-        all_prompts: list[str],
-        texts: list[str],
-        *,
-        max_new_tokens: int | None,
-        temperature: float | None,
-        top_p: float | None,
-    ) -> list[list[str]]:
-        """Generate all prompts and reshape into one row per input text.
-
-        *all_prompts* must be built style by style, texts within each
-        style (so it holds ``n * len(texts)`` prompts for n styles).
-        Applies the sampling defaults, computes per-prompt token
-        budgets, generates, and returns for each input text one string
-        per style, in prompt order.
-        """
-        num_texts = len(texts)
-        n = len(all_prompts) // num_texts
-        temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
-        top_p = top_p if top_p is not None else _DEFAULT_TOP_P
-        all_max_new_tokens = self._compute_max_new_tokens(texts, n, max_new_tokens)
-        model = self._ensure_model()
-
-        # Generate one prompt at a time (each with its own max_new_tokens).
-        flat_results = model.generate_text(
-            all_prompts,
-            max_new_tokens_per_prompt=all_max_new_tokens,
-            temperature=temperature,
-            top_p=top_p,
-        )
-
-        # Reshape flat results back into list[list[str]] (len(texts) x n).
-        paraphrases_per_text: list[list[str]] = [[] for _ in texts]
-        for i in range(n):
-            for row_idx in range(num_texts):
-                # TODO: decide what to do with thinking models
-                paraphrases_per_text[row_idx].append(
-                    flat_results[i * num_texts + row_idx].strip()
-                )
-        return paraphrases_per_text

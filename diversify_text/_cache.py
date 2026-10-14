@@ -5,7 +5,7 @@ objects must be cheap to create, and anything expensive — model
 loading — happens inside a *loader*, a small function whose only job
 is to load and return one model, wrapped with :func:`model_cache`.
 The loaders live next to their model classes: the causal language
-model in :mod:`diversify_text.method.llm`, the TinyStyler model in
+model in :mod:`diversify_text.llm`, the TinyStyler model in
 :mod:`diversify_text.method.tinystyler.model`, and the MIS filter
 below.
 
