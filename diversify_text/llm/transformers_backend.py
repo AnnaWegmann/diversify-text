@@ -152,10 +152,15 @@ class TransformersBackend(LLMBackend):
         Each prompt is processed individually with its own
         ``max_new_tokens`` value.  Local generation always needs a
         cap, so every entry of *max_new_tokens_per_prompt* must be an
-        integer (see :meth:`token_budgets` for the defaults).  Unset
-        sampling parameters fall back to ``_DEFAULT_TEMPERATURE`` and
-        ``_DEFAULT_TOP_P``.
+        integer (see :meth:`token_budgets` for the defaults); ``None``
+        raises a ``ValueError``.  Unset sampling parameters fall back
+        to ``_DEFAULT_TEMPERATURE`` and ``_DEFAULT_TOP_P``.
         """
+        if any(cap is None for cap in max_new_tokens_per_prompt):
+            raise ValueError(
+                "TransformersBackend needs a max_new_tokens value for every "
+                "prompt; use token_budgets() for the defaults."
+            )
         temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
         top_p = top_p if top_p is not None else _DEFAULT_TOP_P
         # TODO: add batching and vLLM backend support in a future release.

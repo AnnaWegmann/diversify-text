@@ -32,7 +32,8 @@ class CausalLMMethod(DiversificationMethod):
         Parameters
         ----------
         model : str
-            HuggingFace model identifier.
+            Model identifier; :func:`~diversify_text.llm.load_backend`
+            decides which backend runs it.
         device : str or None
             Torch device (e.g. ``"cpu"``, ``"mps"``, ``"cuda"``).
             Defaults to auto-detection via :func:`default_device`.

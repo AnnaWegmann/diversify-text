@@ -37,8 +37,14 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         method.generate(["text"], {"casual": ["hey there"]})
         # .kwargs holds the keyword arguments of the generate_text call.
         call_kwargs = method._model.generate_text.call_args.kwargs
-        self.assertIsNone(call_kwargs["temperature"])
-        self.assertIsNone(call_kwargs["top_p"])
+        self.assertEqual(
+            (call_kwargs["temperature"], call_kwargs["top_p"]), (None, None)
+        )
+
+    def test_generate_uses_the_backend_token_budgets(self):
+        method = self._make_method_with_mock_model(["out"])
+        method.generate(["text"], {"casual": ["hey there"]})
+        call_kwargs = method._model.generate_text.call_args.kwargs
         self.assertEqual(call_kwargs["max_new_tokens_per_prompt"], [10])
 
     def test_generate_uses_selected_prompt_key(self):
@@ -126,6 +132,23 @@ class TestTransformersBackend(unittest.TestCase):
         call_kwargs = mock_generate.call_args.kwargs
         self.assertEqual(
             (call_kwargs["temperature"], call_kwargs["top_p"]), (0.7, 0.9)
+        )
+
+    def test_missing_output_cap_raises(self):
+        from diversify_text.llm import TransformersBackend
+
+        backend = TransformersBackend(model_id="test-model", device="cpu")
+        with self.assertRaises(ValueError) as cm:
+            backend.generate_text(
+                ["Rewrite this."],
+                max_new_tokens_per_prompt=[None],
+                temperature=None,
+                top_p=None,
+            )
+        self.assertEqual(
+            str(cm.exception),
+            "TransformersBackend needs a max_new_tokens value for every "
+            "prompt; use token_budgets() for the defaults.",
         )
 
     @patch("diversify_text.llm.TransformersBackend._load_transformers")
