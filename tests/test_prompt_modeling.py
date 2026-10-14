@@ -29,14 +29,14 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         mock_model.generate_text.return_value = responses
         # The backend chooses the default output budget per text.
         mock_model.token_budgets.side_effect = lambda texts: [10] * len(texts)
-        method._model = mock_model
+        method._backend = mock_model
         return method
 
     def test_generate_leaves_unset_sampling_params_to_the_backend(self):
         method = self._make_method_with_mock_model(["out"])
         method.generate(["text"], {"casual": ["hey there"]})
         # .kwargs holds the keyword arguments of the generate_text call.
-        call_kwargs = method._model.generate_text.call_args.kwargs
+        call_kwargs = method._backend.generate_text.call_args.kwargs
         self.assertEqual(
             (call_kwargs["temperature"], call_kwargs["top_p"]), (None, None)
         )
@@ -44,7 +44,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
     def test_generate_uses_the_backend_token_budgets(self):
         method = self._make_method_with_mock_model(["out"])
         method.generate(["text"], {"casual": ["hey there"]})
-        call_kwargs = method._model.generate_text.call_args.kwargs
+        call_kwargs = method._backend.generate_text.call_args.kwargs
         self.assertEqual(call_kwargs["max_new_tokens_per_prompt"], [10])
 
     def test_generate_uses_selected_prompt_key(self):
@@ -56,7 +56,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         )
         # .args[0] is the first positional argument of the generate_text
         # call: the list of fully-filled prompt strings sent to the model.
-        sent_prompts = method._model.generate_text.call_args.args[0]
+        sent_prompts = method._backend.generate_text.call_args.args[0]
         self.assertIn("machine-generated text", sent_prompts[0])
 
     def test_generate_uses_custom_prompt_template(self):
@@ -72,7 +72,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         )
         # .args[0] is the first positional argument of the generate_text
         # call: the list of fully-filled prompt strings sent to the model.
-        sent_prompts = method._model.generate_text.call_args.args[0]
+        sent_prompts = method._backend.generate_text.call_args.args[0]
         self.assertIn("my input", sent_prompts[0])
         self.assertIn("style example a", sent_prompts[0])
 
@@ -101,7 +101,7 @@ class TestGenerateFromStyleDict(unittest.TestCase):
             ]
 
         mock_model.generate_text.side_effect = fake_generate
-        method._model = mock_model
+        method._backend = mock_model
 
         # Explicit max_new_tokens skips the automatic token budget,
         # which would otherwise need the model's tokenizer.

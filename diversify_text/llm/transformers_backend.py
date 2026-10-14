@@ -12,7 +12,6 @@ from __future__ import annotations
 import logging
 
 import torch
-from huggingface_hub import snapshot_download
 
 from diversify_text._utils import default_device, spinner, suppress_hf_load_noise
 from diversify_text.llm.base import LLMBackend
@@ -113,7 +112,7 @@ class TransformersBackend(LLMBackend):
         return mapping[self.precision]
 
     def load(self) -> None:
-        """Download and load the model."""
+        """Load the model into memory."""
         # TODO: add vLLM backend support in a future release.
         self._load_transformers()
 
@@ -177,11 +176,9 @@ class TransformersBackend(LLMBackend):
         return results
 
     def _load_transformers(self) -> None:
-        """Download weights (if needed) and load the model into memory."""
+        """Load the model into memory."""
         from transformers import AutoTokenizer
 
-        with spinner(f"Downloading {self.model_id}"):
-            snapshot_download(self.model_id)
         with spinner(f"Loading {self.model_id} (transformers, {self.device})"):
             with suppress_hf_load_noise():
                 self._tokenizer = AutoTokenizer.from_pretrained(self.model_id)
