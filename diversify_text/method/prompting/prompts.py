@@ -35,7 +35,7 @@ REQUIRED_PLACEHOLDERS: tuple[str, ...] = (
 #   These use [STYLE EXAMPLES], [STYLE NAME] and [DOCUMENT SEGMENT] placeholders.
 
 PROMPT_BANK: dict[str, str] = {
-    STYLE_TRANSFER: (
+    STYLE_TRANSFER: (  # ours
         "Here are examples of the [STYLE NAME] writing style:\n"
         "[STYLE EXAMPLES]\n\n"
         "For the following document give me a diverse paraphrase of the same "
@@ -44,7 +44,7 @@ PROMPT_BANK: dict[str, str] = {
         "Output only the paraphrase, nothing else.\n"
         "Document: [DOCUMENT SEGMENT]"
     ),
-    HUMANIZE_TRANSFER: (
+    HUMANIZE_TRANSFER: (  # inspired by  https://arxiv.org/abs/2401.05952
         "I need to modify a machine-generated text to make it appear more like it was "
         "written by a human. The objective is to introduce elements found in "
         "human-written texts in the [STYLE NAME] style. Here are some examples of "
@@ -60,8 +60,8 @@ PROMPT_BANK: dict[str, str] = {
     ),
 }
 
-#: Where a template comes from, by key.  Templates not listed here are
-#: our own.  Shown on the prompt templates page of the docs.
+#: Where a template comes from.
+#: Shown in the docs.
 PROMPT_SOURCES: dict[str, str] = {
     HUMANIZE_TRANSFER: "inspired by https://arxiv.org/abs/2401.05952 (Zhang et al., 2024)",
 }

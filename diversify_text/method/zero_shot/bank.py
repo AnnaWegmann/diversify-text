@@ -10,10 +10,10 @@ generation.
 # Bank order matters: n selects the first n styles, so the best-curated
 # styles come first.
 ZERO_SHOT_STYLE_BANK: dict[str, list[str]] = {
-    "formal": [
+    "formal": [  # taken from https://arxiv.org/abs/2109.03910
         "Here is some text: [DOCUMENT SEGMENT]. Output only the rewrite, nothing else. Here is a rewrite of the text, which is more formal:"
     ],
-    "simple": [
+    "simple": [  # taken from https://aclanthology.org/2023.emnlp-main.821.pdf
         "Please rewrite the following complex sentence in order to "
         "make it easier to understand by non-native speakers of English. "
         "You can do so by replacing complex words with simpler "
@@ -55,12 +55,13 @@ ZERO_SHOT_STYLE_BANK: dict[str, list[str]] = {
         "nothing else. Here is a rewrite of the text, which uses less "
         "common verbs:"
     ],
-    "wikipedia": [
+    "wikipedia": [  # taken from https://arxiv.org/abs/2401.16380
         "For the following paragraph give me a diverse paraphrase of the same "
         "in high quality English language as in sentences on Wikipedia. "
         "Output only the paraphrase, nothing else. "
         "Text: [DOCUMENT SEGMENT]"
     ],
+    # From: https://arxiv.org/abs/2401.05952 (Zhang et al., 2024)
     # Original 5-modification prompt from the paper (no emojis).
     "humanize": [
         "I need to modify a machine-generated text to make it appear more like it was "
@@ -87,9 +88,11 @@ ZERO_SHOT_STYLE_BANK: dict[str, list[str]] = {
         "Here is the machine-generated text: [DOCUMENT SEGMENT]"
     ],
     # -----------------------------------------------
-    # The following instructions (see ZERO_SHOT_SOURCES) are not so
-    # great templates for REPHRASING: they will often hallucinate new
-    # information to match the target register.
+    # The following instructions are taken from the finephrase space:
+    # https://huggingface.co/spaces/HuggingFaceFW/finephrase
+    #       --> actually they are not so great templates for REPHRASING,
+    #       they will often hallucinate new information to match the
+    #       target register
     # ------------------------------------------------
     "article": [
         "Transform the document into a magazine-style feature article. "
@@ -178,8 +181,8 @@ ZERO_SHOT_STYLE_BANK: dict[str, list[str]] = {
 
 _FINEPHRASE = "taken from https://huggingface.co/spaces/HuggingFaceFW/finephrase"
 
-#: Where an instruction comes from, by style.  Styles not listed here
-#: are our own.  Shown on the instructions page of the docs.
+#: Where an instruction comes from.
+#: Shown in the docs.
 ZERO_SHOT_SOURCES: dict[str, str] = {
     "formal": "taken from https://arxiv.org/abs/2109.03910",
     "simple": "taken from https://aclanthology.org/2023.emnlp-main.821.pdf",
