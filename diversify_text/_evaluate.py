@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import fmean
@@ -129,6 +130,12 @@ def evaluate(
             f"Unknown granularity {granularity!r}. Available: {list(GRANULARITIES)}."
         )
 
+    if metrics is not None:
+        counts = Counter(m for m in metrics if isinstance(m, str))
+        repeated = sorted(name for name, n in counts.items() if n > 1)
+        if repeated:
+            raise ValueError(f"Metrics selected more than once: {repeated}.")
+
     records = _load_records(output)
     if device is None:
         device = getattr(output, "device", None) or "cpu"
@@ -158,6 +165,13 @@ def evaluate(
                     f"Metric {metric.name!r} returned {len(values)} scores "
                     f"for {len(originals)} pairs."
                 )
+            # Two instances of one metric (e.g. BERTScore with different
+            # models) report the same keys; refuse rather than overwrite.
+            if key in scores:
+                raise ValueError(
+                    f"Metric {metric.name!r} reports score {key!r}, which "
+                    f"another selected metric already reported."
+                )
             scores[key] = values
 
     columns = list(scores)
@@ -177,15 +191,23 @@ def evaluate(
         ]
 
     if "text" in want:
+        positions_by_text: dict[int, list[int]] = {}
+        for j, t in enumerate(index):
+            positions_by_text.setdefault(t, []).append(j)
+
         rows = []
         for i, record in enumerate(records):
-            positions = [j for j, t in enumerate(index) if t == i]
+            positions = positions_by_text.get(i, [])
+            # A text without paraphrases has nothing to average: report None.
             rows.append(
                 {
                     "text_index": i,
                     "original": record["original"],
                     "n_paraphrases": len(positions),
-                    **{c: fmean(scores[c][j] for j in positions) for c in columns},
+                    **{
+                        c: fmean(scores[c][j] for j in positions) if positions else None
+                        for c in columns
+                    },
                 }
             )
         result.text = rows

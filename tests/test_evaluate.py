@@ -116,6 +116,14 @@ class TestGranularity(unittest.TestCase):
         every = [p["length_ratio"] for p in pair.pair]
         self.assertAlmostEqual(dataset.dataset["length_ratio"], sum(every) / len(every))
 
+    def test_text_without_paraphrases_gets_none(self):
+        records = RECORDS + [{"original": "zz", "paraphrases": []}]
+        result = evaluate(records, metrics=[LengthRatio()], granularity="all")
+        self.assertEqual(result.text[2]["n_paraphrases"], 0)
+        self.assertIsNone(result.text[2]["length_ratio"])
+        self.assertEqual([r["length_ratio"] for r in result.text[:2]], [1.0, 1.5])
+        self.assertEqual(result.dataset["length_ratio"], 1.25)
+
 
 class TestMetricSelection(unittest.TestCase):
 
@@ -177,6 +185,37 @@ class TestErrors(unittest.TestCase):
     def test_unknown_metric_name(self):
         with self.assertRaises(ValueError):
             evaluate(RECORDS, metrics=["does_not_exist"])
+
+    def test_duplicate_score_keys_are_rejected(self):
+        # Same metric with two models reports the same key twice.
+        with self.assertRaises(ValueError):
+            evaluate(RECORDS, metrics=[ModelBacked(), ModelBacked(model="other")])
+
+    def test_repeated_metric_name_is_rejected_before_scoring(self):
+        computed = []
+
+        class Recording(LengthRatio):
+            def compute(self, originals, paraphrases):
+                computed.append(self.name)
+                return super().compute(originals, paraphrases)
+
+        METRIC_REGISTRY["length_ratio"] = Recording
+        try:
+            with self.assertRaises(ValueError):
+                evaluate(RECORDS, metrics=["length_ratio", "length_ratio"])
+            self.assertEqual(computed, [])
+        finally:
+            del METRIC_REGISTRY["length_ratio"]
+
+    def test_custom_metric_clashing_with_another_score_is_rejected(self):
+        class Impostor(Metric):
+            name = "impostor"
+
+            def compute(self, originals, paraphrases):
+                return {"length_ratio": [0.0] * len(originals)}
+
+        with self.assertRaises(ValueError):
+            evaluate(RECORDS, metrics=[LengthRatio(), Impostor()])
 
     def test_unknown_granularity(self):
         with self.assertRaises(ValueError):
