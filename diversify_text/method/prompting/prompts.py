@@ -60,5 +60,11 @@ PROMPT_BANK: dict[str, str] = {
     ),
 }
 
+#: Where a template comes from.
+#: Shown in the docs.
+PROMPT_SOURCES: dict[str, str] = {
+    HUMANIZE_TRANSFER: "inspired by https://arxiv.org/abs/2401.05952 (Zhang et al., 2024)",
+}
+
 #: Template used when no ``prompt`` is selected.
 DEFAULT_PROMPT: str = STYLE_TRANSFER
