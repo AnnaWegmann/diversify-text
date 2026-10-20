@@ -118,3 +118,6 @@ def _generate_style_listings() -> None:
 
 
 _generate_style_listings()
+
+html_static_path = ["_static"]
+html_css_files = ["custom.css"]

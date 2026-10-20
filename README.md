@@ -8,42 +8,11 @@ pip install diversify-text
 
 **[Full documentation](https://annawegmann.github.io/diversify_text/)**
 
-## Table of contents
-
-- [diversify-text](#diversify-text)
-  - [Table of contents](#table-of-contents)
-  - [Usage](#usage)
-    - [Single text](#single-text)
-    - [Control number of styles](#control-number-of-styles)
-    - [Pick styles from the bank](#pick-styles-from-the-bank)
-    - [Bring your own style examples](#bring-your-own-style-examples)
-    - [Repeats](#repeats)
-    - [Prompting method](#prompting-method)
-    - [Zero-shot method](#zero-shot-method)
-    - [Caching](#caching)
-    - [Using the class directly](#using-the-class-directly)
-    - [List of texts](#list-of-texts)
-    - [Evaluating paraphrases](#evaluating-paraphrases)
-    - [Creating a custom method](#creating-a-custom-method)
-  - [Install](#install)
-  - [Contributing](#contributing)
-    - [Development setup](#development-setup)
-    - [Running tests](#running-tests)
-    - [Working with uv](#working-with-uv)
-      - [Adding packages with `uv add`](#adding-packages-with-uv-add)
-      - [Adding packages to the dev group](#adding-packages-to-the-dev-group)
-      - [Switching between dev and standard mode](#switching-between-dev-and-standard-mode)
-      - [Best practice: run `uv lock -U`](#best-practice-run-uv-lock--u)
-    - [Building docs locally](#building-docs-locally)
-  - [Citation](#citation)
-
-## Usage
+## Quick start
 
 <!-- quickstart-start -->
 
-For file inputs (CSV, TSV, TXT), output options, and punctuation splitting, see the [full usage guide](https://annawegmann.github.io/diversify_text/usage.html).
-
-### Single text
+Generate paraphrases of a text in several styles; or pass a list of texts to paraphrase each one:
 
 ```python
 from diversify_text import diversify
@@ -63,6 +32,54 @@ results = diversify("The experiment was conducted in a controlled lab setting.")
     ]
 }]
 ```
+
+Pick target styles by name. The  [styles page](https://annawegmann.github.io/diversify_text/styles.html) lists every available style with example texts:
+
+```python
+results = diversify(
+    "The experiment was conducted in a controlled lab setting.",
+    styles=["question", "personal_blog"],
+)
+```
+
+Change the model with `model=`. If no method is selected, it is then set to the prompting method (see [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations):
+
+```python
+results = diversify(
+    "The experiment was conducted in a controlled lab setting.",
+    model="Qwen/Qwen3-4B-Instruct-2507",
+)
+```
+
+<!-- quickstart-end -->
+
+## Table of contents
+
+- [Usage](#usage)
+  - [Control number of styles](#control-number-of-styles)
+  - [Pick styles from the bank](#pick-styles-from-the-bank)
+  - [Bring your own style examples](#bring-your-own-style-examples)
+  - [Repeats](#repeats)
+  - [Prompting method](#prompting-method)
+  - [Zero-shot method](#zero-shot-method)
+  - [Caching](#caching)
+  - [Using the class directly](#using-the-class-directly)
+  - [List of texts](#list-of-texts)
+  - [Evaluating paraphrases](#evaluating-paraphrases)
+  - [Creating a custom method](#creating-a-custom-method)
+- [Install](#install)
+- [Contributing](#contributing)
+  - [Development setup](#development-setup)
+  - [Running tests](#running-tests)
+  - [Working with uv](#working-with-uv)
+  - [Building docs locally](#building-docs-locally)
+- [Citation](#citation)
+
+## Usage
+
+<!-- usage-start -->
+
+For file inputs (CSV, TSV, TXT), output options, and punctuation splitting, see the [full usage guide](https://annawegmann.github.io/diversify_text/usage.html).
 
 ### Control number of styles
 
@@ -84,22 +101,7 @@ Each method can have its own bank. The default method (TinyStyler) uses a small 
 
 ### Pick styles from the bank
 
-Select specific built-in styles with `styles`, by name and/or by (0-based) bank index:
-
-```python
-results = diversify(
-    "The experiment was conducted in a controlled lab setting.",
-    styles=["question", "personal_blog"],
-)
-
-# indices work too — handy for trying things without knowing the names
-results = diversify(
-    "The experiment was conducted in a controlled lab setting.",
-    styles=[0, 7, "obama"],
-)
-```
-
-Unknown names and out-of-range indices raise an error listing what is available. Note that indices follow bank order, which may change between releases as the bank is curated — names are the stable way to pin a style.
+Select specific built-in styles by name with `styles`. Unknown names raise an error listing what is available.
 
 A few styles that are too far from contemporary English to be useful defaults (`old_english`, `middle_english`) live outside the regular bank: they are selectable by name only, have no index, and are never picked by `n`.
 
@@ -164,6 +166,8 @@ results = diversify(
 
 `styles` and `style_texts` can be combined in one call (bank styles come first in the output). `n` cannot be combined with either — the number of styles is already determined, so passing `n` raises an error.
 
+Style texts longer than 500 words (e.g. the long prose excerpts in the style bank) are cut after their first 500 words before they reach the model. Change the limit with `max_len_style_text`, or pass `max_len_style_text=None` to keep full texts.
+
 ### Repeats
 
 `repeats` controls how many paraphrases are generated *per style* (default 1). With more than one repeat, the output interleaves the styles:
@@ -208,17 +212,7 @@ results = diversify(
 
 Only prompts that take style example texts are supported — every method receives the same input and produces the same output.
 
-Pick a different model with `model=` (any HuggingFace causal LM that can handle instructions):
-
-```python
-results = diversify(
-    "The experiment was conducted in a controlled lab setting.",
-    method="prompting",
-    model="Qwen/Qwen3-4B-Instruct-2507",
-)
-```
-
-This works for the prompting and zero-shot methods; TinyStyler has a fixed model, so passing `model` with it raises an error.
+Any HuggingFace causal LM that can handle instructions can be picked with `model=`; TinyStyler has a fixed model, so passing `model` with it raises an error. See [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations and insights into which models to use based on our practical experience.
 
 ### Zero-shot method
 
@@ -348,7 +342,7 @@ results = Diversifier(method=MyMethod()).diversify("Hello", styles=["scottish_en
 
 A method returns `list[list[str]]` — for each input text, one generated string per style in `style_dict` order. The core attaches the style labels to the output and runs the method once per repeat, so custom methods stay simple and stateless.
 
-<!-- quickstart-end -->
+<!-- usage-end -->
 
 ## Install
 
@@ -442,10 +436,10 @@ open docs/_build/html/index.html
 If you use `diversify` in your research, we are happy about a citation (placeholder currently).
 
 ```bibtex
-@inproceedings{wegmann2026diversify,
-    title = {diversify_text: An Amazing Library for Text Diversification},
-    author = {Wegmann, Anna and Others},
-    url={https://github.com/AnnaWegmann/diversify_text},
+@misc{wegmann2026diversify,
+    title = {\texttt{diversify-text}: A {P}ython Package for Diversifying the Style of Text},
+    author = {Wegmann, Anna and Velayuthan, Menan and Calò, Eduardo},
+    howpublished = {\url{https://github.com/AnnaWegmann/diversify_text}},
     year = {2026},
 }
 ```
