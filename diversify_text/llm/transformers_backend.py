@@ -149,10 +149,16 @@ class TransformersBackend(LLMBackend):
     ) -> list[str]:
         """Generate completions for a list of prompts.
 
-        Each prompt is processed individually with its own
-        ``max_new_tokens`` value.  Local generation always needs a
-        cap, so every entry of *max_new_tokens_per_prompt* must be an
-        integer (see :meth:`default_token_budgets` for the defaults); ``None``
+        Prompts are sorted by length and generated together in
+        batches, so each batch needs little padding.  A batch generates
+        up to the largest ``max_new_tokens`` value among its prompts;
+        each output still ends at the model's end-of-text token.  All
+        prompts go into one batch; when the GPU runs out of memory, the
+        batch is halved and generation retried.
+
+        Local generation always needs a cap, so every entry of
+        *max_new_tokens_per_prompt* must be an integer (see
+        :meth:`default_token_budgets` for the defaults); ``None``
         raises a ``ValueError``.  Unset sampling parameters fall back
         to ``_DEFAULT_TEMPERATURE`` and ``_DEFAULT_TOP_P``.
         """
@@ -163,17 +169,33 @@ class TransformersBackend(LLMBackend):
             )
         temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
         top_p = top_p if top_p is not None else _DEFAULT_TOP_P
-        # TODO: add batching and vLLM backend support in a future release.
-        results: list[str] = []
-        for prompt, max_new_tokens in zip(prompts, max_new_tokens_per_prompt):
-            results.extend(
-                self._generate_transformers(
-                    [prompt],
-                    max_new_tokens=max_new_tokens,
+        # TODO: add vLLM backend support in a future release.
+        order = sorted(range(len(prompts)), key=lambda i: len(prompts[i]))
+        results: list[str | None] = [None] * len(prompts)
+        batch_size = len(prompts)
+        start = 0
+        while start < len(order):
+            batch = order[start : start + batch_size]
+            try:
+                outputs = self._generate_transformers(
+                    [prompts[i] for i in batch],
+                    max_new_tokens=max(max_new_tokens_per_prompt[i] for i in batch),
                     temperature=temperature,
                     top_p=top_p,
                 )
-            )
+            except torch.OutOfMemoryError:
+                if batch_size == 1:
+                    raise
+                torch.cuda.empty_cache()
+                batch_size = (batch_size + 1) // 2
+                logger.info(
+                    "Out of GPU memory; retrying with %d prompts per batch.",
+                    batch_size,
+                )
+                continue
+            for i, output in zip(batch, outputs):
+                results[i] = output
+            start += len(batch)
         return results
 
     def _load_transformers(self) -> None:

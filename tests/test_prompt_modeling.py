@@ -134,6 +134,26 @@ class TestTransformersBackend(unittest.TestCase):
             (call_kwargs["temperature"], call_kwargs["top_p"]), (0.7, 0.9)
         )
 
+    @patch("diversify_text.llm.TransformersBackend._generate_transformers")
+    def test_outputs_come_back_in_prompt_order(self, mock_generate):
+        from diversify_text.llm import TransformersBackend
+
+        # Echo each prompt, so the output order is visible.
+        mock_generate.side_effect = lambda prompts, **kwargs: list(prompts)
+        backend = TransformersBackend(model_id="test-model", device="cpu")
+        prompts = [
+            "It was a dark and stormy night; the rain fell in torrents.",
+            "Call me Ishmael.",
+            "All happy families are alike.",
+        ]
+        outputs = backend.generate_text(
+            prompts,
+            max_new_tokens_per_prompt=[32, 32, 32],
+            temperature=None,
+            top_p=None,
+        )
+        self.assertEqual(outputs, prompts)
+
     def test_missing_output_cap_raises(self):
         from diversify_text.llm import TransformersBackend
 
