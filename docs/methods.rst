@@ -5,9 +5,6 @@ Methods
 :class:`~diversify_text.method.base.DiversificationMethod` subclass that generates
 paraphrases using a different model or algorithm.
 
-Overview
---------
-
 .. list-table::
    :header-rows: 1
    :widths: 20 15 15 15 35
@@ -33,11 +30,10 @@ Overview
      - TBD
      - Styles defined by rewrite instructions, via a causal LM
 
-Each method has its own page:
-
 .. toctree::
    :maxdepth: 1
 
    tinystyler
-   open_llms
+   prompting
+   zero_shot
    adding_a_method

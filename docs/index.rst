@@ -12,5 +12,6 @@ local transformer models or proprietary models through their API.
    usage
    styles
    longer_texts
+   model_backend
    methods
    api

@@ -42,7 +42,7 @@ results = diversify(
 )
 ```
 
-Change the model with `model=`. If no method is selected, it is then set to the prompting method (see [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations):
+Change the model with `model=`. If no method is selected, it is then set to the prompting method (see [which model?](https://annawegmann.github.io/diversify_text/model_backend.html#which-model) in the docs for recommendations):
 
 ```python
 results = diversify(
@@ -212,7 +212,7 @@ results = diversify(
 
 Only prompts that take style example texts are supported — every method receives the same input and produces the same output.
 
-Any HuggingFace causal LM that can handle instructions can be picked with `model=`, as can a proprietary model (see below); TinyStyler has a fixed model, so passing `model` with it raises an error. See [which model?](https://annawegmann.github.io/diversify_text/open_llms.html#which-model) in the docs for recommendations and insights into which models to use based on our practical experience.
+Any HuggingFace causal LM that can handle instructions can be picked with `model=`, as can a proprietary model (see below); TinyStyler has a fixed model, so passing `model` with it raises an error. See [which model?](https://annawegmann.github.io/diversify_text/model_backend.html#which-model) in the docs for recommendations and insights into which models to use based on our practical experience.
 
 ### Zero-shot method
 
@@ -252,7 +252,7 @@ results = diversify(
 )
 ```
 
-Sampling settings are only sent when you set them, so the provider's defaults apply otherwise, and `seed` has no effect. See [proprietary models via API](https://annawegmann.github.io/diversify_text/open_llms.html#proprietary-models-via-api) in the docs for details and example outputs.
+Sampling settings are only sent when you set them, so the provider's defaults apply otherwise, and `seed` has no effect. See [proprietary models via API](https://annawegmann.github.io/diversify_text/model_backend.html#proprietary-models-via-api) in the docs for details and example outputs.
 
 ### Caching
 

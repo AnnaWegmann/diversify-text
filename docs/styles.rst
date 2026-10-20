@@ -74,7 +74,8 @@ Zero-shot bank
 --------------
 
 Used by the ``zero_shot`` method.  Each style is defined by one rewrite
-*instruction* for the language model instead of example texts.
+*instruction* for the language model instead of example texts (full
+text and sources on the :doc:`zero_shot_instructions` page).
 Selectable via ``n``, by name, or by 0-based index:
 
 .. include:: _generated/zero_shot_bank.inc
