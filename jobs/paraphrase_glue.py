@@ -65,7 +65,7 @@ try:
     torch.cuda.reset_peak_memory_stats()
     start = time.perf_counter()
     output_path = diversifier.diversify(
-        input_path,
+        str(input_path),  # diversify() does not accept Path objects
         n=N_STYLES,
         output_dir=run_dir,
         output_name="paraphrases",
