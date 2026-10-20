@@ -3,3 +3,8 @@
 .wy-table-responsive table th {
     white-space: normal;
 }
+
+/* Prompt templates: show long prompt lines wrapped instead of scrolling. */
+.rst-content .wrap div[class^=highlight] pre {
+    white-space: pre-wrap;
+}

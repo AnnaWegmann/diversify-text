@@ -55,9 +55,13 @@ class Diversifier:
         A built-in method name (default ``"tinystyler"``) or a
         pre-built method instance.
     model : str, optional
-        HuggingFace model identifier, for methods that let you choose
-        one (``"prompting"``, ``"zero_shot"``).  Raises a ``ValueError``
-        for methods with a fixed model (``"tinystyler"``).
+        Model identifier for methods that let you choose one
+        (``"prompting"``, ``"zero_shot"``): a HuggingFace identifier of an open
+        model to run locally, or the name of a proprietary model to
+        query through its provider's API (e.g. ``"gpt-5-mini"``,
+        ``"anthropic/claude-haiku-4-5"``, with the API key in the
+        environment).  Raises a ``ValueError`` for methods with a
+        fixed model (``"tinystyler"``).
 
     Example
     -------
@@ -167,7 +171,9 @@ class Diversifier:
             When omitted, the default seed (``51173``) is applied on the
             first call only and skipped on subsequent calls.  Pass an
             explicit integer to always (re-)seed.  Pass ``None`` to
-            disable seeding entirely.
+            disable seeding entirely.  Ignored (with a warning when set
+            explicitly) for methods whose output a seed cannot affect,
+            such as models queried through a provider's API.
         method_kwargs : mapping[str, Any], optional
             Method-specific keyword arguments. Example:
             ``{"prompt": "humanize_transfer"}`` for prompting.
@@ -254,7 +260,14 @@ class Diversifier:
             self._mis_filter.prepare()
 
         global _default_seed_applied
-        if seed is _SENTINEL:
+        if not self._method.seedable:
+            if seed is not _SENTINEL and seed is not None:
+                logger.warning(
+                    "seed=%r has no effect: the output of this method is "
+                    "not seedable (e.g. a model queried through an API).",
+                    seed,
+                )
+        elif seed is _SENTINEL:
             if not _default_seed_applied:
                 self._apply_seed(_DEFAULT_SEED)
                 _default_seed_applied = True
@@ -425,9 +438,13 @@ def diversify(
         A built-in method name (default ``"tinystyler"``) or a
         pre-built method instance.
     model : str, optional
-        HuggingFace model identifier, for methods that let you choose
-        one (``"prompting"``, ``"zero_shot"``).  Raises a ``ValueError``
-        for methods with a fixed model (``"tinystyler"``).
+        Model identifier for methods that let you choose one
+        (``"prompting"``, ``"zero_shot"``): a HuggingFace identifier of an open
+        model to run locally, or the name of a proprietary model to
+        query through its provider's API (e.g. ``"gpt-5-mini"``,
+        ``"anthropic/claude-haiku-4-5"``, with the API key in the
+        environment).  Raises a ``ValueError`` for methods with a
+        fixed model (``"tinystyler"``).
     semantic_filter : bool
         When ``True``, score each paraphrase with the Mutual Implication
         Score model and select the best candidate above a minimum score.

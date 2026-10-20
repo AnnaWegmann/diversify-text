@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from diversify_text.method.llm import CausalLMMethod, PLACEHOLDER_TEXT
+from diversify_text.method.causal_lm import CausalLMMethod, PLACEHOLDER_TEXT
 from diversify_text.method.zero_shot.bank import ZERO_SHOT_STYLE_BANK
 
 logger = logging.getLogger(__name__)

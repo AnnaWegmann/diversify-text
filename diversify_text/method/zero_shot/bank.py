@@ -178,3 +178,23 @@ ZERO_SHOT_STYLE_BANK: dict[str, list[str]] = {
         "Document: [DOCUMENT SEGMENT]"
     ],
 }
+
+_FINEPHRASE = "taken from https://huggingface.co/spaces/HuggingFaceFW/finephrase"
+
+#: Where an instruction comes from.
+#: Shown in the docs.
+ZERO_SHOT_SOURCES: dict[str, str] = {
+    "formal": "taken from https://arxiv.org/abs/2109.03910",
+    "simple": "taken from https://aclanthology.org/2023.emnlp-main.821.pdf",
+    "wikipedia": "taken from https://arxiv.org/abs/2401.16380",
+    "humanize": "taken from https://arxiv.org/abs/2401.05952 (Zhang et al., 2024)",
+    "article": _FINEPHRASE,
+    "commentary": _FINEPHRASE,
+    "discussion": _FINEPHRASE,
+    "explanation": _FINEPHRASE,
+    "faq": _FINEPHRASE,
+    "math": _FINEPHRASE,
+    "narrative": _FINEPHRASE,
+    "table": _FINEPHRASE,
+    "tutorial": _FINEPHRASE,
+}

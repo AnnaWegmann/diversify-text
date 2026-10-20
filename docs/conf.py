@@ -119,5 +119,68 @@ def _generate_style_listings() -> None:
 
 _generate_style_listings()
 
+
+def _generate_prompt_listings() -> None:
+    """Full prompt templates and zero-shot instructions, generated from the code."""
+    import re
+
+    from diversify_text.method.prompting.prompts import (
+        DEFAULT_PROMPT,
+        PROMPT_BANK,
+        PROMPT_SOURCES,
+    )
+    from diversify_text.method.zero_shot.bank import (
+        ZERO_SHOT_SOURCES,
+        ZERO_SHOT_STYLE_BANK,
+    )
+
+    def linked(source):
+        return re.sub(r"(https?://\S+)", r"`\1 <\1>`_", source)
+
+    def section(title, text, source):
+        lines = [title, "-" * len(title), ""]
+        lines += ["Source: " + (linked(source) if source else "ours") + ".", ""]
+        lines += [".. code-block:: text", "   :class: wrap", ""]
+        lines += [f"   {line}" if line else "" for line in text.split("\n")]
+        lines.append("")
+        return lines
+
+    out = Path(__file__).parent / "_generated"
+    out.mkdir(exist_ok=True)
+
+    lines = []
+    for key, template in PROMPT_BANK.items():
+        title = f"``{key}``" + (" (default)" if key == DEFAULT_PROMPT else "")
+        lines += section(title, template, PROMPT_SOURCES.get(key))
+    (out / "prompt_bank.inc").write_text("\n".join(lines), encoding="utf-8")
+
+    # What the method sends for an instruction with and without the
+    # document placeholder, produced by the method's own filling code.
+    from diversify_text.method.zero_shot.method import ZeroShotMethod
+
+    text = "The cat sat on the mat."
+    examples = [
+        ("Rewrite the text as an old-timey pirate would say it.", "without the placeholder"),
+        ("Rewrite the following text as an old-timey pirate would say it: [DOCUMENT SEGMENT]", "with the placeholder"),
+    ]
+    lines = []
+    for instruction, label in examples:
+        lines += [f"An instruction {label}:", "", ".. code-block:: text", "   :class: wrap", "", f"   {instruction}", ""]
+        lines += ["is sent as:", "", ".. code-block:: text", "   :class: wrap", ""]
+        lines += [f"   {line}" if line else "" for line in ZeroShotMethod._fill_instruction(instruction, text).split("\n")]
+        lines.append("")
+    (out / "zero_shot_example.inc").write_text("\n".join(lines), encoding="utf-8")
+
+    lines = []
+    for i, (name, instructions) in enumerate(ZERO_SHOT_STYLE_BANK.items()):
+        lines += section(
+            f"``{name}`` — index {i}", instructions[0], ZERO_SHOT_SOURCES.get(name)
+        )
+    (out / "zero_shot_instructions.inc").write_text("\n".join(lines), encoding="utf-8")
+
+
+_generate_prompt_listings()
+
+templates_path = ["_templates"]
 html_static_path = ["_static"]
 html_css_files = ["custom.css"]

@@ -8,7 +8,7 @@ intentionally not supported.
 
 from __future__ import annotations
 
-from diversify_text.method.llm import PLACEHOLDER_TEXT
+from diversify_text.method.causal_lm import PLACEHOLDER_TEXT
 
 # -- Prompt key constants -----------------------------------------------------
 # Used in both the bank dict and DEFAULT_PROMPT so renaming a key only
@@ -19,7 +19,7 @@ HUMANIZE_TRANSFER = "humanize_transfer"
 
 # Placeholder tokens used inside prompt templates.  The document
 # placeholder (``PLACEHOLDER_TEXT``) is shared with other prompt-based
-# methods and imported from :mod:`diversify_text.method.llm`.
+# methods and imported from :mod:`diversify_text.method.causal_lm`.
 PLACEHOLDER_STYLE_EXAMPLES = "[STYLE EXAMPLES]"
 PLACEHOLDER_STYLE_NAME = "[STYLE NAME]"
 
@@ -58,6 +58,12 @@ PROMPT_BANK: dict[str, str] = {
         "You should just give me the revised version without any other words.\n"
         "Here is the machine-generated text: [DOCUMENT SEGMENT]"
     ),
+}
+
+#: Where a template comes from.
+#: Shown in the docs.
+PROMPT_SOURCES: dict[str, str] = {
+    HUMANIZE_TRANSFER: "inspired by https://arxiv.org/abs/2401.05952 (Zhang et al., 2024)",
 }
 
 #: Template used when no ``prompt`` is selected.
