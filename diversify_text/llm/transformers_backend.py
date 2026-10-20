@@ -87,9 +87,6 @@ class TransformersBackend(LLMBackend):
         self._torch_dtype = self._resolve_dtype()
         self._tokenizer = None
         self._model = None
-        # Largest number of prompts per batch that fit in GPU memory so
-        # far; ``None`` until generation first runs out of memory.
-        self._max_batch_size: int | None = None
 
     def _resolve_dtype(self) -> torch.dtype | None:
         """Map *precision* string to a ``torch.dtype``.
@@ -157,8 +154,7 @@ class TransformersBackend(LLMBackend):
         up to the largest ``max_new_tokens`` value among its prompts;
         each output still ends at the model's end-of-text token.  All
         prompts go into one batch; when the GPU runs out of memory, the
-        batch is halved and generation retried.  Later calls start from
-        the smaller batch size.
+        batch is halved and generation retried.
 
         Local generation always needs a cap, so every entry of
         *max_new_tokens_per_prompt* must be an integer (see
@@ -176,7 +172,7 @@ class TransformersBackend(LLMBackend):
         # TODO: add vLLM backend support in a future release.
         order = sorted(range(len(prompts)), key=lambda i: len(prompts[i]))
         results: list[str | None] = [None] * len(prompts)
-        batch_size = min(len(prompts), self._max_batch_size or len(prompts))
+        batch_size = len(prompts)
         start = 0
         while start < len(order):
             batch = order[start : start + batch_size]
@@ -192,7 +188,6 @@ class TransformersBackend(LLMBackend):
                     raise
                 torch.cuda.empty_cache()
                 batch_size = (batch_size + 1) // 2
-                self._max_batch_size = batch_size
                 logger.info(
                     "Out of GPU memory; retrying with %d prompts per batch.",
                     batch_size,
