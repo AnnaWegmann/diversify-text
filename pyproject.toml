@@ -39,6 +39,11 @@ dependencies = [
     "accelerate>=1.14.0",
     "litellm-core>=1.107.0.dev1",
     "tenacity>=9.2.1",
+    "sacrebleu>=2.6.0",
+    "evaluate>=0.4.6",
+    "absl-py>=2.5.0",
+    "rouge-score>=0.1.2",
+    "bert-score>=0.3.13",
 ]
 
 [project.urls]
