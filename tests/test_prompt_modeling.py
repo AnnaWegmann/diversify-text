@@ -151,6 +151,16 @@ class TestTransformersBackend(unittest.TestCase):
             "prompt; use default_token_budgets() for the defaults.",
         )
 
+    def test_short_text_gets_room_for_a_full_paraphrase(self):
+        from diversify_text.llm import TransformersBackend
+
+        backend = TransformersBackend(model_id="test-model", device="cpu")
+        # A five-token text, as the tokenizer would count it.
+        backend._tokenizer = lambda texts, truncation: {
+            "input_ids": [[1, 2, 3, 4, 5] for _ in texts]
+        }
+        self.assertEqual(backend.default_token_budgets(["It was a dark night."]), [96])
+
     @patch("diversify_text.llm.TransformersBackend._load_transformers")
     def test_load_calls_transformers(self, mock_load_tf):
         from diversify_text.llm import TransformersBackend
