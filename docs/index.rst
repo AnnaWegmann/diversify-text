@@ -12,6 +12,7 @@ local transformer models or proprietary models through their API.
    usage
    styles
    gender_examples
+   age_examples
    longer_texts
    model_backend
    methods

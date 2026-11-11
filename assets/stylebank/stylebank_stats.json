@@ -1,29 +1,29 @@
 {
   "input_file": "stylebank.json",
   "summary": {
-    "num_leafs": 85,
-    "num_texts": 3542,
+    "num_leafs": 83,
+    "num_texts": 3351,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 41.67058823529412
+      "avg": 40.373493975903614
     },
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 53.29559570863918
+      "avg": 54.573261712921514
     }
   },
-  "num_leafs": 85,
+  "num_leafs": 83,
   "num_leafs_per_group": {
     "individual": 14,
-    "intra-group": 71
+    "intra-group": 69
   },
   "num_leafs_per_category": {
     "idiolect": 14,
     "diachronic": 4,
     "diatopic": 33,
-    "diastratic": 24,
+    "diastratic": 22,
     "diaphasic": 8,
     "diamesic": 2
   },
@@ -82,11 +82,9 @@
       "language_variation/intra-group/diatopic/vincentian_creole",
       "language_variation/intra-group/diatopic/welsh_english",
       "language_variation/intra-group/diatopic/white_zimbabwean_english",
-      "language_variation/intra-group/diastratic/age_18-24",
-      "language_variation/intra-group/diastratic/age_25-34",
-      "language_variation/intra-group/diastratic/age_35-44",
-      "language_variation/intra-group/diastratic/age_45-54",
-      "language_variation/intra-group/diastratic/age_55-74",
+      "language_variation/intra-group/diastratic/age_under-25",
+      "language_variation/intra-group/diastratic/age_25-49",
+      "language_variation/intra-group/diastratic/age_50-plus",
       "language_variation/intra-group/diastratic/education_bachelor",
       "language_variation/intra-group/diastratic/education_doctorate",
       "language_variation/intra-group/diastratic/education_edu-associatedegree",
@@ -177,11 +175,9 @@
       "language_variation/intra-group/diatopic/white_zimbabwean_english"
     ],
     "diastratic": [
-      "language_variation/intra-group/diastratic/age_18-24",
-      "language_variation/intra-group/diastratic/age_25-34",
-      "language_variation/intra-group/diastratic/age_35-44",
-      "language_variation/intra-group/diastratic/age_45-54",
-      "language_variation/intra-group/diastratic/age_55-74",
+      "language_variation/intra-group/diastratic/age_under-25",
+      "language_variation/intra-group/diastratic/age_25-49",
+      "language_variation/intra-group/diastratic/age_50-plus",
       "language_variation/intra-group/diastratic/education_bachelor",
       "language_variation/intra-group/diastratic/education_doctorate",
       "language_variation/intra-group/diastratic/education_edu-associatedegree",
@@ -220,12 +216,12 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 41.67058823529412
+    "avg": 40.373493975903614
   },
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 53.29559570863918
+    "avg": 54.573261712921514
   },
   "per_branch": {
     "individual": {
@@ -242,16 +238,16 @@
       }
     },
     "intra-group": {
-      "num_leafs": 71,
+      "num_leafs": 69,
       "sentences_per_leaf": {
         "min": 10,
         "max": 64,
-        "avg": 37.50704225352113
+        "avg": 35.82608695652174
       },
       "sentence_length_words": {
         "min": 2,
         "max": 47219,
-        "avg": 65.52872699962448
+        "avg": 68.20590614886731
       }
     }
   },
@@ -266,7 +262,7 @@
       "num_leafs": 8
     },
     "diastratic": {
-      "num_leafs": 24
+      "num_leafs": 22
     },
     "diatopic": {
       "num_leafs": 33
@@ -1148,16 +1144,16 @@
         "language_variation",
         "intra-group",
         "diastratic",
-        "age_18-24"
+        "age_under-25"
       ],
       "branch": "intra-group",
       "category": "diastratic",
-      "leaf": "age_18-24",
-      "num_sentences": 64,
+      "leaf": "age_under-25",
+      "num_sentences": 39,
       "sentence_length_words": {
-        "min": 27,
-        "max": 109,
-        "avg": 45.203125
+        "min": 33,
+        "max": 128,
+        "avg": 83.61538461538461
       }
     },
     {
@@ -1165,16 +1161,16 @@
         "language_variation",
         "intra-group",
         "diastratic",
-        "age_25-34"
+        "age_25-49"
       ],
       "branch": "intra-group",
       "category": "diastratic",
-      "leaf": "age_25-34",
-      "num_sentences": 53,
+      "leaf": "age_25-49",
+      "num_sentences": 40,
       "sentence_length_words": {
-        "min": 24,
-        "max": 116,
-        "avg": 54.132075471698116
+        "min": 48,
+        "max": 130,
+        "avg": 87.25
       }
     },
     {
@@ -1182,50 +1178,16 @@
         "language_variation",
         "intra-group",
         "diastratic",
-        "age_35-44"
+        "age_50-plus"
       ],
       "branch": "intra-group",
       "category": "diastratic",
-      "leaf": "age_35-44",
-      "num_sentences": 64,
+      "leaf": "age_50-plus",
+      "num_sentences": 39,
       "sentence_length_words": {
-        "min": 29,
-        "max": 108,
-        "avg": 53.921875
-      }
-    },
-    {
-      "path": [
-        "language_variation",
-        "intra-group",
-        "diastratic",
-        "age_45-54"
-      ],
-      "branch": "intra-group",
-      "category": "diastratic",
-      "leaf": "age_45-54",
-      "num_sentences": 64,
-      "sentence_length_words": {
-        "min": 27,
-        "max": 134,
-        "avg": 60.03125
-      }
-    },
-    {
-      "path": [
-        "language_variation",
-        "intra-group",
-        "diastratic",
-        "age_55-74"
-      ],
-      "branch": "intra-group",
-      "category": "diastratic",
-      "leaf": "age_55-74",
-      "num_sentences": 64,
-      "sentence_length_words": {
-        "min": 29,
-        "max": 88,
-        "avg": 51.265625
+        "min": 53,
+        "max": 129,
+        "avg": 94.53846153846153
       }
     },
     {
