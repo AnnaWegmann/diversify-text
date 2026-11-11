@@ -3,7 +3,7 @@
 Skipped by default, because it downloads model weights and needs a
 CUDA GPU.  To run it::
 
-    DIVERSIFY_TEST_MODELS=1 DIVERSIFY_TEST_DEVICE=cuda \
+    DIVERSIFY_TEST_SPEED=1 DIVERSIFY_TEST_DEVICE=cuda \
         python -m pytest tests/test_batching_speed.py -s
 
 ``-s`` shows the measured tokens per second.
@@ -17,7 +17,7 @@ from unittest.mock import patch
 MODEL = "google/gemma-4-E2B-it"
 
 RUN = (
-    os.environ.get("DIVERSIFY_TEST_MODELS") == "1"
+    os.environ.get("DIVERSIFY_TEST_SPEED") == "1"
     and os.environ.get("DIVERSIFY_TEST_DEVICE", "cpu").startswith("cuda")
 )
 
@@ -49,7 +49,7 @@ def tokens_per_second(backend, prompts):
 
 
 @unittest.skipUnless(
-    RUN, "set DIVERSIFY_TEST_MODELS=1 and DIVERSIFY_TEST_DEVICE=cuda to run"
+    RUN, "set DIVERSIFY_TEST_SPEED=1 and DIVERSIFY_TEST_DEVICE=cuda to run"
 )
 class TestBatchingSpeed(unittest.TestCase):
     def test_batches_generate_faster_than_single_prompts(self):
