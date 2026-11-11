@@ -110,7 +110,7 @@ class CausalLMMethod(DiversificationMethod):
         all_max_new_tokens = self._compute_max_new_tokens(texts, n, max_new_tokens)
         backend = self._ensure_backend()
 
-        # Generate one prompt at a time (each with its own max_new_tokens).
+        # Generate all prompts (each with its own max_new_tokens).
         flat_results = backend.generate_text(
             all_prompts,
             max_new_tokens_per_prompt=all_max_new_tokens,
