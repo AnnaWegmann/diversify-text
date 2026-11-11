@@ -2,16 +2,16 @@
   "input_file": "stylebank.json",
   "summary": {
     "num_leafs": 85,
-    "num_texts": 3609,
+    "num_texts": 3542,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 42.45882352941177
+      "avg": 41.67058823529412
     },
     "text_length_words": {
-      "min": 4,
+      "min": 2,
       "max": 47219,
-      "avg": 53.52950955943474
+      "avg": 53.29559570863918
     }
   },
   "num_leafs": 85,
@@ -220,12 +220,12 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 42.45882352941177
+    "avg": 41.67058823529412
   },
   "sentence_length_words": {
-    "min": 4,
+    "min": 2,
     "max": 47219,
-    "avg": 53.52950955943474
+    "avg": 53.29559570863918
   },
   "per_branch": {
     "individual": {
@@ -246,12 +246,12 @@
       "sentences_per_leaf": {
         "min": 10,
         "max": 64,
-        "avg": 38.45070422535211
+        "avg": 37.50704225352113
       },
       "sentence_length_words": {
-        "min": 4,
+        "min": 2,
         "max": 47219,
-        "avg": 65.53772893772894
+        "avg": 65.52872699962448
       }
     }
   },
@@ -1476,11 +1476,11 @@
       "branch": "intra-group",
       "category": "diastratic",
       "leaf": "gender_female",
-      "num_sentences": 63,
+      "num_sentences": 32,
       "sentence_length_words": {
-        "min": 24,
-        "max": 114,
-        "avg": 52.23809523809524
+        "min": 2,
+        "max": 205,
+        "avg": 33.09375
       }
     },
     {
@@ -1493,11 +1493,11 @@
       "branch": "intra-group",
       "category": "diastratic",
       "leaf": "gender_male",
-      "num_sentences": 56,
+      "num_sentences": 20,
       "sentence_length_words": {
-        "min": 28,
-        "max": 103,
-        "avg": 49.732142857142854
+        "min": 2,
+        "max": 161,
+        "avg": 30.1
       }
     },
     {

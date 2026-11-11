@@ -55,6 +55,9 @@ We also made more additions:
 We run `XGENRE_lyrical_sample.py` extract ALL 78 lyrical/prose texts across train/dev/test from https://huggingface.co/datasets/TajaKuzmanPungersek/X-GENRE-text-genre-dataset. Then starting from the first example, we manually went through the generated json file to fill up the `lyrical` leaf to 13 (some lyrics had been removed in the manual edits). Additionally, we created the `prose` leaf and filled it up to 10 as well starting from the first of the 78 example texts going until 10 high quality samples had been added.
 
 
+We replaced all texts of the `gender_female` and `gender_male` leaves, which came from PASTEL, with examples printed in published studies on how women and men write and speak. The sources of each text are listed in `docs/gender_examples.rst`.
+
+
 ### 5. Generate statistics (optional)
 
 To generate statistics for the resulting StyleBank, run:
