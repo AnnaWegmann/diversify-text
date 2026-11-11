@@ -1,0 +1,834 @@
+{
+  "age_under-25": [
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "14",
+      "gender": "male",
+      "author_id": "3855447",
+      "begins": "On the Fourth Of July I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "female",
+      "author_id": "10d41d21c888ad90a46a8c7ee7158e5e",
+      "begins": "Fantastic location and great value! We"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "24",
+      "gender": "male",
+      "author_id": "1493879",
+      "begins": "I saw a bumper sticker on"
+    },
+    {
+      "source": "Nguyen, Smith & Rosé (2011)",
+      "age": "17",
+      "gender": "not given",
+      "author_id": "blog, p. 121",
+      "begins": "I can't sleep, but this time"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "15",
+      "gender": "female",
+      "author_id": "2086819",
+      "begins": "I am so bored. I forgot"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "female",
+      "author_id": "eec0d5908a0a3cd5f9ccb0b9d41a3f18",
+      "begins": "Decadence This hotel was hard to"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "23",
+      "gender": "female",
+      "author_id": "3857049",
+      "begins": "I've been writing my book, and"
+    },
+    {
+      "source": "Nguyen, Smith & Rosé (2011)",
+      "age": "19",
+      "gender": "not given",
+      "author_id": "telephone speech, p. 122",
+      "begins": "T: yeah it's too i just"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "15",
+      "gender": "male",
+      "author_id": "3723604",
+      "begins": "Thank God it's almost Friday. Last"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "female",
+      "author_id": "2cf4eeeb77622b39f9826c2ed507b606",
+      "begins": "The best property I have ever"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "24",
+      "gender": "male",
+      "author_id": "3893025",
+      "begins": "So, apparently we were hit here"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "16",
+      "gender": "female",
+      "author_id": "3950765",
+      "begins": "I hate it when I am"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "female",
+      "author_id": "cbfc2cd09aa829e3802ee94c522cfafc",
+      "begins": "Classy Hotel in a Flashy Town"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "24",
+      "gender": "female",
+      "author_id": "3544459",
+      "begins": "Too many people have LJ and"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "14",
+      "gender": "male",
+      "author_id": "3520011",
+      "begins": "I'm hungry. Very hungry. Bill left"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "female",
+      "author_id": "af2eea3ee3d33a57c65151803d9dff20",
+      "begins": "Awesome Location! Definitely recommend to anyone"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "24",
+      "gender": "male",
+      "author_id": "3716868",
+      "begins": "Welcome to my online account of"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "16",
+      "gender": "female",
+      "author_id": "3743818",
+      "begins": "*TEXAS,texas is a really cool state"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "female",
+      "author_id": "24e0ecd49e12b0b02be44ea568306398",
+      "begins": "Simply Trendy We stayed at Hotel"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "23",
+      "gender": "female",
+      "author_id": "4027719",
+      "begins": "Seeing one of my development areas"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "16",
+      "gender": "male",
+      "author_id": "3611418",
+      "begins": "First, I crash my go-cart; its"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "390f566c4b1002c6d3c30ba61ea3452d",
+      "begins": "Great location!!! By far, the best"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "23",
+      "gender": "male",
+      "author_id": "3389346",
+      "begins": "I am getting on to be"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "17",
+      "gender": "female",
+      "author_id": "3529549",
+      "begins": "Yea I am so bored lately"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "22b163a0bfe28593dafbfb615c91153e",
+      "begins": "Great Stay At The Millenium I"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "24",
+      "gender": "female",
+      "author_id": "3779062",
+      "begins": "So, I am doing this because"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "17",
+      "gender": "female",
+      "author_id": "3977244",
+      "begins": "Ok, i decided just then not"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "399e54271bf093cd1db15526f0e20d16",
+      "begins": "Very nice I stayed here while"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "15",
+      "gender": "female",
+      "author_id": "3816088",
+      "begins": "so yea on Wendsday I went"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "fe74bc4e13059ced1be836c395b74cca",
+      "begins": "Great Location, Fantastic Views This hotel"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "15",
+      "gender": "female",
+      "author_id": "2177534",
+      "begins": "I went and saw Guy Sebastian"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "cc745d2585fb22460bc68b0c278f6bf1",
+      "begins": "Value for money Very good location"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "13",
+      "gender": "female",
+      "author_id": "3407419",
+      "begins": "hey! i dont know what i"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "ca8af9152c3301a09cffcedcfb30beb5",
+      "begins": "Fantastic Hotel We stayed here last"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "a43562a81a27ee26587a85b3ad035cab",
+      "begins": "Great Hotel! surprisingly good! Friendly! Great"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "13840a1091b013ea7a234ae5c6dc4f2f",
+      "begins": "great hotel We were on vacation"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "a2a0652e918f92b8d5074936a52bf182",
+      "begins": "Loved it. Super-fast check in, large"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "62cf8166540bc4925e4b21e1c4d4653a",
+      "begins": "Great Location. All in all a"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "18-24",
+      "gender": "male",
+      "author_id": "000ed57fa9c24792ab814af97cb34aa5",
+      "begins": "Great Petit Hotel, Superb location! Very"
+    }
+  ],
+  "age_25-49": [
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "25",
+      "gender": "male",
+      "author_id": "3148054",
+      "begins": "In the ever expanding research of"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "female",
+      "author_id": "b5b520654f12c19e07e2c4ea5769cb7a",
+      "begins": "Great Stay at the Omni I"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "35",
+      "gender": "male",
+      "author_id": "3644623",
+      "begins": "In yesterday's post about polio, I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "female",
+      "author_id": "949ef304daf66b039e9b2fc6b9be8e99",
+      "begins": "Refreshingly different. I loved this hotel!I"
+    },
+    {
+      "source": "Nguyen, Smith & Rosé (2011)",
+      "age": "47",
+      "gender": "not given",
+      "author_id": "blog, p. 122",
+      "begins": "[...]In the weeks leading up to"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "25",
+      "gender": "female",
+      "author_id": "3581933",
+      "begins": "so we think the meat thermometer"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "male",
+      "author_id": "44f159ae7b37e51b260c6a07c1cdf599",
+      "begins": "Service how it should be We"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "40",
+      "gender": "female",
+      "author_id": "3360740",
+      "begins": "I find myself recommending these books"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "male",
+      "author_id": "5535b901e2451af733a2d5a922e95ac8",
+      "begins": "Design and a Sign I stayed"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "27",
+      "gender": "male",
+      "author_id": "3327879",
+      "begins": "The past Sunday was a fun"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "female",
+      "author_id": "065e2fc87f67b743c9c80a15cc500728",
+      "begins": "So So The hotel is located"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "40",
+      "gender": "male",
+      "author_id": "3562602",
+      "begins": "My fricking computer broke while I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "female",
+      "author_id": "c9d6b35a79d6f85931480b033bc01b96",
+      "begins": "Perfect Location We stayed in a"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "25",
+      "gender": "female",
+      "author_id": "2610055",
+      "begins": "so, we've been doing a lot"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "male",
+      "author_id": "9a6d25f9ba22f79a163155673ebb5347",
+      "begins": "Whats the Problem? Great location Having"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "40",
+      "gender": "female",
+      "author_id": "3627359",
+      "begins": "wow, a bed never looked so"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "male",
+      "author_id": "17c43ca3b806031e7388167b7db626c0",
+      "begins": "What a beautiful,friendly hotel! My partner"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "27",
+      "gender": "male",
+      "author_id": "3244890",
+      "begins": "Here I am, once again, up"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "female",
+      "author_id": "eeb04485d3f46bb9480597afb21ec123",
+      "begins": "Great Hotel!!!! Stayed at the Hotel"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "37",
+      "gender": "male",
+      "author_id": "1557658",
+      "begins": "man i suck. I'm not much"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "female",
+      "author_id": "336ccbee047d8978874d9b339ab3c01d",
+      "begins": "Excellent location - lovely staff This"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "26",
+      "gender": "female",
+      "author_id": "4278002",
+      "begins": "Well, I am officially exhausted. The"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "male",
+      "author_id": "d1958d5f1eed2e6c986e8ebf3692ecdc",
+      "begins": "Decent Hotel We stayed for 3"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "45",
+      "gender": "female",
+      "author_id": "3934251",
+      "begins": "Why will my 9 year old"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "male",
+      "author_id": "570fea172972bf83447b0d80972e14c2",
+      "begins": "Good Location and Price for Sydney"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "27",
+      "gender": "male",
+      "author_id": "4014718",
+      "begins": "have you ever read, or heard"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "female",
+      "author_id": "493e7f1facfc468c29ae2d44d27ed11e",
+      "begins": "Loved the rooftop pool! I stayed"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "42",
+      "gender": "male",
+      "author_id": "3962045",
+      "begins": "I just updated our 'Maintenance Plan'"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "female",
+      "author_id": "17572d2cae3c604dd1646a32e03cbdf9",
+      "begins": "Luxury hotel at an affordable price"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "27",
+      "gender": "female",
+      "author_id": "426718",
+      "begins": "Feeling down, stress and overwhelmed. Too"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "male",
+      "author_id": "bef34c2d04a05ce0771413eb7c86a750",
+      "begins": "Great Views but.......... The Ritz -Carlton,"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "45",
+      "gender": "female",
+      "author_id": "3391631",
+      "begins": "Well I just got my notice"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "male",
+      "author_id": "f9c2ba60e85bf91b4b69195e37ed4057",
+      "begins": "Quiet, nice, and SMALL It's a"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "26",
+      "gender": "male",
+      "author_id": "3399702",
+      "begins": "Neat, I have a blog. When"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "female",
+      "author_id": "e716984f0d0ade852db3e3c780ae0ae6",
+      "begins": "Did not feel safe I would"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "36",
+      "gender": "male",
+      "author_id": "3440616",
+      "begins": "Grammy is taking Emilie out to"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "35-49",
+      "gender": "female",
+      "author_id": "deda9c50e5a9d09f948d9f2a10a11201",
+      "begins": "Will stay there again, maybe Just"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "27",
+      "gender": "female",
+      "author_id": "3397935",
+      "begins": "Today I am mostly wondering what"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "25-34",
+      "gender": "male",
+      "author_id": "1313cbbeed8a866bb8078fc31482ce3f",
+      "begins": "Second stay, just as good Stayed"
+    },
+    {
+      "source": "Blog Authorship Corpus",
+      "age": "37",
+      "gender": "female",
+      "author_id": "3823631",
+      "begins": "Although the relationship was short lived,"
+    }
+  ],
+  "age_50-plus": [
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "331d80075e275e0862419db0c0944983",
+      "begins": "Clean, comfortable and recently renovated The"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "5834b84986628f905aa5720d41f0ac03",
+      "begins": "Loved the Citadines We have just"
+    },
+    {
+      "source": "Nguyen, Smith & Rosé (2011)",
+      "age": "73",
+      "gender": "not given",
+      "author_id": "telephone speech, p. 122",
+      "begins": "T: ah thoughts i'm retired right"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "27e0287ace9ae03481706268b090523e",
+      "begins": "Great value for money hotel Our"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "26a4251fa0d66c02860d34924ec9b118",
+      "begins": "Will return again We just returned"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "60dc40530643c5410d8b197aa7220ce1",
+      "begins": "Great Vacation My friend and I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "ab77fbcb3663737a23d30f1acd89acca",
+      "begins": "Excellent hotel Stayed for 2 nights"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "2b79761a5c93289ce80f82b12d00d81c",
+      "begins": "Hotel gem in Midtown Manhattan Excellent"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "a1dcfe2490ec53f76f9ab84fa4bdfa2b",
+      "begins": "Stylish and well located This is"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "b78a6b0664189abc94a07ab661390174",
+      "begins": "Great airport hotel Two night stay"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "4441d79d336c3f31ad47a5dbde0e15b3",
+      "begins": "a Rare 'five' Thanks to Trip"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "3b6760dd671428301c37718271ef76d4",
+      "begins": "A Bit Tatty, but Great Location"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "0b6b7c70b3fa9357faada283d46bfbf9",
+      "begins": "First Time at Elysee - Great"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "22ace0b5264a1a0c528aa333b0892bf9",
+      "begins": "Lovely Hotel This lovely small, quiet"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "191ae80dde566c78ec1a593f50dba47c",
+      "begins": "Doubletree beds sooo comfy My son"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "f4518ead2e6ab534d90d7d809ea5c687",
+      "begins": "Love it, hate it! Huge, soulless,"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "eeaa3d8468b36d2ec57e6e0e7c845231",
+      "begins": "Very nice. Good location, especially to"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "48d99d28699a88768b4467042063334e",
+      "begins": "A must stay! Absolutely delightful boutique"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "3cbd151cd24cdb668a21a012f8ae52f4",
+      "begins": "Convenience Close to bus and cable"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "8ceb0422ba345522c0db87f87f05ec0b",
+      "begins": "Great location!! Stayed here in August."
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "8435816c4731937f0c9b5aed44a1c0cc",
+      "begins": "Peaceful, high-class comfort Was so completely"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "d9bd8b990361ca59525777ca14a69ff8",
+      "begins": "I really shouldn't share..... If everyone"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "08126375a22cb66717b412172c3ccb2f",
+      "begins": "A real beauty I felt as"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "59172b25664852dd5dec7eaa183cf1e3",
+      "begins": "A lovely hotel This is a"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "d6afab31fda91cd4e556471230479d5c",
+      "begins": "Nice Place I satyed four nights"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "1c6a181f9533da3fb4e01cf7e82300c5",
+      "begins": "Great value and location This is"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "25da7318d8e57bfd46f840e43b75dd6d",
+      "begins": "What a gem We stayed at"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "a0cdce5190711f36b63df035c069a4e3",
+      "begins": "Small This small hotel just off"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "793736bf437918004e1e9b8f413a7940",
+      "begins": "Good parking, eat out. Spent just"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "1a29dc7c7b380cc47d4a2b44710f6ac5",
+      "begins": "Very happy with this hotel I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "17e0f64260ca34da22d305237d232d28",
+      "begins": "Overpriced We stayed here for 4"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "15580cc1015a6fb54416cbb2bc204761",
+      "begins": "this is the best! Out of"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "10130ba3612ac9bb51c58b4819d28a34",
+      "begins": "Generic Motor Hotel Two Holiday Inn's,"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "51be31e4fdc754bb17611a514fa00982",
+      "begins": "Great little hotel Great hotel in"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "ed4c9401c58b69dc1b6dbd8bdae6e6f4",
+      "begins": "Still Wonderful! My husband and I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "male",
+      "author_id": "0a81d6c0fa71b05b91033feff1a8578f",
+      "begins": "OK to stay The Amsterdam Ramada"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "male",
+      "author_id": "65426923691bf3b0e73385282e3f4d39",
+      "begins": "Very nice hotel Stayed here in"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "50-64",
+      "gender": "female",
+      "author_id": "f77fe0f610effa94b0f1bd4af8113fc9",
+      "begins": "Just outstanding My son and I"
+    },
+    {
+      "source": "PAN14 hotel reviews",
+      "age": "65-plus",
+      "gender": "female",
+      "author_id": "3c77b7799871dbe71552bd0e2a2d71e5",
+      "begins": "Nothing to crow about My husband"
+    }
+  ]
+}

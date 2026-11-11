@@ -58,6 +58,9 @@ We run `XGENRE_lyrical_sample.py` extract ALL 78 lyrical/prose texts across trai
 We replaced all texts of the `gender_female` and `gender_male` leaves, which came from PASTEL, with examples printed in published studies on how women and men write and speak. The sources of each text are listed in `docs/gender_examples.rst`.
 
 
+We replaced the five PASTEL age leaves (`age_18-24`, `age_25-34`, `age_35-44`, `age_45-54`, `age_55-74`) with three broader ones (`age_under-25`, `age_25-49`, `age_50-plus`). Their texts are blog posts from the Blog Authorship Corpus, hotel reviews from the PAN14 author profiling corpus, and four examples printed in Nguyen, Smith & Rosé (2011). We drew random candidates (one text per author, 40-110 words for blogs, 40-130 words for reviews, no links, balanced by gender) and removed poems, quotations, lists, advertisements and texts not in standard English by hand. `additional_info/age_sources.json` lists the source, age, gender and author id of every text; `docs/age_examples.rst` describes the sources.
+
+
 ### 5. Generate statistics (optional)
 
 To generate statistics for the resulting StyleBank, run:

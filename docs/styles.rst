@@ -49,7 +49,8 @@ Selectable via ``n``, by name, or by 0-based index.  The listing
 below (with two example texts per style) is generated from the code
 at every docs build.  The examples of ``gender_female`` and
 ``gender_male`` come from published studies; see
-:doc:`gender_examples`.
+:doc:`gender_examples`.  The examples of the three age styles come
+from blog posts and hotel reviews; see :doc:`age_examples`.
 
 .. include:: _generated/default_bank.inc
 

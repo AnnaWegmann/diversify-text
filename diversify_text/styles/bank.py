@@ -26,7 +26,7 @@ _BANK_ORDER: list[str] = [
     "late_modern_english",  # diachronic
     "earlier_african_american_vernacular_english",  # diatopic
     "prose", # diaphasic
-    "age_55-74",  # diastratic
+    "age_50-plus",  # diastratic
     "jamaican_creole",  # diatopic
     "barackobama",  # idiolect
     "narrative",  # diaphasic
@@ -38,12 +38,10 @@ _BANK_ORDER: list[str] = [
     "persuasive",  # diaphasic
     "cristiano",  # idiolect
     #
-    "age_18-24",  # diastratic
-    "age_25-34",  # diastratic
+    "age_under-25",  # diastratic
+    "age_25-49",  # diastratic
     "early_modern_english",  # diachronic
     "vernacular_liberian_english",  # diatopic
-    "age_35-44",  # diastratic
-    "age_45-54",  # diastratic
     "ddlovato",  # idiolect
     "pakistani_english",  # diatopic
     "jimmyfallon",  # idiolect
