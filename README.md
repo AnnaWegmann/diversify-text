@@ -307,11 +307,19 @@ results.evaluate()      # method on the output
 evaluate(results)       # identical, as a function
 ```
 
-Six metrics run by default: `style_similarity` (how similarly two texts
-are *written*), `bertscore` and `mis` (meaning overlap), `rouge` and
-`bleu` (word overlap), and `chrf` (character overlap). `bleu` and `chrf`
-use sacreBLEU and score 0–100; `chrf` reports chrF++ by default, and
-plain chrF with `{"chrf": {"variants": ["chrf"]}}`.
+Six metrics run by default: `style_similarity` (how well a paraphrase is
+*written* in its target style), `bertscore` and `mis` (meaning overlap),
+`rouge` and `bleu` (word overlap), and `chrf` (character overlap). `bleu`
+and `chrf` use sacreBLEU and score 0–100; `chrf` reports chrF++ by
+default, and plain chrF with `{"chrf": {"variants": ["chrf"]}}`.
+
+`style_similarity` embeds all example texts of the paraphrase's target
+style in `stylebank.json`, pools them into one vector (`"mean"` by
+default; `"max"` and `"min"` take the element-wise maximum or minimum,
+e.g. `{"style_similarity": {"pooling": "max"}}`), and reports the
+cosine similarity to the paraphrase. Styles that are not in
+`stylebank.json` — such as TinyStyler's own styles or your own
+`style_texts` — score `None`, and averages skip them.
 
 Pick a subset with `metrics`, configure them with `metric_kwargs`:
 

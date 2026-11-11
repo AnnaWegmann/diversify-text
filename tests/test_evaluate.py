@@ -39,6 +39,17 @@ class DualScore(Metric):
         return {v: both[v] for v in self.selected}
 
 
+class InformalOnly(Metric):
+    """Uses the target style; scores only "informal" pairs, others None."""
+
+    name = "informal_only"
+    uses_styles = True
+
+    def compute(self, originals, paraphrases, styles):
+        return {self.name: [len(p) if s == "informal" else None
+                            for p, s in zip(paraphrases, styles)]}
+
+
 class ModelBacked(Metric):
     """Takes a model, so model handling can be tested without downloads."""
 
@@ -173,6 +184,24 @@ class TestMetricSelection(unittest.TestCase):
             self.assertGreater(result.dataset["model_backed"], 10.0)
         finally:
             del METRIC_REGISTRY["model_backed"]
+
+    def test_styles_reach_metrics_that_use_them(self):
+        result = evaluate(RECORDS, metrics=[InformalOnly()], granularity="pair")
+        self.assertEqual(
+            [p["informal_only"] for p in result.pair], [2, None, 4, None]
+        )
+
+    def test_none_scores_are_skipped_when_averaging(self):
+        result = evaluate(RECORDS, metrics=[InformalOnly()], granularity="all")
+        self.assertEqual([r["informal_only"] for r in result.text], [2, 4])
+        self.assertEqual(result.dataset["informal_only"], 3)
+
+    def test_all_none_averages_to_none(self):
+        records = [{"original": "x", "paraphrases": [{"style": "formal", "text": "y"}]}]
+        result = evaluate(records, metrics=[InformalOnly()], granularity="all")
+        self.assertIsNone(result.text[0]["informal_only"])
+        self.assertIsNone(result.dataset["informal_only"])
+        self.assertIn("informal_only=None", repr(result))
 
     def test_plain_string_paraphrases_are_accepted(self):
         records = [{"original": "abcd", "paraphrases": ["ab", "abcdef"]}]
