@@ -257,7 +257,7 @@ Sampling settings are only sent when you set them, so the provider's defaults ap
 
 ### Caching
 
-The `diversify()` function automatically caches loaded models between calls. The generation model and the semantic filter are cached independently, so toggling `semantic_filter` does not reload the generation model and vice versa. Call `clear_cache()` to drop cached models and allow memory to be reclaimed when possible:
+The `diversify()` function automatically caches loaded models between calls. The generation model and the semantic filter are cached independently, so toggling `semantic_filter` does not reload the generation model and vice versa. `evaluate()` caches its metric models the same way. Call `clear_cache()` to drop all cached models, including the evaluation ones, and allow memory to be reclaimed when possible:
 
 ```python
 from diversify_text import clear_cache
