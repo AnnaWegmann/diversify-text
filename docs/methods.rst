@@ -19,6 +19,11 @@ paraphrases using a different model or algorithm.
      - TBD
      - TBD
      - Few-shot style transfer using authorship embeddings
+   * - ``hyperstyler``
+     - ~900M params
+     - TBD
+     - TBD
+     - Few-shot style transfer using authorship embeddings, for texts up to 80 tokens
    * - ``prompting``
      - ~3B params (default), or an API model
      - TBD
@@ -34,6 +39,7 @@ paraphrases using a different model or algorithm.
    :maxdepth: 1
 
    tinystyler
+   hyperstyler
    prompting
    zero_shot
    adding_a_method

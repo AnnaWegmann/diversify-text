@@ -6,7 +6,8 @@ loading — happens inside a *loader*, a small function whose only job
 is to load and return one model, wrapped with :func:`model_cache`.
 The loaders live next to their model classes: the causal language
 model in :mod:`diversify_text.llm`, the TinyStyler model in
-:mod:`diversify_text.method.tinystyler.model`, and the MIS filter
+:mod:`diversify_text.method.tinystyler.model`, the HyperStyler model
+in :mod:`diversify_text.method.hyperstyler.model`, and the MIS filter
 below.
 
 Concurrent use is not supported yet: two threads hitting a cold cache
