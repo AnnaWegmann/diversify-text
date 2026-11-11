@@ -34,7 +34,7 @@ a style.
 The prompting method uses the first 16 texts of a style.  The texts
 are stored so that the sources take turns, and women and men take
 turns within a source.  The file
-`age_sources.json <https://github.com/AnnaWegmann/diversify_text/blob/main/assets/stylebank/data/age/age_sources.json>`_
+`age_sources.json <https://github.com/AnnaWegmann/diversify_text/blob/main/assets/stylebank/additional_info/age_sources.json>`_
 lists, for every text in the order it is stored, its source, the
 writer's age or age group, gender and the writer's id in the source.
 
