@@ -133,7 +133,21 @@ class ContentMetricMixin:
 @unittest.skipUnless(installed("sacrebleu"), "sacrebleu not installed")
 class TestChrF(ContentMetricMixin, unittest.TestCase):
     metric = "chrf"
-    ceilings = {"chrf": 100.0}
+    ceilings = {"chrf++": 100.0}
+
+    def test_both_variants(self):
+        result = evaluate(
+            RECORDS, metrics=["chrf"], device=DEVICE,
+            metric_kwargs={"chrf": {"variants": ["chrf", "chrf++"]}},
+        )
+        self.assertEqual(set(result.dataset), {"chrf", "chrf++"})
+        self.assertNotEqual(result.dataset["chrf"], result.dataset["chrf++"])
+
+
+@unittest.skipUnless(installed("sacrebleu"), "sacrebleu not installed")
+class TestBleu(ContentMetricMixin, unittest.TestCase):
+    metric = "bleu"
+    ceilings = {"bleu": 100.0}
 
 
 @unittest.skipUnless(installed("evaluate"), "evaluate not installed")
@@ -281,7 +295,7 @@ class TestModelCache(unittest.TestCase):
 class TestMetricsTogether(unittest.TestCase):
     """Metrics run together must give the same numbers as run alone."""
 
-    metrics = ["chrf"] + (["rouge"] if installed("evaluate") else [])
+    metrics = ["chrf", "bleu"] + (["rouge"] if installed("evaluate") else [])
 
     def test_combined_run_matches_individual_runs(self):
         together = evaluate(RECORDS, metrics=self.metrics, device=DEVICE).dataset

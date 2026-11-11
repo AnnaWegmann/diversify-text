@@ -307,9 +307,11 @@ results.evaluate()      # method on the output
 evaluate(results)       # identical, as a function
 ```
 
-Five metrics run by default: `style_similarity` (how similarly two texts
+Six metrics run by default: `style_similarity` (how similarly two texts
 are *written*), `bertscore` and `mis` (meaning overlap), `rouge` and
-`chrf` (word and character overlap).
+`bleu` (word overlap), and `chrf` (character overlap). `bleu` and `chrf`
+use sacreBLEU and score 0–100; `chrf` reports chrF++ by default, and
+plain chrF with `{"chrf": {"variants": ["chrf"]}}`.
 
 Pick a subset with `metrics`, configure them with `metric_kwargs`:
 
