@@ -11,6 +11,7 @@ local transformer models or proprietary models through their API.
    quickstart
    usage
    styles
+   gender_examples
    longer_texts
    model_backend
    methods

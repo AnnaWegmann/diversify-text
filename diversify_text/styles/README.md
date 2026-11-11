@@ -48,7 +48,7 @@ Language variation
 
 The 85 leaf nodes of the taxonomy form the basis of the text collection included in the StyleBank. Their inclusion was guided by the availability of suitable corpora corresponding to each category. To populate the StyleBank, we collected texts from the corpora listed in the table below.
 
-Each leaf node is populated with between 10 and 64 texts (mean: 42 texts per leaf). In total, the StyleBank contains 3,609 texts. All texts in the StyleBank are between 4 and 47k words in length (mean: 54 words). When passed to a model, each text is cut after its first 500 words (see `max_len_style_text`); the StyleBank itself keeps the full texts. We manually checked all texts to assess their quality.
+Each leaf node is populated with between 10 and 64 texts (mean: 42 texts per leaf). In total, the StyleBank contains 3,542 texts. All texts in the StyleBank are between 2 and 47k words in length (mean: 53 words). When passed to a model, each text is cut after its first 500 words (see `max_len_style_text`); the StyleBank itself keeps the full texts. We manually checked all texts to assess their quality.
 
 | Variation Dimension | Leaf Node            | Resource                                                                                                                            |
 | ------------------- | -------------------- |-------------------------------------------------------------------------------------------------------------------------------------|
@@ -58,7 +58,8 @@ Each leaf node is populated with between 10 and 64 texts (mean: 42 texts per lea
 | Diachronic          | Early Modern English | [TCP Corpus](https://huggingface.co/datasets/uwgraphics/VEP2_TCP_SimpleText)                                                        |
 | Diachronic          | Modern English       | [English Philosophical Texts](https://github.com/earlytexts/english-philosophical-texts)                                            |
 | Diatopic            | All                  | [eWAVE](https://github.com/cldf-datasets/ewave/blob/master/cldf/examples.csv)                                                       |
-| Diastratic          | All                  | [PASTEL](https://github.com/dykang/PASTEL)                                                                                          |
+| Diastratic          | All except gender    | [PASTEL](https://github.com/dykang/PASTEL)                                                                                          |
+| Diastratic          | Gender: female, male | Examples printed in published studies, see [Sources of the gender examples](../../docs/gender_examples.rst)                         |
 | Diaphasic           | All                  | [CORE Corpus](https://github.com/TurkuNLP/CORE-corpus), [X-Genre Corpus](https://huggingface.co/datasets/TajaKuzmanPungersek/X-GENRE-text-genre-dataset)                                                          |
 | Diamesic            | Digital              | [Reddit Post Comment Dataset](https://github.com/ishandandekar/Reddit_Post_Comment_Dataset)                                         |
 | Diamesic            | Spoken               | [This American Life Transcripts](https://www.kaggle.com/datasets/shuyangli94/this-american-life-podcast-transcriptsalignments/data) |

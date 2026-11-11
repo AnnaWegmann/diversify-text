@@ -47,7 +47,9 @@ Used by the prompting method.  The example texts for these styles
 <https://github.com/AnnaWegmann/diversify_text/blob/main/diversify_text/styles/stylebank.json>`_.
 Selectable via ``n``, by name, or by 0-based index.  The listing
 below (with two example texts per style) is generated from the code
-at every docs build:
+at every docs build.  The examples of ``gender_female`` and
+``gender_male`` come from published studies; see
+:doc:`gender_examples`.
 
 .. include:: _generated/default_bank.inc
 
