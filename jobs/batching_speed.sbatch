@@ -9,6 +9,6 @@
 
 set -euo pipefail
 source .venv/bin/activate
-DIVERSIFY_TEST_MODELS=1 DIVERSIFY_TEST_DEVICE=cuda \
+DIVERSIFY_TEST_SPEED=1 DIVERSIFY_TEST_DEVICE=cuda \
     python -m pytest tests/test_batching_speed.py -s
 echo "SMOKE OK"
