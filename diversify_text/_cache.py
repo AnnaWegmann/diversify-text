@@ -19,6 +19,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Any, Callable
 
+from diversify_text._metrics import clear_metric_cache
 from diversify_text._utils import default_device
 from diversify_text.filter.mis import MISFilter, _DEFAULT_MIN_SCORE, _DEFAULT_N_CANDIDATES
 
@@ -96,8 +97,9 @@ def clear_cache() -> None:
     """Drop references to all cached models so their memory can be reclaimed when possible.
 
     Clears every loader registered via :func:`model_cache` (the causal
-    LM engine, the TinyStyler model, and the MIS filter).  After
-    calling this, the next generation or filter use will load models
+    LM engine, the TinyStyler model, and the MIS filter) and the metric
+    models loaded by :func:`~diversify_text.evaluate`.  After calling
+    this, the next generation, filter or evaluation use will load models
     from scratch.
 
     This clears Python-level references but does not guarantee immediate
@@ -106,3 +108,4 @@ def clear_cache() -> None:
     """
     for cached_loader in _MODEL_CACHES:
         cached_loader.cache_clear()
+    clear_metric_cache()

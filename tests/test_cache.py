@@ -108,6 +108,12 @@ class TestTinyStylerModelCache(_CacheTestBase):
         model_after = TinyStylerMethod()._ensure_model()
         self.assertIsNot(model_before, model_after)
 
+    def test_clear_cache_drops_metric_models(self):
+        from diversify_text._metrics import _MODEL_CACHE, _cached
+        _cached(("stub_metric", None, "cpu"), object)
+        _cache.clear_cache()
+        self.assertEqual(_MODEL_CACHE, {})
+
 
 if __name__ == "__main__":
     unittest.main()
