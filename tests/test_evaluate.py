@@ -231,7 +231,7 @@ class TestErrors(unittest.TestCase):
 
     def test_variants_rejected_by_single_score_metric(self):
         with self.assertRaises(ValueError):
-            resolve_metrics(["chrf"], {"chrf": {"variants": ["a"]}})
+            resolve_metrics(["bleu"], {"bleu": {"variants": ["a"]}})
 
     def test_unknown_variant(self):
         with self.assertRaises(ValueError):
@@ -345,7 +345,7 @@ class TestRegistry(unittest.TestCase):
     def test_registry_holds_the_documented_metrics(self):
         self.assertEqual(
             set(METRIC_REGISTRY),
-            {"style_similarity", "bertscore", "rouge", "chrf", "mis"},
+            {"style_similarity", "bertscore", "rouge", "bleu", "chrf", "mis"},
         )
 
     def test_none_selects_every_metric(self):

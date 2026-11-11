@@ -229,16 +229,49 @@ class Rouge(Metric):
 
 
 class ChrF(Metric):
-    """chrF++ — character n-gram F-score with word bigrams."""
+    """chrF — character n-gram F-score; chrF++ also counts word bigrams."""
 
     name = "chrf"
+    variants = ("chrf", "chrf++")
+    default_variants = ("chrf++",)
+    _word_order = {"chrf": 0, "chrf++": 2}
 
     def prepare(self) -> None:
         from sacrebleu.metrics import CHRF
 
+        self._scorers = {
+            v: _cached(
+                (self.name, v, "-"),
+                lambda v=v: CHRF(word_order=self._word_order[v]),
+            )
+            for v in self.selected
+        }
+
+    def compute(self, originals, paraphrases):
+        return {
+            v: [
+                float(scorer.sentence_score(para, [orig]).score)
+                for orig, para in zip(originals, paraphrases)
+            ]
+            for v, scorer in self._scorers.items()
+        }
+
+
+class Bleu(Metric):
+    """Sentence-level sacreBLEU — word n-gram precision.
+
+    Uses ``effective_order`` so short sentences without matching
+    higher-order n-grams do not automatically score 0.
+    """
+
+    name = "bleu"
+
+    def prepare(self) -> None:
+        from sacrebleu.metrics import BLEU
+
         self._scorer = _cached(
             (self.name, None, "-"),
-            lambda: CHRF(word_order=2),
+            lambda: BLEU(effective_order=True),
         )
 
     def compute(self, originals, paraphrases):
@@ -275,7 +308,7 @@ class Mis(Metric):
 # ------------------------------------------------------------------
 
 METRIC_REGISTRY: dict[str, type[Metric]] = {
-    cls.name: cls for cls in (StyleSimilarity, BertScore, Rouge, ChrF, Mis)
+    cls.name: cls for cls in (StyleSimilarity, BertScore, Rouge, Bleu, ChrF, Mis)
 }
 
 

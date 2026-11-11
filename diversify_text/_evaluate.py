@@ -104,7 +104,8 @@ def evaluate(
         ``.jsonl`` file it wrote.
     metrics : list of str or Metric, optional
         Which metrics to run.  ``None`` runs all of them:
-        ``style_similarity``, ``bertscore``, ``rouge``, ``chrf``, ``mis``.
+        ``style_similarity``, ``bertscore``, ``rouge``, ``bleu``, ``chrf``,
+        ``mis``.
     metric_kwargs : dict, optional
         Per-metric keyword arguments keyed by metric name, e.g.
         ``{"bertscore": {"variants": ["precision", "f1"]}}``.
