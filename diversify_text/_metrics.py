@@ -63,6 +63,9 @@ class Metric:
         reports a single score and rejects ``variants``.
     default_variants : tuple[str, ...]
         Sub-scores reported when the caller does not select any.
+    uses_styles : bool
+        Whether :meth:`compute` also takes ``styles``, the target style
+        name of each pair (``None`` when unknown).
     """
 
     name: str = ""
@@ -70,6 +73,7 @@ class Metric:
     default_model: str | None = None
     variants: tuple[str, ...] = ()
     default_variants: tuple[str, ...] = ()
+    uses_styles: bool = False
 
     def __init__(
         self,
@@ -117,11 +121,12 @@ class Metric:
         self,
         originals: list[str],
         paraphrases: list[str],
-    ) -> dict[str, list[float]]:
+    ) -> dict[str, list[float | None]]:
         """Score each ``(original, paraphrase)`` pair.
 
         Returns one list of per-pair scores per reported sub-score;
-        every list has the same length as the inputs.
+        every list has the same length as the inputs.  ``None`` marks a
+        pair the metric cannot score; averages skip it.
         """
         raise NotImplementedError
 
@@ -135,32 +140,77 @@ class Metric:
 
 
 class StyleSimilarity(Metric):
-    """Cosine similarity between sentence-embedding representations.
+    """How well a paraphrase matches its target style.
 
-    With the default model this measures *style* similarity rather than
-    semantic similarity.
+    All example texts of the target style in ``stylebank.json`` are
+    embedded and pooled into one reference vector; the score is the
+    cosine similarity between that vector and the paraphrase.  With the
+    default model this measures *style*, not meaning.
+
+    Paraphrases whose style is not in ``stylebank.json`` (e.g. custom
+    styles or method-specific banks) score ``None``.
     """
 
     name = "style_similarity"
     accepts_model = True
     default_model = "AnnaWegmann/Style-Embedding"
+    uses_styles = True
+    poolings = ("mean", "max", "min")
+
+    def __init__(self, *, pooling: str = "mean", **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        if pooling not in self.poolings:
+            raise ValueError(
+                f"Unknown pooling {pooling!r} for metric {self.name!r}. "
+                f"Available: {list(self.poolings)}."
+            )
+        self.pooling = pooling
 
     def prepare(self) -> None:
         from sentence_transformers import SentenceTransformer
+
+        from diversify_text.styles._load import load_style_bank
 
         self._encoder = _cached(
             (self.name, self.model, self.device),
             lambda: SentenceTransformer(self.model, device=self.device),
         )
+        self._bank = load_style_bank()
 
-    def compute(self, originals, paraphrases):
+    def compute(self, originals, paraphrases, styles):
+        scored = [i for i, s in enumerate(styles) if s in self._bank]
+        missing = sorted({str(s) for s in styles if s not in self._bank})
+        if missing:
+            _log.warning(
+                "style_similarity: no examples in stylebank.json for styles "
+                "%s; their pairs score None.", missing,
+            )
+
+        scores: list[float | None] = [None] * len(paraphrases)
+        if not scored:
+            return {self.name: scores}
+
+        references = {
+            s: self._pool(self._embed(self._bank[s]))
+            for s in {styles[i] for i in scored}
+        }
+        embedded = self._embed([paraphrases[i] for i in scored])
+        for i, vector in zip(scored, embedded):
+            scores[i] = float(vector @ references[styles[i]])
+        return {self.name: scores}
+
+    def _embed(self, texts):
         import numpy as np
 
-        a = self._encoder.encode(originals, convert_to_numpy=True)
-        b = self._encoder.encode(paraphrases, convert_to_numpy=True)
-        a = a / np.linalg.norm(a, axis=1, keepdims=True)
-        b = b / np.linalg.norm(b, axis=1, keepdims=True)
-        return {self.name: [float(s) for s in (a * b).sum(axis=1)]}
+        vectors = self._encoder.encode(texts, convert_to_numpy=True)
+        return vectors / np.linalg.norm(vectors, axis=1, keepdims=True)
+
+    def _pool(self, vectors):
+        import numpy as np
+
+        pool = {"mean": np.mean, "max": np.max, "min": np.min}[self.pooling]
+        pooled = pool(vectors, axis=0)
+        return pooled / np.linalg.norm(pooled)
 
 
 class BertScore(Metric):

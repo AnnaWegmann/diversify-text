@@ -76,7 +76,10 @@ class EvaluationResult:
 
     def __repr__(self) -> str:
         if self.dataset:
-            scores = ", ".join(f"{k}={v:.4f}" for k, v in self.dataset.items())
+            scores = ", ".join(
+                f"{k}={v:.4f}" if v is not None else f"{k}=None"
+                for k, v in self.dataset.items()
+            )
         else:
             scores = ", ".join(self.metrics)
         return f"EvaluationResult(granularity={self.granularity!r}, {scores})"
@@ -157,10 +160,14 @@ def evaluate(
     if not originals:
         raise ValueError("Nothing to evaluate: the output contains no paraphrases.")
 
-    scores: dict[str, list[float]] = {}
+    scores: dict[str, list[float | None]] = {}
     for metric in resolved:
         metric.prepare()
-        for key, values in metric.compute(originals, paraphrases).items():
+        if metric.uses_styles:
+            computed = metric.compute(originals, paraphrases, styles)
+        else:
+            computed = metric.compute(originals, paraphrases)
+        for key, values in computed.items():
             if len(values) != len(originals):
                 raise ValueError(
                     f"Metric {metric.name!r} returned {len(values)} scores "
@@ -199,24 +206,26 @@ def evaluate(
         rows = []
         for i, record in enumerate(records):
             positions = positions_by_text.get(i, [])
-            # A text without paraphrases has nothing to average: report None.
             rows.append(
                 {
                     "text_index": i,
                     "original": record["original"],
                     "n_paraphrases": len(positions),
-                    **{
-                        c: fmean(scores[c][j] for j in positions) if positions else None
-                        for c in columns
-                    },
+                    **{c: _mean(scores[c][j] for j in positions) for c in columns},
                 }
             )
         result.text = rows
 
     if "dataset" in want:
-        result.dataset = {c: fmean(scores[c]) for c in columns}
+        result.dataset = {c: _mean(scores[c]) for c in columns}
 
     return result
+
+
+def _mean(values) -> float | None:
+    """Average the scores, skipping ``None``; ``None`` if nothing is left."""
+    present = [v for v in values if v is not None]
+    return fmean(present) if present else None
 
 
 # ------------------------------------------------------------------

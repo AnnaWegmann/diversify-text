@@ -207,38 +207,79 @@ class TestMIS(ContentMetricMixin, unittest.TestCase):
     installed("sentence_transformers"), "sentence_transformers not installed"
 )
 class TestStyleSimilarity(unittest.TestCase):
-    """Style embeddings measure *how* a text is written, not what it says.
+    """Paraphrases are compared with the pooled examples of their target
+    style in ``stylebank.json``.
 
-    An unrelated sentence in the same register can legitimately outscore
-    a faithful paraphrase, so the ordering checks in
-    :class:`ContentMetricMixin` do not apply here.
+    The test paraphrases are real examples from the bank, labelled once
+    with their own style and once with a very different one.
     """
 
     @classmethod
     def setUpClass(cls):
-        cls.result = evaluate(
-            RECORDS, metrics=["style_similarity"], granularity="pair", device=DEVICE
+        from diversify_text.styles._load import load_style_bank
+
+        bank = load_style_bank()
+        cls.records = [
+            {
+                "original": SOURCE,
+                "paraphrases": [
+                    {"style": own, "text": bank[own][0]},
+                    {"style": other, "text": bank[own][0]},
+                ],
+            }
+            for own, other in [
+                ("early_modern_english", "digital_communication"),
+                ("jamaican_creole", "informational"),
+            ]
+        ]
+        cls.records.append(
+            {"original": SOURCE, "paraphrases": [{"style": "not_a_style", "text": SOURCE}]}
         )
+        cls.result = evaluate(
+            cls.records, metrics=["style_similarity"], granularity="pair",
+            device=DEVICE,
+        )
+
+    def scores(self, result=None):
+        return [r["style_similarity"] for r in (result or self.result).pair]
 
     def test_scores_are_cosine_similarities(self):
-        for row in self.result.pair:
-            self.assertGreaterEqual(row["style_similarity"], -1.0)
-            self.assertLessEqual(row["style_similarity"], 1.0001)
+        for score in self.scores()[:4]:
+            self.assertGreaterEqual(score, -1.0)
+            self.assertLessEqual(score, 1.0001)
 
-    def test_identical_texts_are_near_one(self):
-        identical = next(
-            r for r in self.result.pair if r["style"] == "identical"
-        )
-        self.assertAlmostEqual(identical["style_similarity"], 1.0, places=3)
+    def test_own_style_beats_a_different_style(self):
+        s = self.scores()
+        self.assertGreater(s[0], s[1])
+        self.assertGreater(s[2], s[3])
+
+    def test_style_not_in_the_bank_scores_none(self):
+        self.assertIsNone(self.scores()[4])
+
+    def test_max_and_min_pooling_give_different_scores(self):
+        for pooling in ("max", "min"):
+            pooled = evaluate(
+                self.records, metrics=["style_similarity"], granularity="pair",
+                device=DEVICE,
+                metric_kwargs={"style_similarity": {"pooling": pooling}},
+            )
+            self.assertNotEqual(self.scores(pooled)[:4], self.scores()[:4], pooling)
+
+    def test_unknown_pooling_is_rejected(self):
+        with self.assertRaises(ValueError):
+            evaluate(
+                self.records, metrics=["style_similarity"], device=DEVICE,
+                metric_kwargs={"style_similarity": {"pooling": "median"}},
+            )
 
     def test_a_different_model_gives_different_scores(self):
         other = evaluate(
-            RECORDS, metrics=["style_similarity"], device=DEVICE,
+            self.records, metrics=["style_similarity"], device=DEVICE,
             metric_kwargs={
                 "style_similarity": {"model": "sentence-transformers/all-MiniLM-L6-v2"}
             },
         )
-        default = evaluate(RECORDS, metrics=["style_similarity"], device=DEVICE)
+        default = evaluate(self.records, metrics=["style_similarity"], device=DEVICE)
         self.assertNotAlmostEqual(
             other.dataset["style_similarity"],
             default.dataset["style_similarity"],
