@@ -24,6 +24,7 @@ _DEFAULT_TOP_P = 0.9
 _MAX_NEW_TOKENS_FACTOR = 2.0
 _MAX_NEW_TOKENS_FLOOR = 128
 _MAX_NEW_TOKENS_CAP = 2048
+_BATCH_SIZE = 8
 
 
 def _load_text_generation_model(model_id: str, **load_kwargs):
@@ -149,12 +150,14 @@ class TransformersBackend(LLMBackend):
     ) -> list[str]:
         """Generate completions for a list of prompts.
 
-        Prompts are sorted by length and generated together in
-        batches, so each batch needs little padding.  A batch generates
-        up to the largest ``max_new_tokens`` value among its prompts;
-        each output still ends at the model's end-of-text token.  All
-        prompts go into one batch; when the GPU runs out of memory, the
-        batch is halved and generation retried.
+        Prompts are sorted by length, longest first, and generated
+        together in batches of ``_BATCH_SIZE``, so each batch needs
+        little padding.  A batch generates up to the largest
+        ``max_new_tokens`` value among its prompts; each output still
+        ends at the model's end-of-text token.  When a CUDA GPU runs
+        out of memory, the batch is halved and generation retried.
+        Outputs for a given seed depend on the batch size, so they
+        differ after such a retry.
 
         Local generation always needs a cap, so every entry of
         *max_new_tokens_per_prompt* must be an integer (see
@@ -170,9 +173,11 @@ class TransformersBackend(LLMBackend):
         temperature = temperature if temperature is not None else _DEFAULT_TEMPERATURE
         top_p = top_p if top_p is not None else _DEFAULT_TOP_P
         # TODO: add vLLM backend support in a future release.
-        order = sorted(range(len(prompts)), key=lambda i: len(prompts[i]))
+        order = sorted(
+            range(len(prompts)), key=lambda i: len(prompts[i]), reverse=True
+        )
         results: list[str | None] = [None] * len(prompts)
-        batch_size = len(prompts)
+        batch_size = _BATCH_SIZE
         start = 0
         while start < len(order):
             batch = order[start : start + batch_size]
