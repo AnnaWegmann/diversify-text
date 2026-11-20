@@ -149,7 +149,7 @@ Which model?
      - Fast, but unreliable. Invents content and does not rephrase the input at times.
    * - `HuggingFaceTB/SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
      - 3B
-     - The **default** because fastest. Quality ok-ish. Tends to add info that is not in the input. Sometimes starts replies with "Here\'s a paraphrased version of the document in the same style as the examples provided:"
+     - Quality ok-ish. Tends to add info that is not in the input. Sometimes starts replies with "Here\'s a paraphrased version of the document in the same style as the examples provided:"
    * - `mistralai/Ministral-3-3B-Instruct-2512 <https://huggingface.co/mistralai/Ministral-3-3B-Instruct-2512>`_
      - 3B
      - Outputs often contain commentary
@@ -163,7 +163,7 @@ Which model?
        emoji many times.
    * - `google/gemma-4-E2B-it <https://huggingface.co/google/gemma-4-E2B-it>`_
      - 5B
-     - Best 5B. Best of tested **overall**. The most natural-sounding outputs. Some emoji repetitions happening though.
+     - The **default**. Best 5B. Best of tested **overall**. The most natural-sounding outputs. Some emoji repetitions happening though.
    * - ``gpt-5-mini`` (OpenAI API)
      - API
      - Concise on most styles. Might decline to imitate a named
