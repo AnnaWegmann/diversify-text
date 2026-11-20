@@ -4,11 +4,11 @@ Styles
 Every built-in style, by key.  Names are the stable way to select a
 style; indices follow bank order, which may change between releases as
 the bank is curated.  Each method can have its own banks: the default
-method (TinyStyler) uses the small curated bank below, the prompting
-method uses the default style bank.
+method (prompting) uses the default style bank, the TinyStyler method
+uses the small curated bank below.
 
-TinyStyler bank (default method)
---------------------------------
+TinyStyler bank
+---------------
 
 TinyStyler transfers formality and social-media voice well, but not
 dialects, historical English, or most genres, so it uses its own bank

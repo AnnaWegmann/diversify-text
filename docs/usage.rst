@@ -14,9 +14,9 @@ per style. It cannot be combined with ``styles`` or ``style_texts``:
 .. code-block:: python
 
    [{"original": "Some text.", "paraphrases": [
-       {"style": "informal", "text": "..."},
-       {"style": "formal", "text": "..."},
-       {"style": "question", "text": "..."},
+       {"style": "digital_communication", "text": "..."},
+       {"style": "informational", "text": "..."},
+       {"style": "spoken_communication", "text": "..."},
    ]}]
 
 Reproducibility (seed)
@@ -130,17 +130,17 @@ pin a style. One paraphrase is generated per style:
 
    results = diversify(
        "The experiment was conducted in a controlled lab setting.",
-       styles=["informal", "personal_blog", "obama"],
+       styles=["scottish_english", "informational", "britneyspears"],
        style_texts={
            "telegraphic": ["Key finding: effect confirmed. Details follow."],
        },
    )
 
 Each method can have its own style bank, so which names are available
-depends on the active method. The default method (TinyStyler) uses a
-small bank of styles it demonstrably handles; the prompting method
-uses ``DEFAULT_STYLE_BANK`` (``diversify_text.styles``), the large
-bank of dialects, registers, and more. The full lists are on the
+depends on the active method. The default method (prompting) uses
+``DEFAULT_STYLE_BANK`` (``diversify_text.styles``), the large bank of
+dialects, registers, and more; the TinyStyler method uses a small bank
+of styles it demonstrably handles. The full lists are on the
 :doc:`styles` page.
 
 Creating a custom method

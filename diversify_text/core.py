@@ -28,17 +28,9 @@ from diversify_text.styles import DEFAULT_MAX_LEN_STYLE_TEXT, resolve_style_dict
 logger = logging.getLogger(__name__)
 
 _DEFAULT_SEED = 51173
-_DEFAULT_METHOD = "tinystyler"
+_DEFAULT_METHOD = "prompting"
 _SENTINEL = object()
 _default_seed_applied: bool = False
-
-
-def _default_method(model: str | None) -> str:
-    """A model choice without a method choice selects the prompting method."""
-    if model is not None:
-        logger.info("Using the prompting method for model %r.", model)
-        return "prompting"
-    return _DEFAULT_METHOD
 
 
 class Diversifier:
@@ -52,7 +44,7 @@ class Diversifier:
     device : str, optional
         Torch device (``"cuda"``, ``"cpu"``, ``"mps"``, ...).
     method : str | DiversificationMethod, optional
-        A built-in method name (default ``"tinystyler"``) or a
+        A built-in method name (default ``"prompting"``) or a
         pre-built method instance.
     model : str, optional
         Model identifier for methods that let you choose one
@@ -85,7 +77,7 @@ class Diversifier:
     ) -> None:
         self.device = device
         if method is None:
-            method = _default_method(model)
+            method = _DEFAULT_METHOD
         self._method = DEFAULT_METHOD_REGISTRY.resolve(
             method, model=model, device=device
         )
@@ -435,7 +427,7 @@ def diversify(
     device : str, optional
         Torch device.
     method : str | DiversificationMethod, optional
-        A built-in method name (default ``"tinystyler"``) or a
+        A built-in method name (default ``"prompting"``) or a
         pre-built method instance.
     model : str, optional
         Model identifier for methods that let you choose one
@@ -487,7 +479,7 @@ def diversify(
             "method_kwargs, not both."
         )
     resolved_method = DEFAULT_METHOD_REGISTRY.resolve(
-        method if method is not None else _default_method(model),
+        method if method is not None else _DEFAULT_METHOD,
         model=model,
         **resolve_kwargs,
     )
