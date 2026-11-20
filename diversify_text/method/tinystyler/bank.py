@@ -6,8 +6,8 @@ package's default style bank.
 
 ``tinystylerbank.json`` (in this directory) holds the example texts
 that are not in ``stylebank.json``.  Origin of those styles:
-``informal``, ``question``, and ``obama`` come from TinyStyler's own
-documentation, ``formal`` from STEL, the rest from the CORE corpus.
+``question`` and ``obama`` come from TinyStyler's own documentation,
+the rest from the CORE corpus.
 The dict order below is the bank order (``n`` selects from the front).
 """
 
@@ -21,8 +21,8 @@ _TS_json = load_style_bank(
 )
 
 TINYSTYLER_STYLE_BANK: dict[str, list[str]] = {
-    "informal": _TS_json["informal"],
-    "formal": _TS_json["formal"],
+    "informal": DEFAULT_STYLE_BANK["informal"],
+    "formal": DEFAULT_STYLE_BANK["formal"],
     "question": _TS_json["question"],
     "question_answer_forum": _TS_json["question_answer_forum"],
     "discussion_forum": _TS_json["discussion_forum"],

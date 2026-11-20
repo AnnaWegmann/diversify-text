@@ -19,3 +19,14 @@ For each style it has one entry per text, in the same order as the texts in `sty
 Use it to trace a text back to its source, to remove the texts of a particular writer, or to check how the styles are balanced by source, age and gender. The sources themselves are described in `docs/age_examples.rst`.
 
 If you change the texts of an age style in `stylebank.json`, change this file in the same way; nothing checks that the two still match.
+
+## `formality_sources.json`
+
+Where each text of the `formal` and `informal` styles comes from. For each style it has one entry per text, in the same order as the texts in `stylebank.json`:
+
+| Field    | Meaning                                                          |
+| -------- | ---------------------------------------------------------------- |
+| `source` | `STEL formality sample` or `TinyStyler documentation`            |
+| `begins` | The first six words of the text, to match the entry to its text  |
+
+If you change the texts of these two styles in `stylebank.json`, change this file in the same way; nothing checks that the two still match.
