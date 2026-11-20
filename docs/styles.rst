@@ -7,26 +7,6 @@ the bank is curated.  Each method can have its own banks: the default
 method (prompting) uses the default style bank, the TinyStyler method
 uses the small curated bank below.
 
-TinyStyler bank
----------------
-
-TinyStyler transfers formality and social-media voice well, but not
-dialects, historical English, or most genres, so it uses its own bank
-of styles it demonstrably handles (selected by comparing model outputs
-for every style; see ``evaluations/tinystyler_style_ratings.txt`` in
-the repository).
-
-.. include:: _generated/tinystyler_bank.inc
-
-By name only — these work but are more likely to produce swearing:
-
-.. include:: _generated/tinystyler_unusual.inc
-
-Of the surface-level styles, TinyStyler supports the following
-(by name only):
-
-.. include:: _generated/tinystyler_surface.inc
-
 Every style is defined by a set of example texts.  To print the
 current style lists and the examples of one style from Python:
 
@@ -82,3 +62,23 @@ text and sources on the :doc:`zero_shot_instructions` page).
 Selectable via ``n``, by name, or by 0-based index:
 
 .. include:: _generated/zero_shot_bank.inc
+
+TinyStyler bank
+---------------
+
+TinyStyler transfers formality and social-media voice well, but not
+dialects, historical English, or most genres, so it uses its own bank
+of styles it demonstrably handles (selected by comparing model outputs
+for every style; see ``evaluations/tinystyler_style_ratings.txt`` in
+the repository).
+
+.. include:: _generated/tinystyler_bank.inc
+
+By name only — these work but are more likely to produce swearing:
+
+.. include:: _generated/tinystyler_unusual.inc
+
+Of the surface-level styles, TinyStyler supports the following
+(by name only):
+
+.. include:: _generated/tinystyler_surface.inc
