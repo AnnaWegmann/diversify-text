@@ -3,7 +3,8 @@ Methods
 
 ``diversify-text`` uses a pluggable method architecture. Each method is a
 :class:`~diversify_text.method.base.DiversificationMethod` subclass that generates
-paraphrases using a different model or algorithm.
+paraphrases using a different model or algorithm.  The default method is
+``prompting``.
 
 .. list-table::
    :header-rows: 1
