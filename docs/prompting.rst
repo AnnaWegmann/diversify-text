@@ -3,7 +3,7 @@ Prompting
 
 The ``prompting`` method is the default method.  It generates paraphrases by sending input texts to a
 causal language model with a prompt template. The default model is
-`HuggingFaceTB/SmolLM3-3B <https://huggingface.co/HuggingFaceTB/SmolLM3-3B>`_
+`google/gemma-4-E2B-it <https://huggingface.co/google/gemma-4-E2B-it>`_
 using insights from `The Synthetic Data Playbook <https://huggingface.co/spaces/HuggingFaceFW/finephrase>`_;
 any open or proprietary model can be used instead, see :doc:`model_backend`.
 

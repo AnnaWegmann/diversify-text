@@ -6,7 +6,7 @@ from diversify_text.llm import LLMBackend, load_backend
 from diversify_text.method.base import DiversificationMethod
 
 #: Default causal language model for prompt-based methods.
-_DEFAULT_LLM = "HuggingFaceTB/SmolLM3-3B"
+_DEFAULT_LLM = "google/gemma-4-E2B-it"
 
 #: Placeholder in prompt texts where the input text is inserted.
 PLACEHOLDER_TEXT = "[DOCUMENT SEGMENT]"

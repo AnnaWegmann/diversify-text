@@ -9,7 +9,7 @@ class TestPromptingMethodConstructor(unittest.TestCase):
 
     def test_default_model(self):
         method = PromptingMethod()
-        self.assertEqual(method.model_id, "HuggingFaceTB/SmolLM3-3B")
+        self.assertEqual(method.model_id, "google/gemma-4-E2B-it")
 
     def test_custom_model(self):
         method = PromptingMethod(model="mistralai/Mistral-7B-Instruct-v0.3")
