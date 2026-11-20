@@ -19,6 +19,7 @@ The required source files can be downloaded from the following resources:
 | PASTEL (`pastel`)                      | [GitHub](https://github.com/dykang/PASTEL)                                                                  |
 | CORE Corpus (`core`)                   | [GitHub](https://github.com/TurkuNLP/CORE-corpus)                                                           |
 | This American Life Transcripts (`tal`) | [Kaggle](https://www.kaggle.com/datasets/shuyangli94/this-american-life-podcast-transcriptsalignments/data) |
+| STEL formality sample (`stel`)         | [GitHub](https://github.com/nlpsoc/STEL/blob/main/Data/STEL/dimensions/quad_stel-dimension_formal-100_sample.tsv) |
 
 ### 2. Extract corpus samples
 
@@ -60,6 +61,8 @@ We replaced all texts of the `gender_female` and `gender_male` leaves, which cam
 
 We replaced the five PASTEL age leaves (`age_18-24`, `age_25-34`, `age_35-44`, `age_45-54`, `age_55-74`) with three broader ones (`age_under-25`, `age_25-49`, `age_50-plus`). Their texts are blog posts from the Blog Authorship Corpus, hotel reviews from the PAN14 author profiling corpus, and four examples printed in Nguyen, Smith & Rosé (2011). We drew random candidates (one text per author, 40-110 words for blogs, 40-130 words for reviews, no links, balanced by gender) and removed poems, quotations, lists, advertisements and texts not in standard English by hand. `additional_info/age_sources.json` lists the source, age, gender and author id of every text; `docs/age_examples.rst` describes the sources.
 
+
+We added the `formal` and `informal` leaves, 64 sentences each. `extract_stel_sample.py` reads the 100 formal/informal tasks of the STEL sample. Each task holds two sentence pairs, and a pair is the same content written once formally and once informally. The script keeps the tasks on which at least 4 of 5 annotators agreed and takes the formal sentence from one half of the pairs and the informal sentence from the other half, so the two leaves never share content. From these candidates we removed by hand sentences with spelling or grammar mistakes in the formal leaf, sentences that read as standard English in the informal leaf, and insults, jokes, lists and song lyrics in both. The `formal` leaf starts with 20 STEL sentences that TinyStyler's style bank already used; the `informal` leaf starts with 25 example sentences from the TinyStyler documentation. `additional_info/formality_sources.json` lists the source of every text.
 
 ### 5. Generate statistics (optional)
 
