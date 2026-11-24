@@ -42,7 +42,7 @@
       "language_variation/individual/idiolect/selenagomez",
       "language_variation/individual/idiolect/shakira",
       "language_variation/individual/idiolect/taylorswift13",
-      "language_variation/individual/idiolect/obama"
+      "language_variation/individual/idiolect/barackobama"
     ],
     "intra-group": [
       "language_variation/intra-group/diachronic/middle_english",
@@ -133,7 +133,7 @@
       "language_variation/individual/idiolect/selenagomez",
       "language_variation/individual/idiolect/shakira",
       "language_variation/individual/idiolect/taylorswift13",
-      "language_variation/individual/idiolect/obama"
+      "language_variation/individual/idiolect/barackobama"
     ],
     "diachronic": [
       "language_variation/intra-group/diachronic/middle_english",
@@ -502,11 +502,11 @@
         "language_variation",
         "individual",
         "idiolect",
-        "obama"
+        "barackobama"
       ],
       "branch": "individual",
       "category": "idiolect",
-      "leaf": "obama",
+      "leaf": "barackobama",
       "num_sentences": 64,
       "sentence_length_words": {
         "min": 3,
