@@ -192,39 +192,61 @@ one that loses the meaning:
 
    scores = evaluate(results, granularity="all")
 
-Scores rounded to two decimals, with the texts shortened:
+Scores rounded to two decimals, with the texts shortened.  The comments
+show which question each score belongs to:
 
 .. code-block:: python
 
    scores.dataset
-   {"style_similarity": 0.51, "bertscore_f1": 0.95, "rouge1": 0.53, "rouge2": 0.37,
-    "rougeL": 0.51, "bleu": 36.14, "chrf++": 52.5, "mis": 0.71}
+   {"style_similarity": 0.51,                            # style
+    "bertscore_f1": 0.95,                                # content
+    "rouge1": 0.53, "rouge2": 0.37, "rougeL": 0.51,      # surface similarity
+    "bleu": 36.14, "chrf++": 52.5,                       # surface similarity
+    "mis": 0.71}                                         # content
 
    scores.text
    [{"text_index": 0, "original": "She missed the last train ...", "n_paraphrases": 2,
-     "style_similarity": 0.62, "bertscore_f1": 0.94, "rouge1": 0.56, "rouge2": 0.24,
-     "rougeL": 0.52, "bleu": 18.99, "chrf++": 48.42, "mis": 0.94},
+     "style_similarity": 0.62,                           # style
+     "bertscore_f1": 0.94,                               # content
+     "rouge1": 0.56, "rouge2": 0.24, "rougeL": 0.52,     # surface similarity
+     "bleu": 18.99, "chrf++": 48.42,                     # surface similarity
+     "mis": 0.94},                                       # content
     {"text_index": 1, "original": "The cat sat ...", "n_paraphrases": 2,
-     "style_similarity": 0.4, "bertscore_f1": 0.95, "rouge1": 0.5, "rouge2": 0.5,
-     "rougeL": 0.5, "bleu": 53.28, "chrf++": 56.58, "mis": 0.48}]
+     "style_similarity": 0.4,                            # style
+     "bertscore_f1": 0.95,                               # content
+     "rouge1": 0.5, "rouge2": 0.5, "rougeL": 0.5,        # surface similarity
+     "bleu": 53.28, "chrf++": 56.58,                     # surface similarity
+     "mis": 0.48}]                                       # content
 
    scores.pair
    [{"text_index": 0, "original": "She missed the last train ...",
      "style": "scottish_english", "paraphrase": "She didnae catch ...",
-     "style_similarity": 0.67, "bertscore_f1": 0.94, "rouge1": 0.67, "rouge2": 0.4,
-     "rougeL": 0.67, "bleu": 27.1, "chrf++": 63.71, "mis": 0.92},
+     "style_similarity": 0.67,                           # style
+     "bertscore_f1": 0.94,                               # content
+     "rouge1": 0.67, "rouge2": 0.4, "rougeL": 0.67,      # surface similarity
+     "bleu": 27.1, "chrf++": 63.71,                      # surface similarity
+     "mis": 0.92},                                       # content
     {"text_index": 0, "original": "She missed the last train ...",
      "style": "informational", "paraphrase": "After missing the final train ...",
-     "style_similarity": 0.57, "bertscore_f1": 0.95, "rouge1": 0.44, "rouge2": 0.08,
-     "rougeL": 0.37, "bleu": 10.88, "chrf++": 33.12, "mis": 0.96},
+     "style_similarity": 0.57,                           # style
+     "bertscore_f1": 0.95,                               # content
+     "rouge1": 0.44, "rouge2": 0.08, "rougeL": 0.37,     # surface similarity
+     "bleu": 10.88, "chrf++": 33.12,                     # surface similarity
+     "mis": 0.96},                                       # content
     {"text_index": 1, "original": "The cat sat ...",
      "style": "scottish_english", "paraphrase": "The cat sat on the mat.",
-     "style_similarity": 0.35, "bertscore_f1": 1.0, "rouge1": 1.0, "rouge2": 1.0,
-     "rougeL": 1.0, "bleu": 100.0, "chrf++": 100.0, "mis": 0.97},
+     "style_similarity": 0.35,                           # style
+     "bertscore_f1": 1.0,                                # content
+     "rouge1": 1.0, "rouge2": 1.0, "rougeL": 1.0,        # surface similarity
+     "bleu": 100.0, "chrf++": 100.0,                     # surface similarity
+     "mis": 0.97},                                       # content
     {"text_index": 1, "original": "The cat sat ...",
      "style": "informational", "paraphrase": "Dogs usually sleep ...",
-     "style_similarity": 0.45, "bertscore_f1": 0.91, "rouge1": 0.0, "rouge2": 0.0,
-     "rougeL": 0.0, "bleu": 6.57, "chrf++": 13.17, "mis": 0.0}]
+     "style_similarity": 0.45,                           # style
+     "bertscore_f1": 0.91,                               # content
+     "rouge1": 0.0, "rouge2": 0.0, "rougeL": 0.0,        # surface similarity
+     "bleu": 6.57, "chrf++": 13.17,                      # surface similarity
+     "mis": 0.0}]                                        # content
 
 ``bleu`` and ``chrf++`` run from 0 to 100, the other scores from 0 to 1.
 
