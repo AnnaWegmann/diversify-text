@@ -1,29 +1,29 @@
 {
   "input_file": "stylebank.json",
   "summary": {
-    "num_leafs": 85,
-    "num_texts": 3440,
+    "num_leafs": 86,
+    "num_texts": 3501,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 40.470588235294116
+      "avg": 40.7093023255814
     },
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 53.68488372093023
+      "avg": 53.30934018851757
     }
   },
-  "num_leafs": 85,
+  "num_leafs": 86,
   "num_leafs_per_group": {
     "individual": 14,
-    "intra-group": 71
+    "intra-group": 72
   },
   "num_leafs_per_category": {
     "idiolect": 14,
     "diachronic": 4,
     "diatopic": 33,
-    "diastratic": 22,
+    "diastratic": 23,
     "diaphasic": 10,
     "diamesic": 2
   },
@@ -104,6 +104,7 @@
       "language_variation/intra-group/diastratic/politics_centrist",
       "language_variation/intra-group/diastratic/politics_leftwing",
       "language_variation/intra-group/diastratic/politics_rightwing",
+      "language_variation/intra-group/diastratic/age_child",
       "language_variation/intra-group/diaphasic/informational",
       "language_variation/intra-group/diaphasic/instructional",
       "language_variation/intra-group/diaphasic/interactive",
@@ -198,7 +199,8 @@
       "language_variation/intra-group/diastratic/gender_male",
       "language_variation/intra-group/diastratic/politics_centrist",
       "language_variation/intra-group/diastratic/politics_leftwing",
-      "language_variation/intra-group/diastratic/politics_rightwing"
+      "language_variation/intra-group/diastratic/politics_rightwing",
+      "language_variation/intra-group/diastratic/age_child"
     ],
     "diaphasic": [
       "language_variation/intra-group/diaphasic/informational",
@@ -220,12 +222,12 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 40.470588235294116
+    "avg": 40.7093023255814
   },
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 53.68488372093023
+    "avg": 53.30934018851757
   },
   "per_branch": {
     "individual": {
@@ -242,16 +244,16 @@
       }
     },
     "intra-group": {
-      "num_leafs": 71,
+      "num_leafs": 72,
       "sentences_per_leaf": {
         "min": 10,
         "max": 64,
-        "avg": 36.225352112676056
+        "avg": 36.56944444444444
       },
       "sentence_length_words": {
         "min": 2,
         "max": 47219,
-        "avg": 65.97939346811819
+        "avg": 65.19521458412457
       }
     }
   },
@@ -266,7 +268,7 @@
       "num_leafs": 10
     },
     "diastratic": {
-      "num_leafs": 22
+      "num_leafs": 23
     },
     "diatopic": {
       "num_leafs": 33
@@ -1515,6 +1517,23 @@
         "min": 24,
         "max": 102,
         "avg": 46.5
+      }
+    },
+    {
+      "path": [
+        "language_variation",
+        "intra-group",
+        "diastratic",
+        "age_child"
+      ],
+      "branch": "intra-group",
+      "category": "diastratic",
+      "leaf": "age_child",
+      "num_sentences": 61,
+      "sentence_length_words": {
+        "min": 11,
+        "max": 121,
+        "avg": 32.131147540983605
       }
     },
     {

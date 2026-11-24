@@ -32,6 +32,7 @@ _BANK_ORDER: list[str] = [
     "jamaican_creole",  # diatopic
     "barackobama",  # idiolect
     "narrative",  # diaphasic
+    "age_child",  # diastratic
     "instructional",  # diaphasic
     "arianagrande",  # idiolect
     "welsh_english",  # diatopic

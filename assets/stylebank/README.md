@@ -73,6 +73,14 @@ We replaced the texts of the `barackobama` leaf. It held 59 tweets from the Twee
 
 A passage is two to six consecutive sentences (24 to 105 words). We added passages because a single sentence often does not show a speaker's style. We picked them by hand from the first part of each transcript and left out exchanges with the audience, reporters' questions, long lists of names and quotations. "(Applause.)" notes are removed, "(Laughter.)" notes are kept, and curly quotation marks are replaced by straight ones. The leaf alternates between a passage and a single sentence, and the passages alternate between the three speeches, so its first texts cover all of them.
 
+We added the `age_child` leaf with 61 texts by children aged 4 to 7, from three sources:
+
+- 42 single utterances of speech at home, ages 4;0 to 5;2, from the [UD-English-CHILDES](https://github.com/UniversalDependencies/UD_English-CHILDES) treebank (children Abe, Adam, Laura, Roman and Sarah). The treebank holds single utterances that do not follow one another, so each text is one utterance (11 to 21 words); we picked the longer ones.
+- 12 texts from the English [frog stories](https://talkbank.org/childes/topics/frogs.doc) in CHILDES (Berman & Slobin; recorded by Tanya Renner): four- and five-year-olds telling the story of a wordless picture book. Each text is a run of up to 12 consecutive clauses of one child. We removed the interviewer's turns, the transcription marks for stress and intonation, unclear stretches, and the child's comments about the task and answers to the interviewer. We kept the pauses ("...") and the false starts, wrote "..." where a false start breaks off, and wrote the first word of a sentence with a capital letter.
+- 7 school texts by Year 2 pupils (ages 6 to 7) from the Growth in Grammar corpus, printed in the supplementary material of Durrant & Brenchley (2019). Their spelling was corrected by the authors. We removed the placeholder for a pupil's name ("Love from Personname.") from one text.
+
+The leaf alternates between the three sources. The first 16 texts are 6 utterances, 5 frog-story texts and 5 school texts. `additional_info/child_sources.json` lists the source, age and child of every text.
+
 
 ### 5. Generate statistics (optional)
 
