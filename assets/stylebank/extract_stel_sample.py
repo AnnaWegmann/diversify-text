@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-"""Extract formal and informal candidate sentences from the STEL formality sample.
+"""Extract formal/informal sentence pairs from the STEL formality sample.
 
 Each of the 100 STEL tasks holds two sentence pairs; a pair is the same
 content written once formally and once informally.
 
 Rules:
 - Keep tasks where at least ``--min-votes`` of 5 annotators agreed.
-- Shuffle the pairs and split them in half: the first half gives its formal
-  sentence, the second half its informal sentence. No pair gives both, so
-  the two styles never share content.
-- Output JSON mapping ``formal`` and ``informal`` to sentence lists.
+- Output a JSON list of pairs, each ``{"formal": ..., "informal": ...}``.
 """
 
 from __future__ import annotations
@@ -17,7 +14,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import random
 from pathlib import Path
 
 SENTENCE_COLUMNS = ("Anchor 1", "Anchor 2", "Alternative 1.1", "Alternative 1.2")
@@ -34,7 +30,6 @@ def parse_args() -> argparse.Namespace:
         "-o", "--output", type=Path, default=Path("data/stel/stel_output.json")
     )
     parser.add_argument("--min-votes", type=int, default=4)
-    parser.add_argument("--seed", type=int, default=42)
     return parser.parse_args()
 
 
@@ -53,27 +48,20 @@ def pairs_of_task(row: dict[str, str]) -> list[dict[str, str]]:
     ]
 
 
-def extract_samples(stel_tsv: Path, min_votes: int, seed: int) -> dict[str, list[str]]:
+def extract_pairs(stel_tsv: Path, min_votes: int) -> list[dict[str, str]]:
     pairs: list[dict[str, str]] = []
     with stel_tsv.open("r", encoding="utf-8", newline="") as fh:
         for row in csv.DictReader(fh, delimiter="\t", quoting=csv.QUOTE_NONE):
             if int(row["# Votes out of 5 for Correct Alternative"]) >= min_votes:
                 pairs.extend(pairs_of_task(row))
-
-    random.Random(seed).shuffle(pairs)
-    half = len(pairs) // 2
-    return {
-        "formal": [pair["formal"] for pair in pairs[:half]],
-        "informal": [pair["informal"] for pair in pairs[half:]],
-    }
+    return pairs
 
 
 def main() -> None:
     args = parse_args()
-    data = extract_samples(args.stel_tsv, args.min_votes, args.seed)
-    args.output.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({style: len(texts) for style, texts in data.items()}))
-    print(f"Wrote samples to: {args.output}")
+    pairs = extract_pairs(args.stel_tsv, args.min_votes)
+    args.output.write_text(json.dumps(pairs, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"Wrote {len(pairs)} pairs to: {args.output}")
 
 
 if __name__ == "__main__":
