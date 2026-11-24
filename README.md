@@ -76,7 +76,7 @@ results = diversify(
 }]
 ```
 
-> **Note:** The example texts of the dialect and social-group styles were written by real people, but the model is not a speaker of these dialects or a member of these groups, and its paraphrases can misrepresent how these groups write or speak. Read a paraphrase as a text written with the examples of that style in mind, not as authentic language of that group.
+> **Note:** The example texts of the dialect and social-group styles were written by real people, but models are not speakers of these dialects or members of these groups, and their paraphrases can misrepresent how these groups write or speak. Read a paraphrase as a text written with the examples of that style in mind, not as authentic language of that group.
 
 To pick the styles yourself, by name or with your own example texts, see [Styles](https://annawegmann.github.io/diversify_text/styles.html). To paraphrase many texts or a CSV file, see [Inputs and outputs](https://annawegmann.github.io/diversify_text/inputs_outputs.html).
 

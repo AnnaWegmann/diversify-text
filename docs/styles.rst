@@ -8,10 +8,10 @@ from a built-in bank, or define your own.
 .. note::
 
    The example texts of the dialect and social-group styles were written
-   by real people, but the model is not a speaker of these dialects or a
-   member of these groups, and its paraphrases can misrepresent how these
-   groups write or speak.  Read a paraphrase as a text written with the
-   examples of that style in mind, not as authentic language of that
+   by real people, but models are not speakers of these dialects or
+   members of these groups, and their paraphrases can misrepresent how
+   these groups write or speak.  Read a paraphrase as a text written with
+   the examples of that style in mind, not as authentic language of that
    group.
 
 Each method has its own style bank, so which style names exist depends
