@@ -22,11 +22,12 @@ FIRST_N = (5, 10, 21, 40)
 def print_report(order: list[str], distances: dict) -> None:
     names, categories = distances["names"], distances["categories"]
     idx = [names.index(n) for n in order]
-    measures = MEASURES + ("smallest",)
+    measures = MEASURES + ("smallest_of_three",)
 
     print("Distances are scaled per measure: 1.0 = an average pair of styles in the bank.")
+    print("mean_embedding_distance: mean cosine distance between the styles' averaged embedding vectors (not scaled).")
     print("First n styles: closest pair / mean distance per measure")
-    print(f"{'n':>3}  {'categories':<44} pastel  " + "  ".join(f"{m:>16}" for m in measures) + "  mean_pw_embedding")
+    print(f"{'n':>3}  {'categories':<44} pastel  " + "  ".join(f"{m:>16}" for m in measures) + "  mean_embedding_distance")
     for n in FIRST_N:
         first = idx[:n]
         per_category = Counter(categories[i] for i in first)
@@ -38,8 +39,8 @@ def print_report(order: list[str], distances: dict) -> None:
         print(f"{n:>3}  {cats:<44} {sum(is_pastel(names[i]) for i in first):>6}  " + "  ".join(cells)
               + f"  {_mean_pairwise(distances['centroids'][first]):>17.2f}")
 
-    smallest = distances["smallest"]
-    mean = smallest.sum(axis=1) / (len(names) - 1)
+    combined = distances["smallest_of_three"]
+    mean = combined.sum(axis=1) / (len(names) - 1)
     rank = {names[i]: r + 1 for r, i in enumerate(np.argsort(-mean))}
     print("\nPer position: distinctiveness rank (1 = most different), distance to the nearest style above")
     print(f"{'#':>3}  {'style':<46} {'category':<11} {'rank':>4}  " + "  ".join(f"{m:>14}" for m in measures))
@@ -50,7 +51,7 @@ def print_report(order: list[str], distances: dict) -> None:
 
 
 def _mean_pairwise(vectors: np.ndarray) -> float:
-    """Mean cosine distance over all pairs (the same as ``mean_pw_dist`` in emb-diversity)."""
+    """Mean cosine distance over all pairs of the given style vectors."""
     similarities = vectors @ vectors.T
     upper = np.triu_indices(len(vectors), 1)
     return float((1 - similarities[upper]).mean())

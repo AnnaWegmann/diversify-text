@@ -1,7 +1,7 @@
 """Suggest an order for the default bank: categories take turns, farthest style first.
 
 The next style is the one whose closest already-placed style is farthest
-away ("smallest" distance, see ``distances.py``).  A category does not get
+away ("smallest_of_three" distance, see ``distances.py``).  A category does not get
 a second style until every other category that still has styles left has
 had one in the current round.  PASTEL styles (education_*, ethnic_*,
 politics_*) come after all other styles.
@@ -18,7 +18,7 @@ def is_pastel(name: str) -> bool:
 
 def most_distinct(distances: dict) -> str:
     """The non-PASTEL style with the highest mean distance to all other styles."""
-    D, names = distances["smallest"], distances["names"]
+    D, names = distances["smallest_of_three"], distances["names"]
     mean = (D.sum(axis=1)) / (len(names) - 1)
     return max((n for n in names if not is_pastel(n)), key=lambda n: mean[names.index(n)])
 
@@ -34,7 +34,7 @@ def suggest_order(distances: dict, first: str, fixed: dict[str, int] | None = No
     at_most_one: ``(word, n)``: at most one style whose name contains
         ``word`` in the first ``n`` positions, e.g. ``("creole", 20)``.
     """
-    names, categories, D = distances["names"], distances["categories"], distances["smallest"]
+    names, categories, D = distances["names"], distances["categories"], distances["smallest_of_three"]
     fixed = fixed or {}
     order = [first]
     round_categories = {categories[names.index(first)]}

@@ -17,8 +17,8 @@ change anything. To compute a new, suggested order, run suggest_order.py.
 Styles are compared in three ways: surface patterns (punctuation, capitals,
 emoji, word and sentence length), function words (how often a style uses small
 words such as "the", "she" or "whilst") and the Style-Embedding model.
-"smallest" is the lowest of the three, so a pair counts as close if any one
-measure says so.
+"smallest_of_three" is the lowest of the three, so a pair counts as close if
+any one measure says so.
 
 Computing the distances embeds every example text and takes a few minutes ...
 """)
