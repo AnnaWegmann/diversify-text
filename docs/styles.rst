@@ -179,10 +179,11 @@ from blog posts and hotel reviews; see :doc:`age_examples`.
 The examples of ``formal`` and ``informal`` come from the `STEL
 <https://github.com/nlpsoc/STEL>`_ formality sample and the `TinyStyler
 <https://github.com/zacharyhorvitz/TinyStyler>`_ repository.
-The examples of ``barackobama`` are sentences from three of Barack
-Obama's speeches, taken from the White House transcripts: his final
-press conference and his farewell address (both January 2017) and his
-speech at the 50th anniversary of the Selma marches (March 2015).
+The examples of ``barackobama`` are sentences and short passages from
+three of Barack Obama's speeches, taken from the White House
+transcripts: his final press conference and his farewell address (both
+January 2017) and his speech at the 50th anniversary of the Selma
+marches (March 2015).
 
 .. include:: _generated/default_bank.inc
 

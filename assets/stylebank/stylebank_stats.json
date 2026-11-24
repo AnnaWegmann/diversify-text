@@ -2,16 +2,16 @@
   "input_file": "stylebank.json",
   "summary": {
     "num_leafs": 85,
-    "num_texts": 3456,
+    "num_texts": 3440,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 40.65882352941176
+      "avg": 40.470588235294116
     },
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 53.271701388888886
+      "avg": 53.68488372093023
     }
   },
   "num_leafs": 85,
@@ -220,25 +220,25 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 40.65882352941176
+    "avg": 40.470588235294116
   },
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 53.271701388888886
+    "avg": 53.68488372093023
   },
   "per_branch": {
     "individual": {
       "num_leafs": 14,
       "sentences_per_leaf": {
-        "min": 57,
+        "min": 48,
         "max": 64,
-        "avg": 63.142857142857146
+        "avg": 62
       },
       "sentence_length_words": {
         "min": 3,
-        "max": 52,
-        "avg": 16.29864253393665
+        "max": 105,
+        "avg": 17.254608294930875
       }
     },
     "intra-group": {
@@ -507,11 +507,11 @@
       "branch": "individual",
       "category": "idiolect",
       "leaf": "barackobama",
-      "num_sentences": 64,
+      "num_sentences": 48,
       "sentence_length_words": {
         "min": 3,
-        "max": 52,
-        "avg": 16.234375
+        "max": 105,
+        "avg": 33.5
       }
     },
     {
