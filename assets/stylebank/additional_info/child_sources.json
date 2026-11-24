@@ -12,7 +12,7 @@
    "age": "5;02",
    "child": "B",
    "id": "05;02B",
-   "begins": "Well there was a little boy,"
+   "begins": "Well ... there was a little"
   },
   {
    "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
@@ -96,7 +96,7 @@
    "age": "4;09",
    "child": "I",
    "id": "04;09I",
-   "begins": "He had a frog, and when"
+   "begins": "He had a frog, and ..."
   },
   {
    "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
@@ -117,7 +117,7 @@
    "age": "5;01",
    "child": "A",
    "id": "05;01A",
-   "begins": "And then he's oh my gosh,"
+   "begins": "And then ... he's ... oh"
   },
   {
    "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
@@ -159,7 +159,7 @@
    "age": "5;03",
    "child": "C",
    "id": "05;03C",
-   "begins": "The frog and the boy have"
+   "begins": "The frog and the boy ..."
   },
   {
    "source": "UD-English-CHILDES",
