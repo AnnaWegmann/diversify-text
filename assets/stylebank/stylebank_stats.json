@@ -2,16 +2,16 @@
   "input_file": "stylebank.json",
   "summary": {
     "num_leafs": 85,
-    "num_texts": 3439,
+    "num_texts": 3451,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 40.45882352941177
+      "avg": 40.6
     },
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 53.448386158767086
+      "avg": 53.30889597218198
     }
   },
   "num_leafs": 85,
@@ -220,12 +220,12 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 40.45882352941177
+    "avg": 40.6
   },
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 53.448386158767086
+    "avg": 53.30889597218198
   },
   "per_branch": {
     "individual": {
@@ -246,12 +246,12 @@
       "sentences_per_leaf": {
         "min": 10,
         "max": 64,
-        "avg": 36.056338028169016
+        "avg": 36.225352112676056
       },
       "sentence_length_words": {
         "min": 2,
         "max": 47219,
-        "avg": 66.226171875
+        "avg": 65.97939346811819
       }
     }
   },
@@ -1663,11 +1663,11 @@
       "branch": "intra-group",
       "category": "diaphasic",
       "leaf": "formal",
-      "num_sentences": 24,
+      "num_sentences": 36,
       "sentence_length_words": {
         "min": 6,
         "max": 25,
-        "avg": 12.208333333333334
+        "avg": 12.583333333333334
       }
     },
     {
