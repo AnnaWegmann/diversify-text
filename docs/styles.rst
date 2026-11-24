@@ -179,6 +179,11 @@ from blog posts and hotel reviews; see :doc:`age_examples`.
 The examples of ``formal`` and ``informal`` come from the `STEL
 <https://github.com/nlpsoc/STEL>`_ formality sample and the `TinyStyler
 <https://github.com/zacharyhorvitz/TinyStyler>`_ repository.
+The examples of ``barackobama`` are sentences and short passages from
+three of Barack Obama's speeches, taken from the White House
+transcripts: his final press conference and his farewell address (both
+January 2017) and his speech at the 50th anniversary of the Selma
+marches (March 2015).
 
 .. include:: _generated/default_bank.inc
 
@@ -225,8 +230,9 @@ social-media voice well, but not dialects, historical English, or most
 genres, so it uses its own bank of styles it demonstrably handles
 (selected by comparing model outputs for every style; see
 ``evaluations/tinystyler_style_ratings.txt`` in the repository).
-The examples of ``formal`` and ``informal`` are the ones in the default
-style bank; they have changed since that comparison was made.
+The examples of ``formal``, ``informal`` and ``barackobama`` are the
+ones in the default style bank; they have changed since that comparison
+was made.
 
 .. include:: _generated/tinystyler_bank.inc
 

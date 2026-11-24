@@ -64,6 +64,16 @@ We replaced the five PASTEL age leaves (`age_18-24`, `age_25-34`, `age_35-44`, `
 
 We added the `formal` leaf (36 sentences) and the `informal` leaf (64 sentences). `extract_stel_sample.py` reads the 100 formal/informal tasks of the STEL sample. Each task holds two sentence pairs, and a pair is the same content written once formally and once informally. The script keeps the pairs of the tasks on which at least 4 of 5 annotators agreed. From these pairs we picked sentences by hand. For `formal` we kept only sentences that read as formal on their own; most formal sentences in STEL are only formal next to their informal version ("How old are you?"). For `informal` we left out STEL sentences that read as standard English, and insults, jokes, lists and song lyrics. The `informal` leaf also holds 25 example sentences from `generation/target_styles/informal.txt` in the [TinyStyler repository](https://github.com/zacharyhorvitz/TinyStyler), which we kept as they are. In both leaves the texts that show the style most clearly come first, because the prompting method uses only the first 16 texts of a style.
 
+We replaced the texts of the `barackobama` leaf. It held 59 tweets from the Tweets Dataset, but the account was run by staff, and many of its tweets speak about Obama in the third person, so they do not show how he writes or speaks. The leaf now holds 48 texts from three of his speeches, taken from the White House transcripts:
+
+- 27 single sentences from the opening of his [final press conference](https://obamawhitehouse.archives.gov/the-press-office/2017/01/18/remarks-president-final-press-conference) (18 January 2017). These are the example sentences in `generation/target_styles/obama.txt` of the [TinyStyler repository](https://github.com/zacharyhorvitz/TinyStyler).
+- 8 passages from the rest of that press conference, most of them from his answers to reporters' questions.
+- 7 passages from his [farewell address](https://obamawhitehouse.archives.gov/the-press-office/2017/01/10/remarks-president-farewell-address) (10 January 2017).
+- 6 passages from his speech at the [50th anniversary of the Selma marches](https://obamawhitehouse.archives.gov/the-press-office/2015/03/07/remarks-president-50th-anniversary-selma-montgomery-marches) (7 March 2015).
+
+A passage is two to six consecutive sentences (24 to 105 words). We added passages because a single sentence often does not show a speaker's style. We picked them by hand from the first part of each transcript and left out exchanges with the audience, reporters' questions, long lists of names and quotations. "(Applause.)" notes are removed, "(Laughter.)" notes are kept, and curly quotation marks are replaced by straight ones. The leaf alternates between a passage and a single sentence, and the passages alternate between the three speeches, so its first texts cover all of them.
+
+
 ### 5. Generate statistics (optional)
 
 To generate statistics for the resulting StyleBank, run:

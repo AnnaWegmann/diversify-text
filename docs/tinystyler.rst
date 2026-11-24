@@ -53,10 +53,10 @@ error.
 demonstrably handles (``informal``, ``formal``, ``question``, ...),
 selected by running the model on every available style and comparing
 outputs (``evaluations/tinystyler_style_ratings.txt`` in the
-repository).  The examples of ``formal`` and ``informal`` are the ones
-in the package's default style bank.  They have changed since the
-comparison was made, so the ratings of these two styles were made with
-other example texts.
+repository).  The examples of ``formal``, ``informal`` and
+``barackobama`` are the ones in the package's default style bank.  They
+have changed since the comparison was made, so the ratings of these
+three styles were made with other example texts.
 A few additional styles work but are more likely to produce swearing;
 they are selectable by name only.  The :doc:`styles` page lists all of
 them, along with the default bank used by the prompting method.
