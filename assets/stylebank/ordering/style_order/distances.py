@@ -5,9 +5,11 @@
 - embedding: mean cosine distance between every example of one style and
   every example of the other, with the Style-Embedding model
 
-Each matrix is also scaled so that the average pair of styles is 1.0;
-"smallest" is, per pair, the smallest of the three scaled distances, so
-two styles count as close if any one of them says so.
+The three measures have different ranges, so each matrix is scaled so
+that the average pair of styles is 1.0: 0.5 is half as far apart as an
+average pair, 1.5 half again as far.  "smallest" is, per pair, the
+smallest of the three scaled distances, so two styles count as close if
+any one of them says so.
 """
 
 import json
@@ -40,8 +42,9 @@ def style_distances() -> dict:
         "centroids": centroids,
     }
     off_diagonal = ~np.eye(len(names), dtype=bool)
-    scaled = [result[m] / result[m][off_diagonal].mean() for m in MEASURES]
-    result["smallest"] = np.minimum.reduce(scaled)
+    for m in MEASURES:
+        result[m] = result[m] / result[m][off_diagonal].mean()
+    result["smallest"] = np.minimum.reduce([result[m] for m in MEASURES])
     np.fill_diagonal(result["smallest"], 0)
     return result
 

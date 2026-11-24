@@ -3,8 +3,10 @@
 For the first n styles: how many of each category, how many PASTEL
 styles, the closest pair and the mean distance per measure, and the mean
 pairwise Style-Embedding distance between the styles (one averaged vector
-per style).  For every position: the style's distinctiveness rank and the
-distance to the nearest style ranked above it, per measure.
+per style, unscaled cosine distance).  For every position: the style's
+distinctiveness rank and the distance to the nearest style ranked above
+it, per measure.  All per-measure distances are scaled so that an average
+pair of styles in the bank is 1.0 (see ``distances.py``).
 """
 
 from collections import Counter
@@ -22,6 +24,7 @@ def print_report(order: list[str], distances: dict) -> None:
     idx = [names.index(n) for n in order]
     measures = MEASURES + ("smallest",)
 
+    print("Distances are scaled per measure: 1.0 = an average pair of styles in the bank.")
     print("First n styles: closest pair / mean distance per measure")
     print(f"{'n':>3}  {'categories':<44} pastel  " + "  ".join(f"{m:>16}" for m in measures) + "  mean_pw_embedding")
     for n in FIRST_N:
