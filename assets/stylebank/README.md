@@ -97,3 +97,17 @@ stylebank_stats.json
 ```
 
 The file contains various statistics describing the StyleBank.
+
+### 6. Order of the default style bank
+
+`n` selects the first *n* styles of `_BANK_ORDER` in `diversify_text/styles/bank.py`, so the order decides which styles most users see. Two scripts in the `ordering` folder help choose it:
+
+```bash
+cd ordering
+python order_stats.py     # statistics for the current order
+python suggest_order.py   # a suggested order and its statistics
+```
+
+Both compare the styles in three ways: surface patterns (punctuation, capitals, emoji, word and sentence length), function words (how often a style uses small grammatical words such as "the", "she" or "whilst"), and the Style-Embedding model. They print, for the first *n* styles, the categories, the number of PASTEL styles, the closest pair and the mean distance per measure, and for every position the distance to the nearest style above it.
+
+`suggest_order.py` starts with the style most different from all others. It lets the categories take turns, and each time adds the style whose closest already-placed style is farthest away. Two styles count as close if any one of the three measures says so. On top of that come rules that the distances cannot decide, set at the top of `suggest_order.py`: `formal` at position 2 right after `informal`, `age_child` as the first diastratic style, `lyrical` as the next diaphasic style after `formal`, at most one creole in the first 20, and all PASTEL styles last. The current `_BANK_ORDER` is this suggestion. The distances help, but the order remains a judgement call, so edit those rules or the list in `bank.py` by hand as needed. The code the two scripts share is in `ordering/style_order/`.

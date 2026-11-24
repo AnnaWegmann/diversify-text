@@ -25,8 +25,8 @@ The result is a list with one entry per input text, in input order:
 .. code-block:: python
 
    [
-       {"original": "The experiment ...", "paraphrases": [{"style": "digital_communication", "text": "..."}, ...]},
-       {"original": "She graduated ...", "paraphrases": [{"style": "digital_communication", "text": "..."}, ...]},
+       {"original": "The experiment ...", "paraphrases": [{"style": "informal", "text": "..."}, ...]},
+       {"original": "She graduated ...", "paraphrases": [{"style": "informal", "text": "..."}, ...]},
    ]
 
 A single string gives a list with one entry.

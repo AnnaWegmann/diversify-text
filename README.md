@@ -38,11 +38,11 @@ results = diversify("The experiment was conducted in a controlled lab setting.")
 [{
     "original": "The experiment was conducted in a controlled lab setting.",
     "paraphrases": [
-        {"style": "digital_communication", "text": "\"So the whole experiment went down in a totally controlled lab environment.\""},
-        {"style": "informational", "text": "We ran the experiment in a controlled lab environment."},
-        {"style": "spoken_communication", "text": "So, the whole experiment, you know, it was set up in a controlled lab environment."},
-        {"style": "lyrical", "text": "In the sterile confines of the lab, where every variable's held in check,\nWe set the stage, a controlled scene, no room for any wreck.\nEvery measure taken, every step precisely planned,\nIn that controlled setting, we held the testing in our hand."},
-        {"style": "scottish_english", "text": "The experiment was done in a proper lab, all under control."},
+        {"style": "informal", "text": "So, the test happened in a super controlled lab."},
+        {"style": "formal", "text": "The experiment was carried out within a controlled laboratory environment."},
+        {"style": "britneyspears", "text": "So cool, this experiment was done in a super controlled lab setting! 🧪🔬✨✨"},
+        {"style": "bahamian_creole", "text": "We do di experiment in a proper lab, where everything controlled."},
+        {"style": "late_modern_english", "text": "The trial was undertaken within a regulated laboratory environment."},
     ]
 }]
 ```
@@ -62,8 +62,8 @@ results = diversify(
 [{
     "original": "The experiment was conducted in a controlled lab setting.",
     "paraphrases": [
-        {"style": "digital_communication", "text": "\"So, they ran the experiment in a super controlled lab, you know?\""},
-        {"style": "informational", "text": "The experiment took place in a controlled laboratory environment."},
+        {"style": "informal", "text": "So, they did the test in a proper lab, you know?"},
+        {"style": "formal", "text": "The experiment was carried out within a controlled laboratory environment."},
     ]
 }]
 ```
