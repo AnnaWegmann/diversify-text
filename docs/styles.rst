@@ -179,6 +179,9 @@ from blog posts and hotel reviews; see :doc:`age_examples`.
 The examples of ``formal`` and ``informal`` come from the `STEL
 <https://github.com/nlpsoc/STEL>`_ formality sample and the `TinyStyler
 <https://github.com/zacharyhorvitz/TinyStyler>`_ repository.
+The examples of ``age_child`` are speech and school writing of children
+aged 4 to 7, from the CHILDES database and from Durrant & Brenchley
+(2019).
 The examples of ``barackobama`` are sentences and short passages from
 three of Barack Obama's speeches, taken from the White House
 transcripts: his final press conference and his farewell address (both

@@ -1,0 +1,431 @@
+{
+ "age_child": [
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;1",
+   "child": "Abe",
+   "id": "sent_id 25883",
+   "begins": "Hey Daddy do you remember where"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "5;02",
+   "child": "B",
+   "id": "05;02B",
+   "begins": "Well there was a little boy,"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 24_1120a",
+   "begins": "Zappee the shark felt angry and"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Roman",
+   "id": "sent_id 34282",
+   "begins": "Yeah my daddy threw a rock"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "5;10",
+   "child": "I",
+   "id": "05;10I",
+   "begins": "Once upon a time there was"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 5_317b",
+   "begins": "I want a queen who cares"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;2",
+   "child": "Adam",
+   "id": "sent_id 25690",
+   "begins": "Mommy when I be a big"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "4;00",
+   "child": "A",
+   "id": "04;00A",
+   "begins": "He sat down. And he laid"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 2_52c",
+   "begins": "One day the a meerkat mob"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;3",
+   "child": "Laura",
+   "id": "sent_id 9959",
+   "begins": "And Mommy when I'm five can"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "5;08",
+   "child": "E",
+   "id": "05;08E",
+   "begins": "There was a boy, he had"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 2_34a",
+   "begins": "Dear Mum it was great at"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;0",
+   "child": "Abe",
+   "id": "sent_id 33262",
+   "begins": "What if our house was a"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "4;09",
+   "child": "I",
+   "id": "04;09I",
+   "begins": "He had a frog, and when"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 6_636d",
+   "begins": "When the white dragon flew off"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Roman",
+   "id": "sent_id 17287",
+   "begins": "Um I um I have um"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "5;01",
+   "child": "A",
+   "id": "05;01A",
+   "begins": "And then he's oh my gosh,"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 2_49a",
+   "begins": "Long ago in 1605 there was"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;0",
+   "child": "Sarah",
+   "id": "sent_id 29213",
+   "begins": "I hope I don't get next"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "4;06",
+   "child": "D",
+   "id": "04;06D",
+   "begins": "And and um they're chasing after"
+  },
+  {
+   "source": "Growth in Grammar corpus (Durrant & Brenchley 2019)",
+   "age": "Year 2 (6-7)",
+   "child": "not given",
+   "id": "text 2_43a",
+   "begins": "Long ago in 1605 there was"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;9",
+   "child": "Adam",
+   "id": "sent_id 17789",
+   "begins": "I'm going to hide in there"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "5;03",
+   "child": "C",
+   "id": "05;03C",
+   "begins": "The frog and the boy have"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Abe",
+   "id": "sent_id 12830",
+   "begins": "Daddy remember that time we were"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "4;10",
+   "child": "K",
+   "id": "04;10K",
+   "begins": "He caught a frog. It got"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Roman",
+   "id": "sent_id 23939",
+   "begins": "Well you go on rollercoasters and"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "5;10",
+   "child": "H",
+   "id": "05;10H",
+   "begins": "Well it's about a little boy,"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;3",
+   "child": "Laura",
+   "id": "sent_id 20749",
+   "begins": "And one man left and one"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "4;07",
+   "child": "E",
+   "id": "04;07E",
+   "begins": "And then the deer comed. And"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;1",
+   "child": "Adam",
+   "id": "sent_id 15858",
+   "begins": "I like to play in water"
+  },
+  {
+   "source": "Frog stories (Berman & Slobin)",
+   "age": "4;11",
+   "child": "L",
+   "id": "04;11L",
+   "begins": "He's looking in his boot. Now"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Abe",
+   "id": "sent_id 17709",
+   "begins": "Mommy did you know cowboys wear"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Roman",
+   "id": "sent_id 15199",
+   "begins": "Um um yeah well well I"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;1",
+   "child": "Abe",
+   "id": "sent_id 4824",
+   "begins": "It's been a long long time"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;1",
+   "child": "Roman",
+   "id": "sent_id 8131",
+   "begins": "Because um I wanted someone to"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;9",
+   "child": "Adam",
+   "id": "sent_id 6728",
+   "begins": "I hope I can knock dese"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Laura",
+   "id": "sent_id 22973",
+   "begins": "Because every night I useta have"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;0",
+   "child": "Abe",
+   "id": "sent_id 16183",
+   "begins": "And then the next morning when"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Roman",
+   "id": "sent_id 28507",
+   "begins": "Um my uma my cat's name"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;0",
+   "child": "Sarah",
+   "id": "sent_id 33157",
+   "begins": "That's what the big girls say"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Adam",
+   "id": "sent_id 13049",
+   "begins": "Don't you tear it again or"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;0",
+   "child": "Abe",
+   "id": "sent_id 11147",
+   "begins": "Because if you play too rough"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Roman",
+   "id": "sent_id 6292",
+   "begins": "Marshmallow bread is when is when"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Laura",
+   "id": "sent_id 23286",
+   "begins": "I wonder what I wonder what"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;1",
+   "child": "Adam",
+   "id": "sent_id 9901",
+   "begins": "I like to stand up in"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;1",
+   "child": "Abe",
+   "id": "sent_id 6048",
+   "begins": "If I take these boots off"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Roman",
+   "id": "sent_id 27747",
+   "begins": "And and we climbed up the"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Abe",
+   "id": "sent_id 10665",
+   "begins": "And I don't like the strawberry"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;2",
+   "child": "Roman",
+   "id": "sent_id 3203",
+   "begins": "Be because I just made it"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;2",
+   "child": "Adam",
+   "id": "sent_id 27776",
+   "begins": "Who ever heard of a tiger"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;3",
+   "child": "Laura",
+   "id": "sent_id 22142",
+   "begins": "Now I have noone to play"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;0",
+   "child": "Abe",
+   "id": "sent_id 19119",
+   "begins": "There was this guy who lived"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;2",
+   "child": "Roman",
+   "id": "sent_id 12812",
+   "begins": "It had me in it and"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Sarah",
+   "id": "sent_id 2730",
+   "begins": "He can't sit on chairs because"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;2",
+   "child": "Adam",
+   "id": "sent_id 11106",
+   "begins": "I want ta make the prettiest"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "5;0",
+   "child": "Abe",
+   "id": "sent_id 10663",
+   "begins": "I was just thinking about if"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Roman",
+   "id": "sent_id 421",
+   "begins": "I know but I only get"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;7",
+   "child": "Laura",
+   "id": "sent_id 6012",
+   "begins": "It fell itself and then I"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;0",
+   "child": "Adam",
+   "id": "sent_id 27144",
+   "begins": "I work in the morning time"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Abe",
+   "id": "sent_id 23087",
+   "begins": "Oh no my Mom hasn't been"
+  },
+  {
+   "source": "UD-English-CHILDES",
+   "age": "4;6",
+   "child": "Roman",
+   "id": "sent_id 28616",
+   "begins": "Uma we we took them out"
+  }
+ ]
+}
