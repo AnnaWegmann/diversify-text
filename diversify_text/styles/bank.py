@@ -22,10 +22,12 @@ _BANK_ORDER: list[str] = [
     "lyrical",  # diaphasic
     "scottish_english",  # diatopic
     "interactive",  # diaphasic
+    "informal",  # diaphasic
     "britneyspears",  # idiolect
     "late_modern_english",  # diachronic
     "earlier_african_american_vernacular_english",  # diatopic
     "prose", # diaphasic
+    "formal",  # diaphasic
     "age_50-plus",  # diastratic
     "jamaican_creole",  # diatopic
     "barackobama",  # idiolect

@@ -49,11 +49,14 @@ error.
    settings** and **formality transfer**. The model may not perform as expected
    when reproducing other styles.
 
-**Style bank.** TinyStyler does not use the package's default style
-bank: it has its own small bank of styles it demonstrably handles
-(``informal``, ``formal``, ``question``, ...), selected by running the
-model on every available style and comparing outputs
-(``evaluations/tinystyler_style_ratings.txt`` in the repository).
+**Style bank.** TinyStyler has its own small bank of styles it
+demonstrably handles (``informal``, ``formal``, ``question``, ...),
+selected by running the model on every available style and comparing
+outputs (``evaluations/tinystyler_style_ratings.txt`` in the
+repository).  The examples of ``formal`` and ``informal`` are the ones
+in the package's default style bank.  They have changed since the
+comparison was made, so the ratings of these two styles were made with
+other example texts.
 A few additional styles work but are more likely to produce swearing;
 they are selectable by name only.  The :doc:`styles` page lists all of
 them, along with the default bank used by the prompting method.

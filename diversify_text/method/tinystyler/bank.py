@@ -1,13 +1,15 @@
 """TinyStyler's own style banks.
 
 TinyStyler transfers formality and social-media voice well, but not
-dialects, historical English, or most genres, so it does not use the
-package's default style bank.
+dialects, historical English, or most genres, so it uses its own
+selection of styles instead of the package's default style bank.  Some
+of these styles (``formal``, ``informal``, ...) take their example
+texts from the default bank.
 
 ``tinystylerbank.json`` (in this directory) holds the example texts
 that are not in ``stylebank.json``.  Origin of those styles:
-``informal``, ``question``, and ``obama`` come from TinyStyler's own
-documentation, ``formal`` from STEL, the rest from the CORE corpus.
+``question`` and ``obama`` come from TinyStyler's own documentation,
+the rest from the CORE corpus.
 The dict order below is the bank order (``n`` selects from the front).
 """
 
@@ -21,8 +23,8 @@ _TS_json = load_style_bank(
 )
 
 TINYSTYLER_STYLE_BANK: dict[str, list[str]] = {
-    "informal": _TS_json["informal"],
-    "formal": _TS_json["formal"],
+    "informal": DEFAULT_STYLE_BANK["informal"],
+    "formal": DEFAULT_STYLE_BANK["formal"],
     "question": _TS_json["question"],
     "question_answer_forum": _TS_json["question_answer_forum"],
     "discussion_forum": _TS_json["discussion_forum"],
