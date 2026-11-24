@@ -30,12 +30,14 @@ _BANK_ORDER: list[str] = [
     "formal",  # diaphasic
     "age_50-plus",  # diastratic
     "jamaican_creole",  # diatopic
+    "simple",  # diaphasic
     "barackobama",  # idiolect
     "narrative",  # diaphasic
     "age_child",  # diastratic
     "instructional",  # diaphasic
     "arianagrande",  # idiolect
     "welsh_english",  # diatopic
+    "complex",  # diaphasic
     "opinion",  # diaphasic
     "bahamian_creole",  # diatopic
     "persuasive",  # diaphasic

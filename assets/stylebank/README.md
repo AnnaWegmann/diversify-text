@@ -20,6 +20,7 @@ The required source files can be downloaded from the following resources:
 | CORE Corpus (`core`)                   | [GitHub](https://github.com/TurkuNLP/CORE-corpus)                                                           |
 | This American Life Transcripts (`tal`) | [Kaggle](https://www.kaggle.com/datasets/shuyangli94/this-american-life-podcast-transcriptsalignments/data) |
 | STEL formality sample (`stel`)         | [GitHub](https://github.com/nlpsoc/STEL/blob/main/Data/STEL/dimensions/quad_stel-dimension_formal-100_sample.tsv) |
+| OneStopEnglish (`onestop`)             | [GitHub](https://github.com/nishkalavallabhi/OneStopEnglishCorpus), folders `Texts-SeparatedByReadingLevel/Ele-Txt` and `Adv-Txt` |
 
 ### 2. Extract corpus samples
 
@@ -80,6 +81,8 @@ We added the `age_child` leaf with 61 texts by children aged 4 to 7, from three 
 - 7 school texts by Year 2 pupils (ages 6 to 7) from the Growth in Grammar corpus, printed in the supplementary material of Durrant & Brenchley (2019). Their spelling was corrected by the authors. We removed the placeholder for a pupil's name ("Love from Personname.") from one text.
 
 The leaf alternates between the three sources. The first 16 texts are 6 utterances, 5 frog-story texts and 5 school texts. `additional_info/child_sources.json` lists the source, age and child of every text.
+
+We added the `simple` and `complex` leaves, 32 paragraphs each, from the OneStopEnglish corpus. The corpus holds 189 news articles from The Guardian, each rewritten by teachers at three reading levels. `extract_onestop_sample.py` reads the elementary versions for `simple` and the advanced versions for `complex`. It keeps paragraphs of 40 to 110 words without quotations, because quoted speech is the same at every level, and scores each by its words per sentence and its share of words with seven or more letters. Per article it takes the lowest-scoring paragraph for `simple` and the highest-scoring one for `complex`, and keeps the 64 simplest and the 64 most complex. From these we picked 32 per leaf by hand, leaving out paragraphs that are mostly names or figures. The paragraphs that show the style most clearly come first.
 
 
 ### 5. Generate statistics (optional)

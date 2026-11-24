@@ -182,6 +182,10 @@ The examples of ``formal`` and ``informal`` come from the `STEL
 The examples of ``age_child`` are speech and school writing of children
 aged 4 to 7, from the CHILDES database and from Durrant & Brenchley
 (2019).
+The examples of ``simple`` and ``complex`` are paragraphs of news
+articles written at elementary and at advanced reading level, from the
+`OneStopEnglish corpus
+<https://github.com/nishkalavallabhi/OneStopEnglishCorpus>`_.
 The examples of ``barackobama`` are sentences and short passages from
 three of Barack Obama's speeches, taken from the White House
 transcripts: his final press conference and his farewell address (both
