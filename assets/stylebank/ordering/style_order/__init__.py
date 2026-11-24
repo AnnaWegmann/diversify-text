@@ -1,9 +1,9 @@
 """Measure how different the styles of the default bank are, and suggest an order.
 
 Used by ``order_stats.py`` and ``suggest_order.py`` in the folder above.
-Run from ``assets/stylebank``:
+Run from ``assets/stylebank/ordering``:
 
-    from ordering import style_distances, suggest_order, most_distinct, print_report
+    from style_order import style_distances, suggest_order, most_distinct, print_report
 
     distances = style_distances()  # takes a few minutes: embeds every example text
     order = suggest_order(distances, first=most_distinct(distances))

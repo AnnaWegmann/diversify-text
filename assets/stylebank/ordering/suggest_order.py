@@ -2,7 +2,7 @@
 
 The order starts with the most distinct style, lets the categories take
 turns and always adds the style farthest from those already placed, using
-all three measures (see ordering/suggest.py).  The rules below are
+all three measures (see style_order/suggest.py).  The rules below are
 judgement calls on top of the distances.  The suggested list is printed
 in the format of ``_BANK_ORDER`` in bank.py.
 
@@ -11,7 +11,7 @@ Run from this folder:
     python suggest_order.py
 """
 
-from ordering import most_distinct, print_report, style_distances, suggest_order
+from style_order import most_distinct, print_report, style_distances, suggest_order
 
 FIXED = {"formal": 2}  # show the informal/formal contrast right away
 NEXT_IN_CATEGORY = ("age_child", "lyrical")  # first diastratic style; next diaphasic style after formal
