@@ -11,7 +11,7 @@
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 53.29305912596401
+      "avg": 53.30619822907741
     }
   },
   "num_leafs": 86,
@@ -227,7 +227,7 @@
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 53.29305912596401
+    "avg": 53.30619822907741
   },
   "per_branch": {
     "individual": {
@@ -253,7 +253,7 @@
       "sentence_length_words": {
         "min": 2,
         "max": 47219,
-        "avg": 65.17356627421192
+        "avg": 65.19103684010635
       }
     }
   },
@@ -1533,7 +1533,7 @@
       "sentence_length_words": {
         "min": 11,
         "max": 121,
-        "avg": 31.19672131147541
+        "avg": 31.950819672131146
       }
     },
     {
