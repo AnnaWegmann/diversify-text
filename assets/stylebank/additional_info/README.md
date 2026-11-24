@@ -26,7 +26,7 @@ Where each text of the `formal` and `informal` styles comes from. For each style
 
 | Field    | Meaning                                                          |
 | -------- | ---------------------------------------------------------------- |
-| `source` | `STEL formality sample` or `TinyStyler documentation`            |
+| `source` | `STEL formality sample` or `TinyStyler repository`               |
 | `begins` | The first six words of the text, to match the entry to its text  |
 
 If you change the texts of these two styles in `stylebank.json`, change this file in the same way; nothing checks that the two still match.

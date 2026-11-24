@@ -62,6 +62,6 @@ Each leaf node is populated with between 10 and 64 texts (mean: 41 texts per lea
 | Diastratic          | Age: under 25, 25-49, 50 and over | [Blog Authorship Corpus](https://u.cs.biu.ac.il/~koppel/BlogCorpus.htm), [PAN14 author profiling](https://zenodo.org/records/3716008) hotel reviews, see [Sources of the age examples](../../docs/age_examples.rst) |
 | Diastratic          | Gender: female, male | Examples printed in published studies, see [Sources of the gender examples](../../docs/gender_examples.rst)                         |
 | Diaphasic           | All except formal, informal | [CORE Corpus](https://github.com/TurkuNLP/CORE-corpus), [X-Genre Corpus](https://huggingface.co/datasets/TajaKuzmanPungersek/X-GENRE-text-genre-dataset)                                                          |
-| Diaphasic           | Formal, informal     | [STEL](https://github.com/nlpsoc/STEL) formality sample, examples from the [TinyStyler](https://github.com/zacharyhorvitz/TinyStyler) documentation |
+| Diaphasic           | Formal, informal     | [STEL](https://github.com/nlpsoc/STEL) formality sample, examples from the [TinyStyler](https://github.com/zacharyhorvitz/TinyStyler) repository |
 | Diamesic            | Digital              | [Reddit Post Comment Dataset](https://github.com/ishandandekar/Reddit_Post_Comment_Dataset)                                         |
 | Diamesic            | Spoken               | [This American Life Transcripts](https://www.kaggle.com/datasets/shuyangli94/this-american-life-podcast-transcriptsalignments/data) |
