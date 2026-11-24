@@ -1,3 +1,5 @@
 data/core/train.tsv
 data/tal/valid-transcripts-aligned.json
 data/pastel/test/
+data/onestop/Ele-Txt/
+data/onestop/Adv-Txt/
