@@ -1,26 +1,26 @@
 {
   "input_file": "stylebank.json",
   "summary": {
-    "num_leafs": 86,
-    "num_texts": 3515,
+    "num_leafs": 85,
+    "num_texts": 3456,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 40.872093023255815
+      "avg": 40.65882352941176
     },
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 52.63385490753912
+      "avg": 53.271701388888886
     }
   },
-  "num_leafs": 86,
+  "num_leafs": 85,
   "num_leafs_per_group": {
-    "individual": 15,
+    "individual": 14,
     "intra-group": 71
   },
   "num_leafs_per_category": {
-    "idiolect": 15,
+    "idiolect": 14,
     "diachronic": 4,
     "diatopic": 33,
     "diastratic": 22,
@@ -30,7 +30,6 @@
   "leaf_paths_per_category": {
     "individual": [
       "language_variation/individual/idiolect/arianagrande",
-      "language_variation/individual/idiolect/barackobama",
       "language_variation/individual/idiolect/cristiano",
       "language_variation/individual/idiolect/britneyspears",
       "language_variation/individual/idiolect/ddlovato",
@@ -122,7 +121,6 @@
   "leaf_paths_per_style_category": {
     "idiolect": [
       "language_variation/individual/idiolect/arianagrande",
-      "language_variation/individual/idiolect/barackobama",
       "language_variation/individual/idiolect/cristiano",
       "language_variation/individual/idiolect/britneyspears",
       "language_variation/individual/idiolect/ddlovato",
@@ -222,25 +220,25 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 40.872093023255815
+    "avg": 40.65882352941176
   },
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 52.63385490753912
+    "avg": 53.271701388888886
   },
   "per_branch": {
     "individual": {
-      "num_leafs": 15,
+      "num_leafs": 14,
       "sentences_per_leaf": {
         "min": 57,
         "max": 64,
-        "avg": 62.86666666666667
+        "avg": 63.142857142857146
       },
       "sentence_length_words": {
         "min": 3,
         "max": 52,
-        "avg": 16.234358430540826
+        "avg": 16.29864253393665
       }
     },
     "intra-group": {
@@ -274,7 +272,7 @@
       "num_leafs": 33
     },
     "idiolect": {
-      "num_leafs": 15
+      "num_leafs": 14
     }
   },
   "per_leaf": [
@@ -293,23 +291,6 @@
         "min": 10,
         "max": 29,
         "avg": 17.789473684210527
-      }
-    },
-    {
-      "path": [
-        "language_variation",
-        "individual",
-        "idiolect",
-        "barackobama"
-      ],
-      "branch": "individual",
-      "category": "idiolect",
-      "leaf": "barackobama",
-      "num_sentences": 59,
-      "sentence_length_words": {
-        "min": 10,
-        "max": 23,
-        "avg": 15.271186440677965
       }
     },
     {

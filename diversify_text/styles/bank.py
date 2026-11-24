@@ -30,7 +30,7 @@ _BANK_ORDER: list[str] = [
     "formal",  # diaphasic
     "age_50-plus",  # diastratic
     "jamaican_creole",  # diatopic
-    "barackobama",  # idiolect
+    "obama",  # idiolect
     "narrative",  # diaphasic
     "instructional",  # diaphasic
     "arianagrande",  # idiolect
@@ -47,7 +47,6 @@ _BANK_ORDER: list[str] = [
     "ddlovato",  # idiolect
     "pakistani_english",  # diatopic
     "jimmyfallon",  # idiolect
-    "obama",  # idiolect
     "tanzanian_english",  # diatopic
     "education_bachelor",  # diastratic
     "jtimberlake",  # idiolect
