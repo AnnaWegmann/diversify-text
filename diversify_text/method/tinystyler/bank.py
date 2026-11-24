@@ -1,8 +1,10 @@
 """TinyStyler's own style banks.
 
 TinyStyler transfers formality and social-media voice well, but not
-dialects, historical English, or most genres, so it does not use the
-package's default style bank.
+dialects, historical English, or most genres, so it uses its own
+selection of styles instead of the package's default style bank.  Some
+of these styles (``formal``, ``informal``, ...) take their example
+texts from the default bank.
 
 ``tinystylerbank.json`` (in this directory) holds the example texts
 that are not in ``stylebank.json``.  Origin of those styles:
