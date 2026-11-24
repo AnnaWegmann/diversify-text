@@ -7,8 +7,40 @@ authorship-embedding representations.
 
 Given a source text and a set of style example sentences, TinyStyler generates
 a paraphrase that preserves the content while shifting toward the demonstrated
-writing style. ``diversify-text`` cycles through different style groups from a
-configurable *style bank* to produce multiple stylistically diverse outputs.
+writing style. ``diversify-text`` runs it once per target style to produce
+multiple stylistically diverse outputs.
+
+.. note::
+
+   TinyStyler is one of several models trained specifically for style
+   transfer that could be used here.  We intend to add more of them and
+   compare how well they work.  So far, TinyStyler has been fast, with
+   outputs of acceptable quality.
+
+Select it with ``method="tinystyler"``:
+
+.. code-block:: python
+
+   results = diversify(
+       "The experiment was conducted in a controlled lab setting.",
+       method="tinystyler",
+   )
+
+.. code-block:: python
+
+   [{
+       "original": "The experiment was conducted in a controlled lab setting.",
+       "paraphrases": [
+           {"style": "informal", "text": "yeah but the experiment was done in a controlled lab setting."},
+           {"style": "formal", "text": "The experiment was conducted in a controlled lab setting, I believe."},
+           {"style": "question", "text": "The experiment was conducted in a controlled lab setting? I don't see how this could be a problem."},
+           {"style": "question_answer_forum", "text": "Isn't it just because the experiment was conducted in a controlled lab setting?"},
+           {"style": "discussion_forum", "text": "I think it was done in a controlled lab setting. I'm not sure how the experiment went though, but"},
+       ]
+   }]
+
+TinyStyler has a fixed model, so passing ``model`` with it raises an
+error.
 
 .. note::
 

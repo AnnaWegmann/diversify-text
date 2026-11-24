@@ -67,6 +67,10 @@ html_title = "diversify-text"
 
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# The citation on the home page is included from README.md, where it
+# starts at a level-2 heading.
+suppress_warnings = ["myst.header"]
+
 # -- Generated listings --------------------------------------------------
 # The styles page shows every bank with example texts.  The listings are
 # generated from the code at every docs build, so the page cannot drift

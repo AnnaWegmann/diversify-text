@@ -9,11 +9,16 @@ local transformer models or proprietary models through their API.
    :caption: Contents
 
    quickstart
-   usage
    styles
-   gender_examples
-   age_examples
-   longer_texts
-   model_backend
    methods
+   model_backend
+   evaluation
+   inputs_outputs
+   settings
+   under_development
    api
+
+.. include:: ../README.md
+   :parser: myst_parser.sphinx_
+   :start-after: <!-- citation-start -->
+   :end-before: <!-- citation-end -->

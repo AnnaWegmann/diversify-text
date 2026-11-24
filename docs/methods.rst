@@ -1,40 +1,37 @@
 Methods
 =======
 
-``diversify-text`` uses a pluggable method architecture. Each method is a
-:class:`~diversify_text.method.base.DiversificationMethod` subclass that generates
-paraphrases using a different model or algorithm.  The default method is
-``prompting``.
+A method is the way the paraphrases are generated.  The package offers
+two kinds: methods that prompt a general-purpose language model
+(``prompting`` and ``zero_shot``), and models trained specifically for
+style transfer (``tinystyler``).  Choose one with ``method=``.
+
+.. note::
+
+   The default, used when no ``method`` is given, is ``prompting``.
 
 .. list-table::
    :header-rows: 1
-   :widths: 20 15 15 15 35
+   :widths: 20 25 55
 
    * - Method
-     - Model Size
-     - Speed
-     - Performance
+     - Model size
      - Description
-   * - ``tinystyler``
-     - ~800M params
-     - TBD
-     - TBD
-     - Few-shot style transfer using authorship embeddings
    * - ``prompting``
      - ~5B params (default), or an API model
-     - TBD
-     - TBD
-     - Prompt-based paraphrasing using a causal LM
+     - Prompts a language model with example texts of the target style
    * - ``zero_shot``
      - ~5B params (default), or an API model
-     - TBD
-     - TBD
-     - Styles defined by rewrite instructions, via a causal LM
+     - Prompts a language model with a rewrite instruction for the
+       target style, instead of example texts
+   * - ``tinystyler``
+     - ~800M params
+     - Model trained for style transfer; uses example texts of the
+       target style
 
 .. toctree::
    :maxdepth: 1
 
-   tinystyler
    prompting
    zero_shot
-   adding_a_method
+   tinystyler
