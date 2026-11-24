@@ -1,26 +1,26 @@
 {
   "input_file": "stylebank.json",
   "summary": {
-    "num_leafs": 85,
-    "num_texts": 3451,
+    "num_leafs": 86,
+    "num_texts": 3515,
     "texts_per_leaf": {
       "min": 10,
       "max": 64,
-      "avg": 40.6
+      "avg": 40.872093023255815
     },
     "text_length_words": {
       "min": 2,
       "max": 47219,
-      "avg": 53.30889597218198
+      "avg": 52.63385490753912
     }
   },
-  "num_leafs": 85,
+  "num_leafs": 86,
   "num_leafs_per_group": {
-    "individual": 14,
+    "individual": 15,
     "intra-group": 71
   },
   "num_leafs_per_category": {
-    "idiolect": 14,
+    "idiolect": 15,
     "diachronic": 4,
     "diatopic": 33,
     "diastratic": 22,
@@ -42,7 +42,8 @@
       "language_variation/individual/idiolect/rihanna",
       "language_variation/individual/idiolect/selenagomez",
       "language_variation/individual/idiolect/shakira",
-      "language_variation/individual/idiolect/taylorswift13"
+      "language_variation/individual/idiolect/taylorswift13",
+      "language_variation/individual/idiolect/obama"
     ],
     "intra-group": [
       "language_variation/intra-group/diachronic/middle_english",
@@ -133,7 +134,8 @@
       "language_variation/individual/idiolect/rihanna",
       "language_variation/individual/idiolect/selenagomez",
       "language_variation/individual/idiolect/shakira",
-      "language_variation/individual/idiolect/taylorswift13"
+      "language_variation/individual/idiolect/taylorswift13",
+      "language_variation/individual/idiolect/obama"
     ],
     "diachronic": [
       "language_variation/intra-group/diachronic/middle_english",
@@ -220,25 +222,25 @@
   "sentences_per_leaf": {
     "min": 10,
     "max": 64,
-    "avg": 40.6
+    "avg": 40.872093023255815
   },
   "sentence_length_words": {
     "min": 2,
     "max": 47219,
-    "avg": 53.30889597218198
+    "avg": 52.63385490753912
   },
   "per_branch": {
     "individual": {
-      "num_leafs": 14,
+      "num_leafs": 15,
       "sentences_per_leaf": {
         "min": 57,
         "max": 64,
-        "avg": 62.785714285714285
+        "avg": 62.86666666666667
       },
       "sentence_length_words": {
-        "min": 9,
-        "max": 31,
-        "avg": 16.234357224118316
+        "min": 3,
+        "max": 52,
+        "avg": 16.234358430540826
       }
     },
     "intra-group": {
@@ -272,7 +274,7 @@
       "num_leafs": 33
     },
     "idiolect": {
-      "num_leafs": 14
+      "num_leafs": 15
     }
   },
   "per_leaf": [
@@ -512,6 +514,23 @@
         "min": 10,
         "max": 26,
         "avg": 16.78125
+      }
+    },
+    {
+      "path": [
+        "language_variation",
+        "individual",
+        "idiolect",
+        "obama"
+      ],
+      "branch": "individual",
+      "category": "idiolect",
+      "leaf": "obama",
+      "num_sentences": 64,
+      "sentence_length_words": {
+        "min": 3,
+        "max": 52,
+        "avg": 16.234375
       }
     },
     {

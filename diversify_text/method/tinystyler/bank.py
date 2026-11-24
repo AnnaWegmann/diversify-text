@@ -8,8 +8,8 @@ texts from the default bank.
 
 ``tinystylerbank.json`` (in this directory) holds the example texts
 that are not in ``stylebank.json``.  Origin of those styles:
-``question`` and ``obama`` come from TinyStyler's own documentation,
-the rest from the CORE corpus.
+``question`` comes from TinyStyler's own documentation, the rest from
+the CORE corpus.
 The dict order below is the bank order (``n`` selects from the front).
 """
 
@@ -28,7 +28,7 @@ TINYSTYLER_STYLE_BANK: dict[str, list[str]] = {
     "question": _TS_json["question"],
     "question_answer_forum": _TS_json["question_answer_forum"],
     "discussion_forum": _TS_json["discussion_forum"],
-    "obama": _TS_json["obama"],
+    "obama": DEFAULT_STYLE_BANK["obama"],
     "formal_speech": _TS_json["formal_speech"],
     "personal_blog": _TS_json["personal_blog"],
     "song_lyrics": _TS_json["song_lyrics"],
