@@ -1,5 +1,5 @@
-Model backend
-=============
+Models
+======
 
 The :doc:`prompting` and :doc:`zero_shot` methods generate paraphrases
 with a general-purpose language model: an open model that runs
@@ -50,6 +50,25 @@ when the tokenizer provides one.
 
 **Inference backend.** Open models run through the ``transformers``
 library; proprietary models are queried through ``litellm``.
+
+**Precision.** Open models are loaded in bfloat16 by default
+(``precision="auto"``).  Other options are ``"float16"``,
+``"bfloat16"`` and ``None`` (full float32 precision).  Pass it through
+``method_kwargs``:
+
+.. code-block:: python
+
+   results = diversify(
+       "The cat sat on the mat.",
+       method="prompting",
+       method_kwargs={"precision": "float16"},
+   )
+
+or to the method constructor, e.g.
+``PromptingMethod(precision="float16")``.  When you use a
+:class:`~diversify_text.Diversifier`, set it on the method
+constructor: ``precision`` passed to ``Diversifier.diversify`` through
+``method_kwargs`` is ignored.
 
 .. _api-models:
 
@@ -117,13 +136,12 @@ A few things work differently for API models:
   explicitly logs a warning.
 * ``device`` and ``precision`` do not apply.
 * Each paraphrase is one request to the provider, sent one after the
-  other. Requests that fail for a transient reason (rate limit,
-  connection problem, timeout, server error) are retried three times
-  with increasing waits; other errors, such as a wrong API key, are
-  raised at once.
+  other. A failed request is retried up to three times by ``litellm``;
+  which errors are retried and how long it waits in between is decided
+  by ``litellm``.
 * Keep an eye on cost: with ``n`` styles and ``repeats``, the number of
   requests is ``n * repeats`` per input text (times ``n_candidates``
-  with the semantic filter on).
+  with the :ref:`semantic filter <semantic-filter>` on).
 
 .. _which-model:
 
@@ -273,13 +291,3 @@ Friday?*
      - Could ye send it tae me afore Friday?
    * - anthropic/claude-haiku-4-5
      - Could ye no send me yon report afore the Friday, like?
-
-Development
------------
-
-To see the exact prompts sent to the model, enable debug logging:
-
-.. code-block:: python
-
-   import logging
-   logging.basicConfig(level=logging.DEBUG)
