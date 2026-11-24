@@ -5,6 +5,15 @@ Every paraphrase is the input text rewritten in one target style, and
 each target style is defined by a set of example texts.  Pick styles
 from a built-in bank, or define your own.
 
+.. note::
+
+   The example texts of the dialect and social-group styles were written
+   by real people, but the model is not a speaker of these dialects or a
+   member of these groups, and its paraphrases can misrepresent how these
+   groups write or speak.  Read a paraphrase as a text written with the
+   examples of that style in mind, not as authentic language of that
+   group.
+
 Each method has its own style bank, so which style names exist depends
 on the method.  The examples on this page use the default method
 (prompting) and its style bank; all banks are listed under

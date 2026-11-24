@@ -31,18 +31,18 @@ Paraphrase a text in five different styles:
 ```python
 from diversify_text import diversify
 
-results = diversify("The experiment was conducted in a controlled lab setting.")
+results = diversify("I required an alcoholic beverage after viewing the referenced subject.")
 ```
 
 ```python
 [{
-    "original": "The experiment was conducted in a controlled lab setting.",
+    "original": "I required an alcoholic beverage after viewing the referenced subject.",
     "paraphrases": [
-        {"style": "informal", "text": "So, the test happened in a super controlled lab."},
-        {"style": "formal", "text": "The experiment was carried out within a controlled laboratory environment."},
-        {"style": "britneyspears", "text": "So cool, this experiment was done in a super controlled lab setting! 🧪🔬✨✨"},
-        {"style": "bahamian_creole", "text": "We do di experiment in a proper lab, where everything controlled."},
-        {"style": "late_modern_english", "text": "The trial was undertaken within a regulated laboratory environment."},
+        {"style": "informal", "text": "\"Man, after seeing that stuff, I seriously needed a drink.\""},
+        {"style": "formal", "text": "Upon viewing the referenced subject, I found myself requiring an alcoholic beverage."},
+        {"style": "britneyspears", "text": "Needed a little something to unwind after checking that out. 🥂✨"},
+        {"style": "bahamian_creole", "text": "Mi need some drink after I see dat thing."},
+        {"style": "late_modern_english", "text": "Having perused the subject in question, I found myself in need of an alcoholic draught."},
     ]
 }]
 ```
@@ -53,20 +53,30 @@ Choose how many styles you get with `n`:
 
 ```python
 results = diversify(
-    "The experiment was conducted in a controlled lab setting.",
-    n=2,
+    "idk.....but i have faith in you lol",
+    n=10,
 )
 ```
 
 ```python
 [{
-    "original": "The experiment was conducted in a controlled lab setting.",
+    "original": "idk.....but i have faith in you lol",
     "paraphrases": [
-        {"style": "informal", "text": "So, they did the test in a proper lab, you know?"},
-        {"style": "formal", "text": "The experiment was carried out within a controlled laboratory environment."},
+        {"style": "informal", "text": "i dunno... but i totally believe in you haha"},
+        {"style": "formal", "text": "I have confidence in you."},
+        {"style": "britneyspears", "text": "I totally have faith in you, seriously! ✨💖💖"},
+        {"style": "bahamian_creole", "text": "Mi dunno... but mi have faith in yuh, lol."},
+        {"style": "late_modern_english", "text": "Albeit I remain uncertain of the precise matter at hand, yet I hold a firm conviction in your capacity."},
+        {"style": "age_child", "text": "I don't know... but I really believe in you!"},
+        {"style": "digital_communication", "text": "I seriously have faith in you, lol."},
+        {"style": "gender_female", "text": "Ugh, I don't even know... but I really have faith in you, haha."},
+        {"style": "earlier_african_american_vernacular_english", "text": "I dunno... but I got faith in ya, lol."},
+        {"style": "lyrical", "text": "There's a flicker in my soul, a steady light I see,\nA quiet trust that anchors me.\nYeah, I can feel it deep inside,\nThere's a faith in you, nowhere to hide."},
     ]
 }]
 ```
+
+> **Note:** The example texts of the dialect and social-group styles were written by real people, but the model is not a speaker of these dialects or a member of these groups, and its paraphrases can misrepresent how these groups write or speak. Read a paraphrase as a text written with the examples of that style in mind, not as authentic language of that group.
 
 To pick the styles yourself, by name or with your own example texts, see [Styles](https://annawegmann.github.io/diversify_text/styles.html). To paraphrase many texts or a CSV file, see [Inputs and outputs](https://annawegmann.github.io/diversify_text/inputs_outputs.html).
 
