@@ -20,7 +20,7 @@ or add it to a [uv](https://docs.astral.sh/uv/) project:
 uv add diversify-text
 ```
 
-Requires Python 3.10+.
+Requires Python 3.11+.
 
 <!-- install-end -->
 
