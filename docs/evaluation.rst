@@ -35,7 +35,7 @@ faithfulness matters less.
      - ``style_similarity``
      - Higher: closer to the example texts of the target style.
    * - Output diversity
-     - Under construction
+     - ``vendi``, with ``evaluate_diversity()``
      - Higher: the paraphrases of one text differ more from each
        other.
 
@@ -150,9 +150,44 @@ score ``None``, and averages leave them out.
 Output diversity
 ----------------
 
-Under construction.  No metric compares the paraphrases of one text
-with each other yet.  Once one is added, a higher score will mean the
-paraphrases differ more from each other.
+The metrics above compare each paraphrase with its original.  Output
+diversity compares the paraphrases of one text with *each other*, so it
+has its own function, ``evaluate_diversity()``.  It takes the same
+input as ``evaluate()``:
+
+.. code-block:: python
+
+   from diversify_text import evaluate_diversity
+
+   evaluate_diversity(results)
+   evaluate_diversity("bios_diversified.jsonl", granularity="all")
+
+Each input text gets one score, computed over its paraphrases only; the
+original is not included.  The dataset score is the average over input
+texts, so every text counts once however many paraphrases it has.
+``granularity`` is ``"dataset"`` (default), ``"text"`` (one score per
+input text) or ``"all"`` (both); there is no pair level.
+
+* ``vendi``, the `Vendi score <https://arxiv.org/abs/2210.02410>`_
+  computed with `emb-diversity <https://github.com/nlpsoc/emb-diversity>`_,
+  is the effective number of different paraphrases.  It runs from 1
+  (all paraphrases say the same) to the number of paraphrases (all
+  unrelated), so compare it only between runs with the same number of
+  paraphrases per text.  The paraphrases are embedded with
+  `all-mpnet-base-v2 <https://huggingface.co/sentence-transformers/all-mpnet-base-v2>`_,
+  which captures meaning, so the score measures diversity of content.
+  Choose another `sentence-transformers <https://sbert.net>`_ model with
+  ``model``, for example a style model to measure diversity of style:
+
+  .. code-block:: python
+
+     evaluate_diversity(
+         results,
+         metric_kwargs={"vendi": {"model": "AnnaWegmann/Style-Embedding"}},
+     )
+
+Texts with fewer than two paraphrases score ``None`` and are left out
+of the average.  ``device`` works as for ``evaluate()``.
 
 Level of detail
 ---------------
