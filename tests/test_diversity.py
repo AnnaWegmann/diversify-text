@@ -303,6 +303,55 @@ class TestVendiScoreValues(unittest.TestCase):
 
 
 # ------------------------------------------------------------------
+# Type-token ratio
+# ------------------------------------------------------------------
+
+
+class TestTypeTokenRatio(unittest.TestCase):
+
+    def ttr(self, *paraphrase_sets, granularity="text"):
+        records = [{"original": "o", "paraphrases": list(s)} for s in paraphrase_sets]
+        return evaluate_diversity(records, metrics=["ttr"], granularity=granularity)
+
+    def test_tokens_are_pooled_over_the_paraphrases(self):
+        # 6 tokens, 4 types: "the" and "cat" are repeated across paraphrases.
+        result = self.ttr(["The cat sat.", "The cat ran."])
+        self.assertAlmostEqual(result.text[0]["ttr"], 4 / 6)
+
+    def test_identical_paraphrases_halve_the_ratio(self):
+        result = self.ttr(["a b c", "a b c"])
+        self.assertAlmostEqual(result.text[0]["ttr"], 0.5)
+
+    def test_no_repeated_word_scores_one(self):
+        result = self.ttr(["one two", "three four"])
+        self.assertEqual(result.text[0]["ttr"], 1.0)
+
+    def test_punctuation_and_case_are_ignored(self):
+        result = self.ttr(["Hello, world!", "hello world ."])
+        self.assertAlmostEqual(result.text[0]["ttr"], 0.5)
+
+    def test_single_paraphrase_scores_none(self):
+        result = self.ttr(["a b", "c d"], ["only one"], granularity="all")
+        self.assertIsNone(result.text[1]["ttr"])
+        self.assertEqual(result.dataset["ttr"], 1.0)
+
+    def test_paraphrases_without_words_score_none(self):
+        result = self.ttr(["...", "!"])
+        self.assertIsNone(result.text[0]["ttr"])
+
+    def test_dataset_is_the_mean_over_data_points(self):
+        result = self.ttr(["a b", "c d"], ["a a", "a a"], granularity="dataset")
+        self.assertAlmostEqual(result.dataset["ttr"], (1.0 + 0.25) / 2)
+
+    def test_registered_and_takes_no_model(self):
+        from diversify_text._diversity import TypeTokenRatio
+
+        self.assertIs(DIVERSITY_METRIC_REGISTRY["ttr"], TypeTokenRatio)
+        with self.assertRaises(ValueError):
+            TypeTokenRatio(model="x")
+
+
+# ------------------------------------------------------------------
 # Vendi score with the real model
 # ------------------------------------------------------------------
 

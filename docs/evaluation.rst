@@ -35,7 +35,7 @@ faithfulness matters less.
      - ``style_similarity``
      - Higher: closer to the example texts of the target style.
    * - Output diversity
-     - ``vendi``, with ``evaluate_diversity()``
+     - ``vendi``, ``ttr``, with ``evaluate_diversity()``
      - Higher: the paraphrases of one text differ more from each
        other.
 
@@ -185,6 +185,16 @@ input text) or ``"all"`` (both); there is no pair level.
          results,
          metric_kwargs={"vendi": {"model": "AnnaWegmann/Style-Embedding"}},
      )
+
+* ``ttr``, the type-token ratio, is the share of distinct words among
+  all words of a text's paraphrases taken together, so words repeated
+  across paraphrases lower it.  It runs from near 0 (the same words
+  again and again) to 1 (no word used twice) and needs no model.
+  Words are found as in the `lexical-diversity
+  <https://github.com/kristopherkyle/lexical_diversity>`_ package:
+  punctuation is removed, the text lowercased and split at spaces.
+  The ratio falls as texts get longer, so compare it only between runs
+  whose paraphrases have similar lengths and numbers.
 
 Texts with fewer than two paraphrases score ``None`` and are left out
 of the average.  ``device`` works as for ``evaluate()``.
