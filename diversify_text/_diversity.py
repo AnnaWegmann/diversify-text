@@ -11,6 +11,7 @@ paraphrases it has.
 
 from __future__ import annotations
 
+import re
 from collections import Counter
 from typing import Any
 
@@ -129,8 +130,71 @@ class VendiScore(DiversityMetric):
         return scores
 
 
+class TypeTokenRatio(DiversityMetric):
+    """Type-token ratio: the share of distinct words in the paraphrases.
+
+    The paraphrases of a data point are tokenised and pooled, and the
+    score is the number of distinct tokens over the number of tokens,
+    so words repeated *across* paraphrases lower it.  It runs from near
+    0 (the same words over and over) to 1 (no word used twice).  It
+    needs no model.
+
+    Tokenisation and ratio follow ``tokenize`` and ``ttr`` of the
+    ``lexical-diversity`` package (Kristopher Kyle, MIT licence,
+    https://github.com/kristopherkyle/lexical_diversity): punctuation is
+    removed, text is lowercased and split on whitespace.  The code is
+    copied rather than imported because the last release of that
+    package no longer imports with current ``setuptools``.  Empty
+    tokens, which its tokeniser leaves behind around removed
+    punctuation and leading or trailing spaces, are dropped.
+
+    TTR falls as texts get longer, so compare it only between runs with
+    paraphrases of similar length and number.
+    """
+
+    name = "ttr"
+
+    def compute(self, paraphrase_sets):
+        scores: list[float | None] = []
+        for texts in paraphrase_sets:
+            if len(texts) < self.min_size:
+                scores.append(None)
+                continue
+            tokens = [t for text in texts for t in _tokenize(text) if t]
+            scores.append(_ttr(tokens) if tokens else None)
+        return scores
+
+
+# --- from lexical_diversity/lex_div.py (Kristopher Kyle, MIT licence) ---
+
+_PUNCTUATION = "`` '' ' . , ? ! ) ( % / - _ -LRB- -RRB- SYM : ;".split(" ")
+
+
+def _tokenize(raw_text: str) -> list[str]:
+    for x in _PUNCTUATION:
+        raw_text = raw_text.replace(x, "")
+    raw_text = re.sub(r"\s+", " ", raw_text)
+    raw_text = raw_text.lower()
+    return raw_text.split(" ")
+
+
+def _safe_divide(numerator: float, denominator: float) -> float:
+    if denominator == 0 or denominator == 0.0:
+        return 0
+    return numerator / denominator
+
+
+def _ttr(text: list[str]) -> float:
+    ntokens = len(text)
+    ntypes = len(set(text))
+    return _safe_divide(ntypes, ntokens)
+
+
+# --- end of lexical_diversity code ---
+
+
 DIVERSITY_METRIC_REGISTRY: dict[str, type[DiversityMetric]] = {
-    cls.name: cls for cls in (VendiScore,)
+    cls.name: cls for cls in (VendiScore, TypeTokenRatio)
 }
 
 
@@ -204,7 +268,8 @@ def evaluate_diversity(
         The value returned by :func:`diversify`, or a path to a
         ``.jsonl`` file it wrote.
     metrics : list of str or DiversityMetric, optional
-        Which metrics to run.  ``None`` runs all of them: ``vendi``.
+        Which metrics to run.  ``None`` runs all of them: ``vendi`` and
+        ``ttr``.
     metric_kwargs : dict, optional
         Per-metric keyword arguments keyed by metric name, e.g.
         ``{"vendi": {"model": "all-MiniLM-L6-v2"}}``.
