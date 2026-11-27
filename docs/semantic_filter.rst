@@ -22,28 +22,26 @@ style, it just runs a bit longer.
 Example
 -------
 
-The same text with the filter off and on.  Both calls use the same
-seed, so they start from the same paraphrases:
+The same question with the filter off and on, with the same seed:
 
 .. code-block:: python
 
-   text = "idk.....but i have faith in you lol"
+   text = "Where did you put the keys to the bike shed?"
+   styles = ["informal", "formal", "gender_female"]
 
-   without_filter = diversify(text, seed=51173)
-   with_filter = diversify(text, seed=51173, semantic_filter=True)
+   without_filter = diversify(text, styles=styles, seed=1)
+   with_filter = diversify(text, styles=styles, seed=1, semantic_filter=True)
 
 Without the filter:
 
 .. code-block:: python
 
    [{
-       "original": "idk.....but i have faith in you lol",
+       "original": "Where did you put the keys to the bike shed?",
        "paraphrases": [
-           {"style": "informal", "text": "i dunno... but i totally believe in you haha"},
-           {"style": "formal", "text": "I have confidence in you."},
-           {"style": "britneyspears", "text": "Sending you some serious good vibes! ✨ I totally have faith in you, girl! 💖💖"},
-           {"style": "bahamian_creole", "text": "Mi dunno... but mi got faith in yuh, lol."},
-           {"style": "late_modern_english", "text": "Alas, I confess I harbor a certain trust in your being."},
+           {"style": "informal", "text": "\"Yo, where'd you stash the bike shed keys?\""},
+           {"style": "formal", "text": "Could you please inform me of the location of the keys to the bike shed?"},
+           {"style": "gender_female", "text": "\"Ugh, where did I put the keys to the bike shed? I can't find them anywhere!\""},
        ]
    }]
 
@@ -52,21 +50,19 @@ With the filter:
 .. code-block:: python
 
    [{
-       "original": "idk.....but i have faith in you lol",
+       "original": "Where did you put the keys to the bike shed?",
        "paraphrases": [
-           {"style": "informal", "text": "i dunno... but i totally believe in you haha"},
-           {"style": "formal", "text": "I have confidence in you."},
-           {"style": "britneyspears", "text": "\"Honestly, I totally have faith in you, you know? 😉\""},
-           {"style": "bahamian_creole", "text": "Mi dunno... but mi got faith in yuh, lol."},
-           {"style": "late_modern_english", "text": "Alas, I confess I harbor a certain trust in your being."},
+           {"style": "informal", "text": "\"Yo, where'd you stash the bike shed keys?\""},
+           {"style": "formal", "text": "Could you please inform me of the location of the keys to the bike shed?"},
+           {"style": "gender_female", "text": "Ugh, where did you put the keys to the bike shed?"},
        ]
    }]
 
-Four of the five paraphrases are the same.  The ``britneyspears``
-paraphrase without the filter starts with a sentence that is not in
-the original, and scored 0.60, below the default ``min_score`` of
-0.70.  With the filter it is replaced by another attempt, which scored
-0.78.
+The ``informal`` and ``formal`` paraphrases are the same.  Without the
+filter, the ``gender_female`` paraphrase asks where *I* put the keys
+and no longer where *you* put them.  It scored 0.15, below the
+default ``min_score`` of 0.70.  With the filter it is replaced by
+another attempt, which asks the original question and scored 0.90.
 
 What the filter does
 --------------------
