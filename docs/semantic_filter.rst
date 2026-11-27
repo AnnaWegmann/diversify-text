@@ -83,6 +83,15 @@ What the filter does
 4. If no attempt reaches ``min_score``, the attempt with the highest
    score is kept and a warning is logged.
 
+.. note::
+
+   The Mutual Implication Score may not work well for styles that are
+   very different from the original.  It can give a low score to a
+   paraphrase that keeps the meaning, for example in
+   ``late_modern_english``.  Asking a language model to judge whether
+   a paraphrase keeps the meaning (an LLM as a judge) might work better
+   for such styles.  This is under construction.
+
 Settings
 --------
 
