@@ -3,10 +3,10 @@
 Semantic filter
 ===============
 
-A paraphrase can lose or change part of what the original says.  With
+A paraphrase can deviate quite a lot from the original.  With
 ``semantic_filter=True``, every paraphrase is generated several times
 and checked against the original, and the attempt that keeps the
-meaning is returned:
+meaning the most is returned:
 
 .. code-block:: python
 
@@ -17,10 +17,8 @@ meaning is returned:
        semantic_filter=True,
    )
 
-The result looks the same as without the filter: one paraphrase per
-style.  The filter never removes a paraphrase, and the attempts are
-compared within one style, so you get the same styles as without the
-filter.
+The output looks the same as without the filter: one paraphrase per
+style, it just runs a bit longer.  
 
 What the filter does
 --------------------
