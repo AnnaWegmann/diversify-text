@@ -19,6 +19,51 @@ original, and a paraphrase that deviates too much is generated again:
 The output looks the same as without the filter: one paraphrase per
 style, it just runs a bit longer.  
 
+Example
+-------
+
+The same question with the filter off and on, with the same seed:
+
+.. code-block:: python
+
+   text = "Where did you put the keys to the bike shed?"
+   styles = ["informal", "formal", "gender_female"]
+
+   without_filter = diversify(text, styles=styles, seed=1)
+   with_filter = diversify(text, styles=styles, seed=1, semantic_filter=True)
+
+Without the filter:
+
+.. code-block:: python
+
+   [{
+       "original": "Where did you put the keys to the bike shed?",
+       "paraphrases": [
+           {"style": "informal", "text": "\"Yo, where'd you stash the bike shed keys?\""},
+           {"style": "formal", "text": "Could you please inform me of the location of the keys to the bike shed?"},
+           {"style": "gender_female", "text": "\"Ugh, where did I put the keys to the bike shed? I can't find them anywhere!\""},
+       ]
+   }]
+
+With the filter:
+
+.. code-block:: python
+
+   [{
+       "original": "Where did you put the keys to the bike shed?",
+       "paraphrases": [
+           {"style": "informal", "text": "\"Yo, where'd you stash the bike shed keys?\""},
+           {"style": "formal", "text": "Could you please inform me of the location of the keys to the bike shed?"},
+           {"style": "gender_female", "text": "Ugh, where did you put the keys to the bike shed?"},
+       ]
+   }]
+
+The ``informal`` and ``formal`` paraphrases are the same.  Without the
+filter, the ``gender_female`` paraphrase asks where *I* put the keys
+and no longer where *you* put them.  It scored 0.15, below the
+default ``min_score`` of 0.70.  With the filter it is replaced by
+another attempt, which asks the original question and scored 0.90.
+
 What the filter does
 --------------------
 
@@ -33,6 +78,28 @@ What the filter does
    ``max_attempts`` times.
 4. If no attempt reaches ``min_score``, the attempt with the highest
    score is kept and a warning is logged.
+
+Examples of scores
+------------------
+
+A paraphrase that keeps the meaning gets a high score:
+
+* Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
+* ``late_modern_english``, score 0.91: "It is a matter of record that Stephen Hawking came into the world on the eighth day of January in the year of our Lord nineteen forty-two, being the issue of Frank and Isobel Hawking."
+
+There is quite some difficulty generally when it comes to judging whether a paraphrase kept the original meaning. Arguably, no paraphrase fully keeps the meaning of the original. And MIS seems to generally lower for styles that look different from the original, or is generally less "standard".
+
+For example:
+* Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
+* ``lyrical``, score 0.24: "Born on January eighth, nineteen forty-two, that's when Stephen Hawking came to light, / From Frank and Isobel, a pair of light."
+
+With the filter on, such a paraphrase is generated again although it keeps the meaning. One might then end up with a worse version when it comes to style consistency if just relying on the MIS score.
+
+.. note::
+
+   Asking a language model to judge whether a paraphrase keeps the
+   meaning (an LLM-as-a-judge) might work better for such styles.
+   This is under construction.
 
 Settings
 --------
