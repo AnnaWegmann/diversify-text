@@ -87,26 +87,18 @@ A paraphrase that keeps the meaning gets a high score:
 * Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
 * ``late_modern_english``, score 0.91: "It is a matter of record that Stephen Hawking came into the world on the eighth day of January in the year of our Lord nineteen forty-two, being the issue of Frank and Isobel Hawking."
 
-A paraphrase that changes the meaning gets a low score.  Here the
-question turns into a statement:
+There is quite some difficulty generally when it comes to judging whether a paraphrase kept the original meaning. Arguably, no paraphrase fully keeps the meaning of the original. And MIS seems to generally lower for styles that look different from the original, or is generally less "standard".
 
-* Original: "Do you know what time the last train to Amsterdam leaves?"
-* ``digital_communication``, score 0.50: "Seriously, who even knows what time the last train to Amsterdam is? I'm totally clueless."
-
-A problem case: the score can also be low for a paraphrase that keeps
-the meaning, when its style is very different from the original.  This
-one keeps the date and the names of the parents:
-
+For example:
 * Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
 * ``lyrical``, score 0.24: "Born on January eighth, nineteen forty-two, that's when Stephen Hawking came to light, / From Frank and Isobel, a pair of light."
 
-With the filter on, such a paraphrase is generated again although it
-keeps the meaning.
+With the filter on, such a paraphrase is generated again although it keeps the meaning. One might then end up with a worse version when it comes to style consistency if just relying on the MIS score.
 
 .. note::
 
    Asking a language model to judge whether a paraphrase keeps the
-   meaning (an LLM as a judge) might work better for such styles.
+   meaning (an LLM-as-a-judge) might work better for such styles.
    This is under construction.
 
 Settings
