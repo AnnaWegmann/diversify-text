@@ -22,9 +22,8 @@
 ## Keeping the meaning of the original
 
 A paraphrase can lose or change part of what the original says. With
-`semantic_filter=True`, every paraphrase is generated several times and
-checked against the original, and the attempt that keeps the meaning
-is returned:
+`semantic_filter=True`, every paraphrase is checked against the
+original, and a paraphrase that changed too much is generated again:
 
 ```python
 results = diversify(
