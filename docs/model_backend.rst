@@ -140,7 +140,7 @@ A few things work differently for API models:
   which errors are retried and how long it waits in between is decided
   by ``litellm``.
 * Keep an eye on cost: with ``n`` styles and ``repeats``, the number of
-  requests is ``n * repeats`` per input text (times ``n_candidates``
+  requests is ``n * repeats`` per input text (times ``max_attempts``
   with the :ref:`semantic filter <semantic-filter>` on).
 
 .. _which-model:

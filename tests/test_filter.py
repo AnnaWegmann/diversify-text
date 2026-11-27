@@ -59,16 +59,15 @@ class TestMISFilterIntegration(unittest.TestCase):
         div = Diversifier(
             method="echo",
             semantic_filter=True,
-            min_score=0.90,
-            n_candidates=3,
+            filter_kwargs={"min_score": 0.90, "max_attempts": 3},
         )
         self.assertIsNotNone(div._mis_filter)
         self.assertEqual(div._mis_filter.min_score, 0.90)
-        self.assertEqual(div._mis_filter.n_candidates, 3)
+        self.assertEqual(div._mis_filter.max_attempts, 3)
 
     def test_selects_best_candidate_for_failed_style(self):
-        div = self._make_diversifier(min_score=0.80, n_candidates=3)
-        # n=2, n_candidates=3.
+        div = self._make_diversifier(filter_kwargs={"min_score": 0.80, "max_attempts": 3})
+        # n=2, max_attempts=3.
         # IndexedMethod produces: c0 → ["hello:s0:c0", "hello:s1:c0"]
         #                         c1 → ["hello:s0:c1", "hello:s1:c1"]
         #                         c2 → ["hello:s0:c2", "hello:s1:c2"]
@@ -89,7 +88,7 @@ class TestMISFilterIntegration(unittest.TestCase):
         self.assertEqual(self._mock_score.call_count, 3)
 
     def test_keeps_best_even_if_all_below_threshold(self):
-        div = self._make_diversifier(min_score=0.80, n_candidates=3)
+        div = self._make_diversifier(filter_kwargs={"min_score": 0.80, "max_attempts": 3})
         self._mock_score.side_effect = [
             [0.3],   # candidate 0: fails
             [0.6],   # candidate 1: still below

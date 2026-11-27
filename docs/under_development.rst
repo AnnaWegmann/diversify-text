@@ -7,44 +7,6 @@ Under development
    ``diversify-text``.  They may change or be removed in a future
    release.
 
-.. _semantic-filter:
-
-Semantic filter
----------------
-
-The semantic filter scores each paraphrase with the
-`Mutual Implication Score <https://huggingface.co/s-nlp/Mutual_Implication_Score>`_
-model (how well the paraphrase and the original imply each other) and
-keeps the best of several candidates.  Candidates are compared per
-style, so the filter does not reduce stylistic diversity:
-
-.. code-block:: python
-
-   results = diversify(
-       "The experiment was conducted in a controlled lab setting.",
-       semantic_filter=True,
-   )
-
-``n_candidates`` (default 3) sets how many candidates are generated per
-paraphrase, and ``min_score`` (default 0.70) is the score a candidate
-should reach:
-
-.. code-block:: python
-
-   results = diversify(
-       "The experiment was conducted in a controlled lab setting.",
-       semantic_filter=True,
-       n_candidates=5,
-       min_score=0.8,
-   )
-
-All candidates are always generated, so generation costs styles ×
-``repeats`` × ``n_candidates`` model calls per input text.
-
-With a :class:`~diversify_text.Diversifier`, turn the filter on in the
-constructor: ``Diversifier(semantic_filter=True,
-n_candidates=5, min_score=0.8)``.
-
 Longer texts
 ------------
 

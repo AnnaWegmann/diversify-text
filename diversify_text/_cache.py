@@ -21,7 +21,7 @@ from typing import Any, Callable
 
 from diversify_text._metrics import clear_metric_cache
 from diversify_text._utils import default_device
-from diversify_text.filter.mis import MISFilter, _DEFAULT_MIN_SCORE, _DEFAULT_N_CANDIDATES
+from diversify_text.filter.mis import MISFilter, _DEFAULT_MIN_SCORE, _DEFAULT_MAX_ATTEMPTS
 
 #: All cached loaders, registered by :func:`model_cache`.
 _MODEL_CACHES: list[Any] = []
@@ -52,7 +52,7 @@ def model_cache(loader: Callable) -> Callable:
 
 # ------------------------------------------------------------------
 # MIS filter (cached loader + thin wrapper for cheap per-call
-# settings like min_score and n_candidates)
+# settings like min_score and max_attempts)
 # ------------------------------------------------------------------
 
 @model_cache
@@ -63,29 +63,31 @@ def _load_mis_filter(device: str) -> MISFilter:
 
 def get_cached_mis_filter(
     device: str | None,
-    **filter_kwargs: Any,
+    *,
+    min_score: float = _DEFAULT_MIN_SCORE,
+    max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
 ) -> MISFilter:
     """Return cached MIS filter, reloading only when *device* changes.
 
     Thin wrapper around :func:`_load_mis_filter`.  The model load is
     cached (expensive); this function just applies cheap per-call
-    threshold settings on the existing instance.  Changing
-    ``min_score`` or ``n_candidates`` between calls does not trigger a
-    model reload — only a device change does.
+    settings on the existing instance.  Changing ``min_score`` or
+    ``max_attempts`` between calls does not trigger a model reload —
+    only a device change does.
 
     Parameters
     ----------
     device : str or None
         Torch device.  ``None`` resolves to :func:`default_device`.
-    **filter_kwargs
-        ``min_score`` and ``n_candidates``.  Missing keys reset to
-        their defaults so that omitting a kwarg doesn't leave a stale
-        value from a previous call.
+    min_score, max_attempts
+        See :class:`~diversify_text.filter.mis.MISFilter`.  A setting
+        that is left out is reset to its default, so it doesn't keep a
+        stale value from a previous call.
     """
     device = device or default_device()
     mis_filter = _load_mis_filter(device)
-    mis_filter.min_score = filter_kwargs.get("min_score", _DEFAULT_MIN_SCORE)
-    mis_filter.n_candidates = filter_kwargs.get("n_candidates", _DEFAULT_N_CANDIDATES)
+    mis_filter.min_score = min_score
+    mis_filter.max_attempts = max_attempts
     return mis_filter
 
 
