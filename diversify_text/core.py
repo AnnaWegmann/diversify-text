@@ -9,6 +9,7 @@ input text.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from functools import partial
 import logging
 from itertools import islice
 from pathlib import Path
@@ -64,11 +65,12 @@ class Diversifier:
         fixed model (``"tinystyler"``).
     semantic_filter : bool
         When ``True``, score each paraphrase with the Mutual Implication
-        Score model and select the best candidate above a minimum score.
+        Score model and regenerate the ones below a minimum score.
     filter_kwargs : dict, optional
         Settings of the semantic filter: ``min_score`` (default 0.70),
         the score a paraphrase should reach, and ``max_attempts``
-        (default 3), how many times each paraphrase is generated.
+        (default 3), how many times a paraphrase is generated at most,
+        counting the first time.
 
     Example
     -------
@@ -157,8 +159,7 @@ class Diversifier:
         repeats : int
             How many paraphrases to generate per style (default 1).
             The output interleaves the styles: style A, style B,
-            style A, style B.  With the semantic filter on, generation
-            cost is styles x repeats x ``max_attempts``.
+            style A, style B.
         text_column : str
             Column name to extract when *texts* points to a CSV/TSV file.
         batch_size : int
@@ -282,11 +283,12 @@ class Diversifier:
             self._apply_seed(seed)
 
         # --- process batches lazily ---
-        n_candidates = (
-            self._mis_filter.max_attempts
-            if self._mis_filter is not None
-            else 1
-        )
+        generation_kwargs = {
+            "max_new_tokens": max_new_tokens,
+            "temperature": temperature,
+            "top_p": top_p,
+            "method_kwargs": method_kwargs,
+        }
         writer = OutputWriter(input_context, len(style_dict) * repeats, out_path)
         writer.open()
         try:
@@ -300,33 +302,33 @@ class Diversifier:
                         batch_texts, **preprocess_kwargs
                     )
 
-                    # Generate n_candidates sets of paraphrases.  Each
-                    # set holds one full style round per repeat, so the
-                    # styles interleave: style A, style B, style A, ...
-                    all_candidates: list[list[list[str]]] = []
-                    for _ in range(n_candidates):
-                        candidate = [[] for _ in generation_texts]
-                        for _ in range(repeats):
-                            style_round = self._diversify_batch(
-                                batch_texts=generation_texts,
-                                style_dict=style_dict,
-                                max_new_tokens=max_new_tokens,
-                                temperature=temperature,
-                                top_p=top_p,
-                                method_kwargs=method_kwargs,
-                            )
-                            for row, extra in zip(candidate, style_round):
-                                row.extend(extra)
-                        candidate = postprocess(candidate, preprocess_context)
-                        all_candidates.append(candidate)
+                    # Each row holds one full style round per repeat, so
+                    # the styles interleave: style A, style B, style A, ...
+                    paraphrases_by_text = [[] for _ in generation_texts]
+                    for _ in range(repeats):
+                        style_round = self._diversify_batch(
+                            batch_texts=generation_texts,
+                            style_dict=style_dict,
+                            **generation_kwargs,
+                        )
+                        for row, extra in zip(paraphrases_by_text, style_round):
+                            row.extend(extra)
+                    paraphrases_by_text = postprocess(
+                        paraphrases_by_text, preprocess_context
+                    )
 
                     if self._mis_filter is not None:
-                        paraphrases_by_text = self._mis_filter.select_best(
-                            batch_texts=batch_texts,
-                            all_candidates=all_candidates,
+                        paraphrases_by_text = self._mis_filter.replace_low_scoring(
+                            batch_texts,
+                            paraphrases_by_text,
+                            regenerate=partial(
+                                self._regenerate,
+                                batch_texts=batch_texts,
+                                style_dict=style_dict,
+                                preprocess_kwargs=preprocess_kwargs,
+                                **generation_kwargs,
+                            ),
                         )
-                    else:
-                        paraphrases_by_text = all_candidates[0]
 
                     # Label each paraphrase with the style that produced
                     # it (the style names cycle once per repeat).
@@ -372,12 +374,53 @@ class Diversifier:
         *,
         batch_texts: list[str],
         style_dict: dict[str, list[str]],
+        **generation_kwargs: Any,
+    ) -> list[list[str]]:
+        pairs = [(text, style) for style in style_dict for text in batch_texts]
+        paraphrases = self._generate(pairs, style_dict, **generation_kwargs)
+        num_texts = len(batch_texts)
+        return [paraphrases[text_idx::num_texts] for text_idx in range(num_texts)]
+
+    def _regenerate(
+        self,
+        positions: list[tuple[int, int]],
+        *,
+        batch_texts: list[str],
+        style_dict: dict[str, list[str]],
+        preprocess_kwargs: Mapping[str, Any],
+        **generation_kwargs: Any,
+    ) -> list[str]:
+        """Generate one new paraphrase per (text index, paraphrase index).
+
+        All of them are generated in one call to the method.
+        """
+        styles = list(style_dict)
+        pairs: list[tuple[str, str]] = []
+        contexts = []
+        for text_idx, paraphrase_idx in positions:
+            generation_texts, context = preprocess(
+                [batch_texts[text_idx]], **preprocess_kwargs
+            )
+            style = styles[paraphrase_idx % len(styles)]
+            pairs.extend((text, style) for text in generation_texts)
+            contexts.append((len(generation_texts), context))
+
+        paraphrases = iter(self._generate(pairs, style_dict, **generation_kwargs))
+        return [
+            postprocess([[p] for p in islice(paraphrases, n)], context)[0][0]
+            for n, context in contexts
+        ]
+
+    def _generate(
+        self,
+        pairs: list[tuple[str, str]],
+        style_dict: dict[str, list[str]],
+        *,
         max_new_tokens: int | None,
         temperature: float | None,
         top_p: float | None,
         method_kwargs: Mapping[str, Any],
-    ) -> list[list[str]]:
-        pairs = [(text, style) for style in style_dict for text in batch_texts]
+    ) -> list[str]:
         paraphrases = self._method.generate(
             pairs,
             style_dict,
@@ -387,8 +430,7 @@ class Diversifier:
             **method_kwargs,
         )
         self._validate_paraphrases(paraphrases, pairs)
-        num_texts = len(batch_texts)
-        return [paraphrases[text_idx::num_texts] for text_idx in range(num_texts)]
+        return paraphrases
 
     @staticmethod
     def _validate_paraphrases(
@@ -451,11 +493,12 @@ def diversify(
         fixed model (``"tinystyler"``).
     semantic_filter : bool
         When ``True``, score each paraphrase with the Mutual Implication
-        Score model and select the best candidate above a minimum score.
+        Score model and regenerate the ones below a minimum score.
     filter_kwargs : dict, optional
         Settings of the semantic filter: ``min_score`` (default 0.70),
         the score a paraphrase should reach, and ``max_attempts``
-        (default 3), how many times each paraphrase is generated.
+        (default 3), how many times a paraphrase is generated at most,
+        counting the first time.
     **kwargs
         Forwarded to :meth:`Diversifier.diversify`
         (``n``, ``styles``, ``style_texts``, ``max_len_style_text``,

@@ -6,50 +6,85 @@ from unittest.mock import MagicMock
 from diversify_text import Diversifier
 from diversify_text.filter.mis import MISFilter
 
-from tests.fixtures import IndexedMethod
+from tests.fixtures import AttemptMethod
 
 
-class TestMISFilterUnit(unittest.TestCase):
-    """Unit tests for MISFilter in isolation."""
+class TestReplaceLowScoring(unittest.TestCase):
+    """MISFilter.replace_low_scoring with a mocked MIS model."""
 
-    def setUp(self):
-        self.f = MISFilter(min_score=0.80)
+    def test_only_paraphrases_below_min_score_are_regenerated(self):
+        mis_filter = MISFilter(min_score=0.7)
+        mis_filter.score = MagicMock(side_effect=[[0.9, 0.4], [0.8]])
+        regenerate = MagicMock(return_value=["A storm raged through the dark night."])
 
-    def test_score_batch_reshapes_correctly(self):
-        self.f.score = MagicMock(
-            return_value=[0.9, 0.5, 0.8, 0.7, 0.6, 0.95]
+        mis_filter.replace_low_scoring(
+            ["It was a dark and stormy night."],
+            [["The night was dark and stormy.", "It was a bright and sunny day."]],
+            regenerate,
         )
 
-        scores = self.f.score_batch(
-            ["text1", "text2"],
-            [["p1a", "p1b", "p1c"], ["p2a", "p2b", "p2c"]],
+        regenerate.assert_called_once_with([(0, 1)])
+
+    def test_regenerated_paraphrase_replaces_the_low_scoring_one(self):
+        mis_filter = MISFilter(min_score=0.7)
+        mis_filter.score = MagicMock(side_effect=[[0.9, 0.4], [0.8]])
+        regenerate = MagicMock(return_value=["A storm raged through the dark night."])
+
+        paraphrases = mis_filter.replace_low_scoring(
+            ["It was a dark and stormy night."],
+            [["The night was dark and stormy.", "It was a bright and sunny day."]],
+            regenerate,
         )
-        self.assertEqual(scores, [[0.9, 0.5, 0.8], [0.7, 0.6, 0.95]])
 
-    def test_identify_failures(self):
-        failures = self.f.identify_failures([[0.9, 0.5, 0.8], [0.7, 0.6, 0.95]])
-        self.assertEqual(failures, [[1], [0, 1]])
+        self.assertEqual(
+            paraphrases,
+            [["The night was dark and stormy.", "A storm raged through the dark night."]],
+        )
 
-    def test_identify_failures_none_below(self):
-        failures = self.f.identify_failures([[0.9, 0.85]])
-        self.assertEqual(failures, [[]])
+    def test_nothing_is_regenerated_when_all_reach_min_score(self):
+        mis_filter = MISFilter(min_score=0.7)
+        mis_filter.score = MagicMock(return_value=[0.9, 0.8])
+        regenerate = MagicMock()
 
-    def test_score_batch_empty(self):
-        scores = self.f.score_batch(["text"], [[]])
-        self.assertEqual(scores, [[]])
+        mis_filter.replace_low_scoring(
+            ["It was a dark and stormy night."],
+            [["The night was dark and stormy.", "A storm raged through the dark night."]],
+            regenerate,
+        )
+
+        regenerate.assert_not_called()
+
+    def test_best_attempt_is_kept_when_none_reaches_min_score(self):
+        mis_filter = MISFilter(min_score=0.7, max_attempts=3)
+        mis_filter.score = MagicMock(side_effect=[[0.3], [0.6], [0.5]])
+        regenerate = MagicMock(
+            side_effect=[["The night was stormy."], ["The weather was bad."]]
+        )
+
+        paraphrases = mis_filter.replace_low_scoring(
+            ["It was a dark and stormy night."],
+            [["It was a bright and sunny day."]],
+            regenerate,
+        )
+
+        self.assertEqual(paraphrases, [["The night was stormy."]])
+
+    def test_paraphrase_is_generated_at_most_max_attempts_times(self):
+        mis_filter = MISFilter(min_score=0.7, max_attempts=3)
+        mis_filter.score = MagicMock(return_value=[0.3])
+        regenerate = MagicMock(return_value=["It was a bright and sunny day."])
+
+        mis_filter.replace_low_scoring(
+            ["It was a dark and stormy night."],
+            [["It was a bright and sunny day."]],
+            regenerate,
+        )
+
+        self.assertEqual(regenerate.call_count, 2)
 
 
 class TestMISFilterIntegration(unittest.TestCase):
     """Integration tests: MISFilter wired into Diversifier."""
-
-    def _make_diversifier(self, **kwargs):
-        """Create a Diversifier with IndexedMethod and a mocked MIS scorer."""
-        kwargs.setdefault("method", IndexedMethod())
-        kwargs.setdefault("semantic_filter", True)
-        div = Diversifier(**kwargs)
-        self._mock_score = MagicMock()
-        div._mis_filter.score = self._mock_score
-        return div
 
     def test_no_filter_by_default(self):
         div = Diversifier(method="echo")
@@ -65,41 +100,50 @@ class TestMISFilterIntegration(unittest.TestCase):
         self.assertEqual(div._mis_filter.min_score, 0.90)
         self.assertEqual(div._mis_filter.max_attempts, 3)
 
-    def test_selects_best_candidate_for_failed_style(self):
-        div = self._make_diversifier(filter_kwargs={"min_score": 0.80, "max_attempts": 3})
-        # n=2, max_attempts=3.
-        # IndexedMethod produces: c0 → ["hello:s0:c0", "hello:s1:c0"]
-        #                         c1 → ["hello:s0:c1", "hello:s1:c1"]
-        #                         c2 → ["hello:s0:c2", "hello:s1:c2"]
-        self._mock_score.side_effect = [
-            [0.5, 0.9],    # candidate 0: style 0 fails
-            [0.85, 0.92],  # candidate 1: style 0 passes
-            [0.7, 0.88],   # candidate 2: style 0 passes
-        ]
+    def test_low_scoring_paraphrase_is_regenerated_in_its_style(self):
+        div = Diversifier(method=AttemptMethod(), semantic_filter=True)
+        div._mis_filter.score = MagicMock(side_effect=[[0.9, 0.4], [0.8]])
 
-        results = div.diversify("hello", n=2)
-        paraphrases = results[0]["paraphrases"]
-        self.assertEqual(len(paraphrases), 2)
-        # Style 0: first candidate failed (0.5), best is candidate 1 (0.85).
-        self.assertEqual(paraphrases[0]["text"], "hello:s0:c1")
-        # Style 1: first candidate passed (0.9), kept as-is.
-        self.assertEqual(paraphrases[1]["text"], "hello:s1:c0")
-        # 3 score calls: first candidate + 2 remaining.
-        self.assertEqual(self._mock_score.call_count, 3)
+        results = div.diversify(
+            "It was a dark and stormy night.", styles=["formal", "informal"]
+        )
 
-    def test_keeps_best_even_if_all_below_threshold(self):
-        div = self._make_diversifier(filter_kwargs={"min_score": 0.80, "max_attempts": 3})
-        self._mock_score.side_effect = [
-            [0.3],   # candidate 0: fails
-            [0.6],   # candidate 1: still below
-            [0.5],   # candidate 2: still below
-        ]
+        self.assertEqual(
+            results[0]["paraphrases"],
+            [
+                {"style": "formal", "text": "It was a dark and stormy night. (formal, attempt 1)"},
+                {"style": "informal", "text": "It was a dark and stormy night. (informal, attempt 2)"},
+            ],
+        )
 
-        results = div.diversify("hello", n=1)
-        paraphrases = results[0]["paraphrases"]
-        self.assertEqual(len(paraphrases), 1)
-        # Best score is 0.6 from candidate 1.
-        self.assertEqual(paraphrases[0]["text"], "hello:s0:c1")
+    def test_low_scoring_paraphrases_of_different_styles_are_regenerated_together(self):
+        div = Diversifier(method=AttemptMethod(), semantic_filter=True)
+        div._mis_filter.score = MagicMock(side_effect=[[0.4, 0.4], [0.8, 0.8]])
+
+        results = div.diversify(
+            "It was a dark and stormy night.", styles=["formal", "informal"]
+        )
+
+        self.assertEqual(
+            results[0]["paraphrases"],
+            [
+                {"style": "formal", "text": "It was a dark and stormy night. (formal, attempt 2)"},
+                {"style": "informal", "text": "It was a dark and stormy night. (informal, attempt 2)"},
+            ],
+        )
+
+    def test_low_scoring_repeat_is_regenerated_in_its_style(self):
+        div = Diversifier(method=AttemptMethod(), semantic_filter=True)
+        div._mis_filter.score = MagicMock(side_effect=[[0.9, 0.9, 0.9, 0.4], [0.8]])
+
+        results = div.diversify(
+            "It was a dark and stormy night.", styles=["formal", "informal"], repeats=2
+        )
+
+        self.assertEqual(
+            results[0]["paraphrases"][3],
+            {"style": "informal", "text": "It was a dark and stormy night. (informal, attempt 3)"},
+        )
 
 
 if __name__ == "__main__":
