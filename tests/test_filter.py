@@ -145,6 +145,25 @@ class TestMISFilterIntegration(unittest.TestCase):
             {"style": "informal", "text": "It was a dark and stormy night. (informal, attempt 3)"},
         )
 
+    def test_low_scoring_texts_split_into_sentences_are_regenerated_whole(self):
+        div = Diversifier(method=AttemptMethod(), semantic_filter=True)
+        div._mis_filter.score = MagicMock(side_effect=[[0.4, 0.4], [0.8, 0.8]])
+
+        results = div.diversify(
+            ["It was a dark and stormy night. The rain fell in torrents.", "Call me Ishmael."],
+            styles=["formal"],
+            preprocess_kwargs={"split_on_punctuation": True},
+        )
+
+        self.assertEqual(
+            [result["paraphrases"][0]["text"] for result in results],
+            [
+                "It was a dark and stormy night. (formal, attempt 2) "
+                "The rain fell in torrents. (formal, attempt 2)",
+                "Call me Ishmael. (formal, attempt 2)",
+            ],
+        )
+
 
 if __name__ == "__main__":
     unittest.main()
