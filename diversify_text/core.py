@@ -9,6 +9,7 @@ input text.
 from __future__ import annotations
 
 from collections.abc import Mapping
+from functools import partial
 import logging
 from itertools import islice
 from pathlib import Path
@@ -62,6 +63,14 @@ class Diversifier:
         ``"anthropic/claude-haiku-4-5"``, with the API key in the
         environment).  Raises a ``ValueError`` for methods with a
         fixed model (``"tinystyler"``).
+    semantic_filter : bool
+        When ``True``, score each paraphrase with the Mutual Implication
+        Score model and regenerate the ones below a minimum score.
+    filter_kwargs : dict, optional
+        Settings of the semantic filter: ``min_score`` (default 0.70),
+        the score a paraphrase should reach, and ``max_attempts``
+        (default 3), how many times a paraphrase is generated at most,
+        counting the first time.
 
     Example
     -------
@@ -80,8 +89,8 @@ class Diversifier:
         method: str | DiversificationMethod | None = None,
         model: str | None = None,
         semantic_filter: bool = False,
+        filter_kwargs: dict[str, Any] | None = None,
         _mis_filter: MISFilter | None = None,
-        **filter_kwargs: Any,
     ) -> None:
         self.device = device
         if method is None:
@@ -92,7 +101,7 @@ class Diversifier:
         if _mis_filter is not None:
             self._mis_filter = _mis_filter
         elif semantic_filter:
-            self._mis_filter = MISFilter(device=device, **filter_kwargs)
+            self._mis_filter = MISFilter(device=device, **(filter_kwargs or {}))
         else:
             self._mis_filter: MISFilter | None = None
 
@@ -150,8 +159,7 @@ class Diversifier:
         repeats : int
             How many paraphrases to generate per style (default 1).
             The output interleaves the styles: style A, style B,
-            style A, style B.  With the semantic filter on, generation
-            cost is styles x repeats x ``n_candidates``.
+            style A, style B.
         text_column : str
             Column name to extract when *texts* points to a CSV/TSV file.
         batch_size : int
@@ -275,12 +283,16 @@ class Diversifier:
             self._apply_seed(seed)
 
         # --- process batches lazily ---
-        n_candidates = (
-            self._mis_filter.n_candidates
-            if self._mis_filter is not None
-            else 1
-        )
-        writer = OutputWriter(input_context, len(style_dict) * repeats, out_path)
+        generation_kwargs = {
+            "max_new_tokens": max_new_tokens,
+            "temperature": temperature,
+            "top_p": top_p,
+            "method_kwargs": method_kwargs,
+        }
+        # One style per paraphrase of a text (the style names cycle
+        # once per repeat).
+        slot_styles = list(style_dict) * repeats
+        writer = OutputWriter(input_context, len(slot_styles), out_path)
         writer.open()
         try:
             with tqdm(total=input_context.total, desc="Diversifying", unit="text") as pbar:
@@ -289,41 +301,29 @@ class Diversifier:
                     if not batch_texts:
                         break
 
-                    generation_texts, preprocess_context = preprocess(
-                        batch_texts, **preprocess_kwargs
+                    paraphrases_by_text = self._paraphrase(
+                        batch_texts,
+                        style_dict,
+                        repeats=repeats,
+                        preprocess_kwargs=preprocess_kwargs,
+                        **generation_kwargs,
                     )
 
-                    # Generate n_candidates sets of paraphrases.  Each
-                    # set holds one full style round per repeat, so the
-                    # styles interleave: style A, style B, style A, ...
-                    all_candidates: list[list[list[str]]] = []
-                    for _ in range(n_candidates):
-                        candidate = [[] for _ in generation_texts]
-                        for _ in range(repeats):
-                            style_round = self._diversify_batch(
-                                batch_texts=generation_texts,
-                                style_dict=style_dict,
-                                max_new_tokens=max_new_tokens,
-                                temperature=temperature,
-                                top_p=top_p,
-                                method_kwargs=method_kwargs,
-                            )
-                            for row, extra in zip(candidate, style_round):
-                                row.extend(extra)
-                        candidate = postprocess(candidate, preprocess_context)
-                        all_candidates.append(candidate)
-
                     if self._mis_filter is not None:
-                        paraphrases_by_text = self._mis_filter.select_best(
-                            batch_texts=batch_texts,
-                            all_candidates=all_candidates,
+                        paraphrases_by_text = self._mis_filter.replace_low_scoring(
+                            batch_texts,
+                            paraphrases_by_text,
+                            regenerate=partial(
+                                self._regenerate,
+                                batch_texts=batch_texts,
+                                slot_styles=slot_styles,
+                                style_dict=style_dict,
+                                preprocess_kwargs=preprocess_kwargs,
+                                **generation_kwargs,
+                            ),
                         )
-                    else:
-                        paraphrases_by_text = all_candidates[0]
 
-                    # Label each paraphrase with the style that produced
-                    # it (the style names cycle once per repeat).
-                    slot_styles = list(style_dict) * repeats
+                    # Label each paraphrase with the style that produced it.
                     labeled_by_text = [
                         [
                             {"style": style_name, "text": paraphrase}
@@ -359,6 +359,63 @@ class Diversifier:
         except ImportError:
             pass
         logger.info("Using random seed: %d", seed)
+
+    def _paraphrase(
+        self,
+        texts: list[str],
+        style_dict: dict[str, list[str]],
+        *,
+        repeats: int,
+        preprocess_kwargs: Mapping[str, Any],
+        **generation_kwargs: Any,
+    ) -> list[list[str]]:
+        """Paraphrase each text into every style, *repeats* times.
+
+        Each row holds one full style round per repeat, so the styles
+        interleave: style A, style B, style A, ...
+        """
+        generation_texts, preprocess_context = preprocess(texts, **preprocess_kwargs)
+        paraphrases: list[list[str]] = [[] for _ in generation_texts]
+        for _ in range(repeats):
+            style_round = self._diversify_batch(
+                batch_texts=generation_texts,
+                style_dict=style_dict,
+                **generation_kwargs,
+            )
+            for row, extra in zip(paraphrases, style_round):
+                row.extend(extra)
+        return postprocess(paraphrases, preprocess_context)
+
+    def _regenerate(
+        self,
+        positions: list[tuple[int, int]],
+        *,
+        batch_texts: list[str],
+        slot_styles: list[str],
+        style_dict: dict[str, list[str]],
+        preprocess_kwargs: Mapping[str, Any],
+        **generation_kwargs: Any,
+    ) -> list[str]:
+        """Generate one new paraphrase per (text index, paraphrase index).
+
+        The method is called once per style, with all texts that need a
+        new paraphrase in that style.
+        """
+        new_paraphrases: dict[tuple[int, int], str] = {}
+        for style_name in style_dict:
+            style_positions = [p for p in positions if slot_styles[p[1]] == style_name]
+            if not style_positions:
+                continue
+            rows = self._paraphrase(
+                [batch_texts[text_idx] for text_idx, _ in style_positions],
+                {style_name: style_dict[style_name]},
+                repeats=1,
+                preprocess_kwargs=preprocess_kwargs,
+                **generation_kwargs,
+            )
+            for position, row in zip(style_positions, rows):
+                new_paraphrases[position] = row[0]
+        return [new_paraphrases[p] for p in positions]
 
     def _diversify_batch(
         self,
@@ -415,6 +472,7 @@ def diversify(
     method: str | DiversificationMethod | None = None,
     model: str | None = None,
     semantic_filter: bool = False,
+    filter_kwargs: dict[str, Any] | None = None,
     **kwargs,
 ) -> DiversifyOutput:
     """One-shot convenience function: create a :class:`Diversifier` and run it.
@@ -424,9 +482,8 @@ def diversify(
     filter per ``device``, independently of each other.  Switching
     ``semantic_filter`` on or off reuses the cached generation model,
     changing the method reuses the cached MIS filter, and per-call
-    options never trigger a model reload; changing filter thresholds
-    (``min_score``, ``n_candidates``) updates the existing MIS filter
-    instance rather than reloading it.
+    options never trigger a model reload; changing ``filter_kwargs``
+    updates the existing MIS filter instance rather than reloading it.
 
     Parameters
     ----------
@@ -447,10 +504,14 @@ def diversify(
         fixed model (``"tinystyler"``).
     semantic_filter : bool
         When ``True``, score each paraphrase with the Mutual Implication
-        Score model and select the best candidate above a minimum score.
+        Score model and regenerate the ones below a minimum score.
+    filter_kwargs : dict, optional
+        Settings of the semantic filter: ``min_score`` (default 0.70),
+        the score a paraphrase should reach, and ``max_attempts``
+        (default 3), how many times a paraphrase is generated at most,
+        counting the first time.
     **kwargs
-        Forwarded to :class:`Diversifier` (``min_score``,
-        ``n_candidates``) and :meth:`Diversifier.diversify`
+        Forwarded to :meth:`Diversifier.diversify`
         (``n``, ``styles``, ``style_texts``, ``max_len_style_text``,
         ``repeats``, ``text_column``, ``batch_size``, ``max_new_tokens``,
         ``temperature``, ``top_p``, ``seed``, ``method_kwargs``,
@@ -466,10 +527,6 @@ def diversify(
     The internal cache is not thread-safe.  For multi-threaded
     applications, use :class:`Diversifier` directly.
     """
-    # Separate filter kwargs from diversify() kwargs.
-    filter_keys = {"min_score", "n_candidates"}
-    filter_kwargs = {k: kwargs.pop(k) for k in filter_keys if k in kwargs}
-
     # Resolve the method (same default as Diversifier).  No model is
     # loaded and nothing is cached here — the method object just stores
     # its configuration.  The model is loaded on first use, when
@@ -492,7 +549,11 @@ def diversify(
         **resolve_kwargs,
     )
 
-    mis_filter = _cache.get_cached_mis_filter(device, **filter_kwargs) if semantic_filter else None
+    mis_filter = (
+        _cache.get_cached_mis_filter(device, **(filter_kwargs or {}))
+        if semantic_filter
+        else None
+    )
 
     # The filter has no public object parameter, hence the private one.
     div = Diversifier(device=device, method=resolved_method, _mis_filter=mis_filter)

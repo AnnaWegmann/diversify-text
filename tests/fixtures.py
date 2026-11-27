@@ -46,23 +46,22 @@ class CountingMethod(DiversificationMethod):
         ]
 
 
-class IndexedMethod(DiversificationMethod):
+class AttemptMethod(DiversificationMethod):
     """Returns different paraphrases on each generate() call.
 
-    Output format: ``<text>:s<style>:c<call>``, allowing tests to identify
-    exactly which candidate and style a selected paraphrase came from.
+    Output format: ``<text> (<style>, attempt <call>)``, so tests can tell
+    which style and which generate() call a paraphrase came from.
     """
 
-    name = "indexed"
+    name = "attempt"
 
     def __init__(self) -> None:
-        self.call_count = 0
+        self.attempt = 0
 
     def generate(self, texts, style_dict, *, max_new_tokens=None,
                  temperature=None, top_p=None, **kwargs):
-        result = [
-            [f"{text}:s{i}:c{self.call_count}" for i in range(len(style_dict))]
+        self.attempt += 1
+        return [
+            [f"{text} ({style}, attempt {self.attempt})" for style in style_dict]
             for text in texts
         ]
-        self.call_count += 1
-        return result

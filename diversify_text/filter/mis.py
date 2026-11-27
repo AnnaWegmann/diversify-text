@@ -1,20 +1,19 @@
 """MIS-based content preservation filter.
 
 Uses the `Mutual Implication Score <https://huggingface.co/s-nlp/Mutual_Implication_Score>`_
-to score paraphrases against their originals and identify those that fall below
-a content-preservation threshold.
+to score paraphrases against their originals and regenerate those that fall
+below a content-preservation threshold.
 """
 
 from __future__ import annotations
 
 import logging
-
-from tqdm import tqdm
+from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
 _DEFAULT_MIN_SCORE = 0.70
-_DEFAULT_N_CANDIDATES = 3
+_DEFAULT_MAX_ATTEMPTS = 3
 
 
 class MISFilter:
@@ -28,11 +27,11 @@ class MISFilter:
         Torch device for the MIS model (e.g. ``"cpu"``, ``"cuda"``).
     min_score : float
         Minimum acceptable MIS score.  Paraphrases scoring below this
-        are considered failures.
-    n_candidates : int
-        Number of alternative paraphrases to generate for each
-        below-threshold paraphrase.  The best-scoring candidate
-        replaces the original.
+        are generated again.
+    max_attempts : int
+        How many times a paraphrase is generated at most, counting the
+        first time.  A paraphrase is only generated again while it
+        scores below *min_score*.
     """
 
     def __init__(
@@ -40,13 +39,13 @@ class MISFilter:
         device: str | None = None,
         *,
         min_score: float = _DEFAULT_MIN_SCORE,
-        n_candidates: int = _DEFAULT_N_CANDIDATES,
+        max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
     ) -> None:
         from diversify_text._utils import default_device
 
         self.device = device or default_device()
         self.min_score = min_score  # validated by setter
-        self.n_candidates = n_candidates  # validated by setter
+        self.max_attempts = max_attempts  # validated by setter
         self._mis = None
 
     @property
@@ -60,14 +59,14 @@ class MISFilter:
         self._min_score = value
 
     @property
-    def n_candidates(self) -> int:
-        return self._n_candidates
+    def max_attempts(self) -> int:
+        return self._max_attempts
 
-    @n_candidates.setter
-    def n_candidates(self, value: int) -> None:
+    @max_attempts.setter
+    def max_attempts(self, value: int) -> None:
         if value < 1:
-            raise ValueError("n_candidates must be at least 1")
-        self._n_candidates = value
+            raise ValueError("max_attempts must be at least 1")
+        self._max_attempts = value
 
     def prepare(self) -> None:
         """Pre-load the MIS model."""
@@ -153,138 +152,71 @@ class MISFilter:
             preds.extend(merged_prob.cpu().flatten().tolist())
         return preds
 
-    def score_batch(
+    def replace_low_scoring(
         self,
         originals: list[str],
         paraphrases_by_text: list[list[str]],
-    ) -> list[list[float]]:
-        """Score all paraphrases for a batch of originals.
-
-        Flattens the nested structure, scores in one MIS call, then
-        reshapes back.
-
-        Returns
-        -------
-        list[list[float]]
-            Scores shaped ``[n_texts][n]``.
-        """
-        flat_originals: list[str] = []
-        flat_paraphrases: list[str] = []
-        sizes: list[int] = []
-        for orig, paras in zip(originals, paraphrases_by_text):
-            for p in paras:
-                flat_originals.append(orig)
-                flat_paraphrases.append(p)
-            sizes.append(len(paras))
-
-        total = len(flat_originals)
-        if total == 0:
-            return [[] for _ in originals]
-
-        logger.info("Scoring %d paraphrase(s) with MIS ...", total)
-        flat_scores = self.score(flat_originals, flat_paraphrases)
-
-        result: list[list[float]] = []
-        idx = 0
-        for size in sizes:
-            result.append(flat_scores[idx : idx + size])
-            idx += size
-        return result
-
-    def identify_failures(
-        self,
-        scores_by_text: list[list[float]],
-    ) -> list[list[int]]:
-        """Return indices of paraphrases below *min_score* for each text.
-
-        Returns
-        -------
-        list[list[int]]
-            For each text, a list of style indices that failed.
-        """
-        return [
-            [i for i, s in enumerate(scores) if s < self.min_score]
-            for scores in scores_by_text
-        ]
-
-    def select_best(
-        self,
-        batch_texts: list[str],
-        all_candidates: list[list[list[str]]],
+        regenerate: Callable[[list[tuple[int, int]]], list[str]],
     ) -> list[list[str]]:
-        """Select the best paraphrase per style from pre-generated candidates.
+        """Regenerate the paraphrases that score below *min_score*.
 
-        Scores the first candidate set; if all pass, returns it immediately.
-        Otherwise scores remaining candidates and picks the highest-scoring
-        option per (text, style) position.
+        Every paraphrase is scored once.  Those below *min_score* are
+        generated again and scored again, until they reach *min_score*
+        or have been generated *max_attempts* times.  A paraphrase that
+        never reaches *min_score* is replaced by its best-scoring
+        attempt.
 
         Parameters
         ----------
-        batch_texts : list[str]
+        originals : list[str]
             Original input texts.
-        all_candidates : list[list[list[str]]]
-            Shape ``[n_candidates][n_texts][n]``.  Each candidate set
-            contains the same styles in the same order, produced by separate
-            calls to the generation method with temperature sampling.
+        paraphrases_by_text : list[list[str]]
+            The first paraphrases, shape ``[n_texts][n]``.
+        regenerate : callable
+            Takes a list of ``(text index, paraphrase index)`` pairs and
+            returns one new paraphrase for each pair, in the same order.
 
         Returns
         -------
         list[list[str]]
-            Shape ``[n_texts][n]`` — one paraphrase per style.
+            Shape ``[n_texts][n]``, with the same styles in the same
+            places as *paraphrases_by_text*.
         """
-        n_candidates = len(all_candidates)
-        n_texts = len(batch_texts)
-        n = len(all_candidates[0][0]) if n_texts > 0 else 0
-
-        # Score the first candidate set.
-        first_scores = self.score_batch(batch_texts, all_candidates[0])
-        failures = self.identify_failures(first_scores)
-        total_failures = sum(len(fl) for fl in failures)
-
-        if total_failures == 0:
-            return [list(row) for row in all_candidates[0]]
-
-        for t_idx, failed_styles in enumerate(failures):
-            for s_idx in failed_styles:
-                logger.info(
-                    "MIS filter: text %d, style %d scored %.2f (below %.2f).",
-                    t_idx, s_idx, first_scores[t_idx][s_idx], self.min_score,
-                )
-        logger.info(
-            "MIS filter: %d/%d paraphrase(s) below %.2f. "
-            "Selecting from %d candidates.",
-            total_failures, n_texts * n, self.min_score, n_candidates,
+        best = [list(row) for row in paraphrases_by_text]
+        positions = [
+            (text_idx, paraphrase_idx)
+            for text_idx, row in enumerate(best)
+            for paraphrase_idx in range(len(row))
+        ]
+        scores = self.score(
+            [originals[text_idx] for text_idx, _ in positions],
+            [best[text_idx][paraphrase_idx] for text_idx, paraphrase_idx in positions],
         )
+        best_score = dict(zip(positions, scores))
 
-        # Score remaining candidate sets.
-        all_scores = [first_scores]
-        for candidate in all_candidates[1:]:
-            all_scores.append(self.score_batch(batch_texts, candidate))
+        for _ in range(self.max_attempts - 1):
+            below = [p for p in positions if best_score[p] < self.min_score]
+            if not below:
+                break
+            logger.info(
+                "MIS filter: regenerating %d/%d paraphrase(s) below %.2f.",
+                len(below), len(positions), self.min_score,
+            )
+            new_paraphrases = regenerate(below)
+            new_scores = self.score(
+                [originals[text_idx] for text_idx, _ in below], new_paraphrases
+            )
+            for position, paraphrase, score in zip(below, new_paraphrases, new_scores):
+                if score > best_score[position]:
+                    text_idx, paraphrase_idx = position
+                    best[text_idx][paraphrase_idx] = paraphrase
+                    best_score[position] = score
 
-        # For each (text, style): keep first candidate if it passes,
-        # otherwise pick the best across all candidates.
-        result = [list(row) for row in all_candidates[0]]
-        for t_idx, failed_styles in enumerate(failures):
-            for s_idx in failed_styles:
-                best_c = max(
-                    range(n_candidates),
-                    key=lambda c: all_scores[c][t_idx][s_idx],
-                )
-                result[t_idx][s_idx] = all_candidates[best_c][t_idx][s_idx]
-
-        # Log any remaining below-threshold paraphrases.
-        below = sum(
-            1
-            for t_idx, failed_styles in enumerate(failures)
-            for s_idx in failed_styles
-            if max(all_scores[c][t_idx][s_idx] for c in range(n_candidates))
-            < self.min_score
-        )
-        if below > 0:
+        still_below = sum(score < self.min_score for score in best_score.values())
+        if still_below:
             logger.warning(
                 "MIS filter: %d/%d paraphrases remain below %.2f. "
                 "Keeping best-scoring attempts.",
-                below, n_texts * n, self.min_score,
+                still_below, len(positions), self.min_score,
             )
-
-        return result
+        return best

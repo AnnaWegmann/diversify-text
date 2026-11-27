@@ -18,3 +18,18 @@
 :start-after: <!-- quickstart-start -->
 :end-before: <!-- quickstart-end -->
 ```
+
+## Keeping the meaning of the original
+
+A paraphrase can lose or change part of what the original says. With
+`semantic_filter=True`, every paraphrase is checked against the
+original, and the ones that changed too much are generated again:
+
+```python
+results = diversify(
+    "I required an alcoholic beverage after viewing the referenced subject.",
+    semantic_filter=True,
+)
+```
+
+See {doc}`semantic_filter` for how the check works and what it costs.
