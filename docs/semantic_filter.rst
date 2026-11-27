@@ -20,6 +20,55 @@ meaning the most is returned:
 The output looks the same as without the filter: one paraphrase per
 style, it just runs a bit longer.  
 
+Example
+-------
+
+The same text with the filter off and on.  Both calls use the same
+seed, so they start from the same paraphrases:
+
+.. code-block:: python
+
+   text = "idk.....but i have faith in you lol"
+
+   without_filter = diversify(text, seed=51173)
+   with_filter = diversify(text, seed=51173, semantic_filter=True)
+
+Without the filter:
+
+.. code-block:: python
+
+   [{
+       "original": "idk.....but i have faith in you lol",
+       "paraphrases": [
+           {"style": "informal", "text": "i dunno... but i totally believe in you haha"},
+           {"style": "formal", "text": "I have confidence in you."},
+           {"style": "britneyspears", "text": "Sending you some serious good vibes! ✨ I totally have faith in you, girl! 💖💖"},
+           {"style": "bahamian_creole", "text": "Mi dunno... but mi got faith in yuh, lol."},
+           {"style": "late_modern_english", "text": "Alas, I confess I harbor a certain trust in your being."},
+       ]
+   }]
+
+With the filter:
+
+.. code-block:: python
+
+   [{
+       "original": "idk.....but i have faith in you lol",
+       "paraphrases": [
+           {"style": "informal", "text": "i dunno... but i totally believe in you haha"},
+           {"style": "formal", "text": "I have confidence in you."},
+           {"style": "britneyspears", "text": "\"Honestly, I totally have faith in you, you know? 😉\""},
+           {"style": "bahamian_creole", "text": "Mi dunno... but mi got faith in yuh, lol."},
+           {"style": "late_modern_english", "text": "Alas, I confess I harbor a certain trust in your being."},
+       ]
+   }]
+
+Four of the five paraphrases are the same.  The ``britneyspears``
+paraphrase without the filter starts with a sentence that is not in
+the original, and scored 0.60, below the default ``min_score`` of
+0.70.  With the filter it is replaced by another attempt, which scored
+0.78.
+
 What the filter does
 --------------------
 
