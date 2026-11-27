@@ -103,6 +103,8 @@ class TinyStylerMethod(DiversificationMethod):
 
         paraphrases: list[str] = [""] * len(pairs)
 
+        # dict.fromkeys keeps each style once, in the order of first
+        # appearance in pairs.
         for style in dict.fromkeys(style for _, style in pairs):
             pair_indices = [i for i, (_, s) in enumerate(pairs) if s == style]
             batch = model.transfer(
