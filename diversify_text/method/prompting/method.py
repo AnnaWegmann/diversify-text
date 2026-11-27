@@ -112,8 +112,8 @@ class PromptingMethod(CausalLMMethod):
         self,
         template: str,
         text: str,
-        style_idx: int | None = None,
-        fs_style_examples: dict[str, list[str]] | None = None,
+        style_name: str,
+        style_examples: list[str],
         n_style_examples: int = _DEFAULT_N_STYLE_EXAMPLES,
     ) -> str:
         """Replace all placeholders in a template to produce a ready prompt.
@@ -125,54 +125,33 @@ class PromptingMethod(CausalLMMethod):
             ``[STYLE EXAMPLES]``, and optionally ``[STYLE NAME]``.
         text : str
             The input text to insert at ``[DOCUMENT SEGMENT]``.
-        style_idx : int or None
-            Index into *fs_style_examples* (cycled with modulo).  Each
-            paraphrase iteration uses a different style set.  When
-            there are fewer styles than paraphrases, styles are reused.
-            Required when *fs_style_examples* has more than one entry.
-        fs_style_examples : dict[str, list[str]] or None
-            Mapping of style names to example sentences.
+        style_name : str
+            Name of the target style, inserted at ``[STYLE NAME]``.
+        style_examples : list[str]
+            Example sentences of the target style, inserted at
+            ``[STYLE EXAMPLES]``.
         n_style_examples : int
-            Maximum number of example sentences to include from the
-            selected style sets.
+            Maximum number of example sentences to include.
 
         Returns
         -------
         str
             Fully filled prompt string, ready for generation.
-
-        Raises
-        ------
-        ValueError
-            If *fs_style_examples* has more than one entry but
-            *style_idx* is not provided.
         """
         # Style example placeholders (example-based templates).
-        if PLACEHOLDER_STYLE_EXAMPLES in template and fs_style_examples:
-            if style_idx is None and len(fs_style_examples) > 1:
-                raise ValueError(
-                    "style_idx is required when fs_style_examples "
-                    "contains more than one style set."
-                )
-            style_names = list(fs_style_examples.keys())
-            style_sets = list(fs_style_examples.values())
-            idx = (style_idx or 0) % len(style_sets)
-            style_block = self._format_style_examples(
-                style_sets[idx], n=n_style_examples
-            )
-            template = template.replace(PLACEHOLDER_STYLE_EXAMPLES, style_block)
+        style_block = self._format_style_examples(
+            style_examples, n=n_style_examples
+        )
+        template = template.replace(PLACEHOLDER_STYLE_EXAMPLES, style_block)
 
         # Style name placeholder (example-based and name-based templates).
-        if PLACEHOLDER_STYLE_NAME in template and fs_style_examples:
-            style_names = list(fs_style_examples.keys())
-            idx = (style_idx or 0) % len(style_names)
-            name = (
-                style_names[idx]
-                .replace("_tinystyler", "")
-                .replace("_stel", "")
-                .replace("_", " ")
-            )
-            template = template.replace(PLACEHOLDER_STYLE_NAME, name)
+        name = (
+            style_name
+            .replace("_tinystyler", "")
+            .replace("_stel", "")
+            .replace("_", " ")
+        )
+        template = template.replace(PLACEHOLDER_STYLE_NAME, name)
 
         # Document placeholder (all templates).
         template = template.replace(PLACEHOLDER_TEXT, text)
@@ -225,7 +204,8 @@ class PromptingMethod(CausalLMMethod):
             self._fill_template(
                 template=prompt_template,
                 text=text,
-                fs_style_examples={style: style_dict[style]},
+                style_name=style,
+                style_examples=style_dict[style],
                 n_style_examples=n_style_examples,
             )
             for text, style in pairs
