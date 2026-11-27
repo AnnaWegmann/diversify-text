@@ -370,8 +370,6 @@ class Diversifier:
         top_p: float | None,
         method_kwargs: Mapping[str, Any],
     ) -> list[list[str]]:
-        # Every text in every style: style by style, the texts within
-        # each style.
         pairs = [(text, style) for style in style_dict for text in batch_texts]
         paraphrases = self._method.generate(
             pairs,
