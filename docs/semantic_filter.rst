@@ -79,98 +79,29 @@ What the filter does
 4. If no attempt reaches ``min_score``, the attempt with the highest
    score is kept and a warning is logged.
 
-How the score treats different styles
--------------------------------------
+Examples of scores
+------------------
 
-The Mutual Implication Score is lower for some styles than for others,
-also when a paraphrase keeps the meaning.  We paraphrased 17 short
-texts (6 statements and 11 questions) into the first ten styles, with
-the default model and the filter off:
+A paraphrase that keeps the meaning gets a high score:
 
-.. list-table::
-   :header-rows: 1
-   :widths: 50 25 25
+* Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
+* ``late_modern_english``, score 0.91: "It is a matter of record that Stephen Hawking came into the world on the eighth day of January in the year of our Lord nineteen forty-two, being the issue of Frank and Isobel Hawking."
 
-   * - Style
-     - Average score
-     - Below 0.70
-   * - ``informal``
-     - 0.89
-     - 0 of 17
-   * - ``age_child``
-     - 0.87
-     - 2 of 17
-   * - ``formal``
-     - 0.87
-     - 1 of 17
-   * - ``earlier_african_american_vernacular_english``
-     - 0.86
-     - 2 of 17
-   * - ``gender_female``
-     - 0.86
-     - 1 of 17
-   * - ``digital_communication``
-     - 0.85
-     - 2 of 17
-   * - ``britneyspears``
-     - 0.83
-     - 2 of 17
-   * - ``bahamian_creole``
-     - 0.81
-     - 3 of 17
-   * - ``late_modern_english``
-     - 0.78
-     - 5 of 17
-   * - ``lyrical``
-     - 0.60
-     - 10 of 17
+A paraphrase that changes the meaning gets a low score.  Here the
+question turns into a statement:
 
-The same sentence in three styles.  All three paraphrases keep the
-date and the names of the parents, but the ``lyrical`` one scores far
-below the default ``min_score`` of 0.70:
+* Original: "Do you know what time the last train to Amsterdam leaves?"
+* ``digital_communication``, score 0.50: "Seriously, who even knows what time the last train to Amsterdam is? I'm totally clueless."
 
-Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
+A problem case: the score can also be low for a paraphrase that keeps
+the meaning, when its style is very different from the original.  This
+one keeps the date and the names of the parents:
 
-.. list-table::
-   :header-rows: 1
-   :widths: 22 66 12
+* Original: "Stephen Hawking was born on 8 January 1942 to Frank and Isobel Hawking."
+* ``lyrical``, score 0.24: "Born on January eighth, nineteen forty-two, that's when Stephen Hawking came to light, / From Frank and Isobel, a pair of light."
 
-   * - Style
-     - Paraphrase
-     - Score
-   * - ``informal``
-     - So, Stephen Hawking was born on January 8th, 1942, to Frank and Isobel Hawking.
-     - 0.97
-   * - ``late_modern_english``
-     - It is a matter of record that Stephen Hawking came into the world on the eighth day of January in the year of our Lord nineteen forty-two, being the issue of Frank and Isobel Hawking.
-     - 0.91
-   * - ``lyrical``
-     - Born on January eighth, nineteen forty-two, that's when Stephen Hawking came to light, / From Frank and Isobel, a pair of light.
-     - 0.24
-
-And a question that keeps its meaning in all three styles:
-
-Original: "How long does it take to get from the airport to the city centre by bus?"
-
-.. list-table::
-   :header-rows: 1
-   :widths: 22 66 12
-
-   * - Style
-     - Paraphrase
-     - Score
-   * - ``informal``
-     - "so how long does it take to get from the airport to downtown by bus?"
-     - 0.72
-   * - ``lyrical``
-     - Oh, the journey from the airport to the city's heart, / By bus, is that the path we gotta take? / How long will that ride take, I wonder, / For the city lights that we're gonna make.
-     - 0.52
-   * - ``late_modern_english``
-     - How long doth the journey from the aerodrome to the heart of the city by omnibus require?
-     - 0.41
-
-With the filter on, such paraphrases are generated again although
-they keep the meaning, and the new attempt can be plainer in style.
+With the filter on, such a paraphrase is generated again although it
+keeps the meaning.
 
 .. note::
 
