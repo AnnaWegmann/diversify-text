@@ -62,6 +62,13 @@ class Diversifier:
         ``"anthropic/claude-haiku-4-5"``, with the API key in the
         environment).  Raises a ``ValueError`` for methods with a
         fixed model (``"tinystyler"``).
+    semantic_filter : bool
+        When ``True``, score each paraphrase with the Mutual Implication
+        Score model and select the best candidate above a minimum score.
+    filter_kwargs : dict, optional
+        Settings of the semantic filter: ``min_score`` (default 0.70),
+        the score a paraphrase should reach, and ``max_attempts``
+        (default 3), how many times each paraphrase is generated.
 
     Example
     -------
@@ -80,8 +87,8 @@ class Diversifier:
         method: str | DiversificationMethod | None = None,
         model: str | None = None,
         semantic_filter: bool = False,
+        filter_kwargs: dict[str, Any] | None = None,
         _mis_filter: MISFilter | None = None,
-        **filter_kwargs: Any,
     ) -> None:
         self.device = device
         if method is None:
@@ -92,7 +99,7 @@ class Diversifier:
         if _mis_filter is not None:
             self._mis_filter = _mis_filter
         elif semantic_filter:
-            self._mis_filter = MISFilter(device=device, **filter_kwargs)
+            self._mis_filter = MISFilter(device=device, **(filter_kwargs or {}))
         else:
             self._mis_filter: MISFilter | None = None
 
@@ -151,7 +158,7 @@ class Diversifier:
             How many paraphrases to generate per style (default 1).
             The output interleaves the styles: style A, style B,
             style A, style B.  With the semantic filter on, generation
-            cost is styles x repeats x ``n_candidates``.
+            cost is styles x repeats x ``max_attempts``.
         text_column : str
             Column name to extract when *texts* points to a CSV/TSV file.
         batch_size : int
@@ -276,7 +283,7 @@ class Diversifier:
 
         # --- process batches lazily ---
         n_candidates = (
-            self._mis_filter.n_candidates
+            self._mis_filter.max_attempts
             if self._mis_filter is not None
             else 1
         )
@@ -412,6 +419,7 @@ def diversify(
     method: str | DiversificationMethod | None = None,
     model: str | None = None,
     semantic_filter: bool = False,
+    filter_kwargs: dict[str, Any] | None = None,
     **kwargs,
 ) -> DiversifyOutput:
     """One-shot convenience function: create a :class:`Diversifier` and run it.
@@ -421,9 +429,8 @@ def diversify(
     filter per ``device``, independently of each other.  Switching
     ``semantic_filter`` on or off reuses the cached generation model,
     changing the method reuses the cached MIS filter, and per-call
-    options never trigger a model reload; changing filter thresholds
-    (``min_score``, ``n_candidates``) updates the existing MIS filter
-    instance rather than reloading it.
+    options never trigger a model reload; changing ``filter_kwargs``
+    updates the existing MIS filter instance rather than reloading it.
 
     Parameters
     ----------
@@ -445,9 +452,12 @@ def diversify(
     semantic_filter : bool
         When ``True``, score each paraphrase with the Mutual Implication
         Score model and select the best candidate above a minimum score.
+    filter_kwargs : dict, optional
+        Settings of the semantic filter: ``min_score`` (default 0.70),
+        the score a paraphrase should reach, and ``max_attempts``
+        (default 3), how many times each paraphrase is generated.
     **kwargs
-        Forwarded to :class:`Diversifier` (``min_score``,
-        ``n_candidates``) and :meth:`Diversifier.diversify`
+        Forwarded to :meth:`Diversifier.diversify`
         (``n``, ``styles``, ``style_texts``, ``max_len_style_text``,
         ``repeats``, ``text_column``, ``batch_size``, ``max_new_tokens``,
         ``temperature``, ``top_p``, ``seed``, ``method_kwargs``,
@@ -463,10 +473,6 @@ def diversify(
     The internal cache is not thread-safe.  For multi-threaded
     applications, use :class:`Diversifier` directly.
     """
-    # Separate filter kwargs from diversify() kwargs.
-    filter_keys = {"min_score", "n_candidates"}
-    filter_kwargs = {k: kwargs.pop(k) for k in filter_keys if k in kwargs}
-
     # Resolve the method (same default as Diversifier).  No model is
     # loaded and nothing is cached here — the method object just stores
     # its configuration.  The model is loaded on first use, when
@@ -489,7 +495,11 @@ def diversify(
         **resolve_kwargs,
     )
 
-    mis_filter = _cache.get_cached_mis_filter(device, **filter_kwargs) if semantic_filter else None
+    mis_filter = (
+        _cache.get_cached_mis_filter(device, **(filter_kwargs or {}))
+        if semantic_filter
+        else None
+    )
 
     # The filter has no public object parameter, hence the private one.
     div = Diversifier(device=device, method=resolved_method, _mis_filter=mis_filter)

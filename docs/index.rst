@@ -12,6 +12,7 @@ local transformer models or proprietary models through their API.
    styles
    methods
    model_backend
+   semantic_filter
    evaluation
    inputs_outputs
    settings

@@ -14,7 +14,7 @@ from tqdm import tqdm
 logger = logging.getLogger(__name__)
 
 _DEFAULT_MIN_SCORE = 0.70
-_DEFAULT_N_CANDIDATES = 3
+_DEFAULT_MAX_ATTEMPTS = 3
 
 
 class MISFilter:
@@ -29,10 +29,10 @@ class MISFilter:
     min_score : float
         Minimum acceptable MIS score.  Paraphrases scoring below this
         are considered failures.
-    n_candidates : int
-        Number of alternative paraphrases to generate for each
-        below-threshold paraphrase.  The best-scoring candidate
-        replaces the original.
+    max_attempts : int
+        How many times each paraphrase is generated.  The first attempt
+        is kept if it reaches *min_score*; otherwise the best-scoring
+        attempt is kept.
     """
 
     def __init__(
@@ -40,13 +40,13 @@ class MISFilter:
         device: str | None = None,
         *,
         min_score: float = _DEFAULT_MIN_SCORE,
-        n_candidates: int = _DEFAULT_N_CANDIDATES,
+        max_attempts: int = _DEFAULT_MAX_ATTEMPTS,
     ) -> None:
         from diversify_text._utils import default_device
 
         self.device = device or default_device()
         self.min_score = min_score  # validated by setter
-        self.n_candidates = n_candidates  # validated by setter
+        self.max_attempts = max_attempts  # validated by setter
         self._mis = None
 
     @property
@@ -60,14 +60,14 @@ class MISFilter:
         self._min_score = value
 
     @property
-    def n_candidates(self) -> int:
-        return self._n_candidates
+    def max_attempts(self) -> int:
+        return self._max_attempts
 
-    @n_candidates.setter
-    def n_candidates(self, value: int) -> None:
+    @max_attempts.setter
+    def max_attempts(self, value: int) -> None:
         if value < 1:
-            raise ValueError("n_candidates must be at least 1")
-        self._n_candidates = value
+            raise ValueError("max_attempts must be at least 1")
+        self._max_attempts = value
 
     def prepare(self) -> None:
         """Pre-load the MIS model."""
