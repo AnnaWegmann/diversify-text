@@ -68,6 +68,7 @@ class DiversificationMethod(ABC):
         style to write it in.  The same text can appear with several
         styles, and the same style with several texts.  *style_dict*
         maps each style name to its example texts (as built by
-        :func:`~diversify_text.styles.resolve_style_dict`).  Return one
-        generated string per pair, in the order of *pairs*.
+        :func:`~diversify_text.styles.resolve_style_dict`); every style
+        name in *pairs* is one of its keys.  Return one generated
+        string per pair, in the order of *pairs*.
         """

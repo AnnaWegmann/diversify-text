@@ -166,10 +166,12 @@ A method is a subclass of
    ]}]
 
 ``generate`` receives ``pairs`` and ``style_dict``.  Each pair is an
-input text together with the name of the style to write it in; the
-same text appears once for every style.  ``style_dict`` maps each
-style name to its example texts, built from the caller's ``styles``
-and ``style_texts``.  ``generate`` returns one generated string per
+input text together with the name of the style to write it in.  A text
+can come with any number of the styles, so do not assume that every
+text appears with every style.  ``style_dict`` maps each style name to
+its example texts, built from the caller's ``styles`` and
+``style_texts``; every style name in ``pairs`` is one of its keys.
+``generate`` returns one generated string per
 pair, in the order of ``pairs`` (a ``list[str]`` as long as
 ``pairs``).  The style labels are attached afterwards, and
 ``generate`` is called once per repeat, so a method does not need to
