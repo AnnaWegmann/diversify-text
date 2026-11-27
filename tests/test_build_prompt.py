@@ -97,6 +97,8 @@ class TestFillTemplate(unittest.TestCase):
         result = method._fill_template(
             template="Rewrite: [DOCUMENT SEGMENT]",
             text="my text",
+            style_name="informal_custom",
+            style_examples=["example one", "example two"],
         )
         self.assertNotIn(PLACEHOLDER_TEXT, result)
         self.assertIn("my text", result)
@@ -111,8 +113,8 @@ class TestFillTemplate(unittest.TestCase):
         result = method._fill_template(
             template=template,
             text="hello",
-            style_idx=0,
-            fs_style_examples={"informal_custom": ["example one", "example two"]},
+            style_name="informal_custom",
+            style_examples=["example one", "example two"],
             n_style_examples=2,
         )
         self.assertNotIn(PLACEHOLDER_TEXT, result)
