@@ -4,18 +4,19 @@ from diversify_text.method import DiversificationMethod
 
 
 class PrefixMethod(DiversificationMethod):
-    """Returns prefixed paraphrases: ``<prefix>:<text>:<i>``."""
+    """Returns prefixed paraphrases: ``<prefix>:<text>:<i>``, with ``<i>``
+    the position of the style in *style_dict*."""
 
     name = "prefix"
 
     def __init__(self, prefix: str) -> None:
         self.prefix = prefix
 
-    def generate(self, texts, style_dict, *, max_new_tokens=None,
+    def generate(self, pairs, style_dict, *, max_new_tokens=None,
                  temperature=None, top_p=None, **kwargs):
+        styles = list(style_dict)
         return [
-            [f"{self.prefix}:{text}:{i}" for i in range(len(style_dict))]
-            for text in texts
+            f"{self.prefix}:{text}:{styles.index(style)}" for text, style in pairs
         ]
 
 
@@ -24,7 +25,7 @@ class FailingMethod(DiversificationMethod):
 
     name = "failing"
 
-    def generate(self, texts, style_dict, *, max_new_tokens=None,
+    def generate(self, pairs, style_dict, *, max_new_tokens=None,
                  temperature=None, top_p=None, **kwargs):
         raise RuntimeError("boom")
 
@@ -37,13 +38,11 @@ class CountingMethod(DiversificationMethod):
     def __init__(self) -> None:
         self.calls = 0
 
-    def generate(self, texts, style_dict, *, max_new_tokens=None,
+    def generate(self, pairs, style_dict, *, max_new_tokens=None,
                  temperature=None, top_p=None, **kwargs):
         self.calls += 1
-        return [
-            [f"{text}:{i}" for i in range(len(style_dict))]
-            for text in texts
-        ]
+        styles = list(style_dict)
+        return [f"{text}:{styles.index(style)}" for text, style in pairs]
 
 
 class IndexedMethod(DiversificationMethod):
@@ -58,11 +57,12 @@ class IndexedMethod(DiversificationMethod):
     def __init__(self) -> None:
         self.call_count = 0
 
-    def generate(self, texts, style_dict, *, max_new_tokens=None,
+    def generate(self, pairs, style_dict, *, max_new_tokens=None,
                  temperature=None, top_p=None, **kwargs):
+        styles = list(style_dict)
         result = [
-            [f"{text}:s{i}:c{self.call_count}" for i in range(len(style_dict))]
-            for text in texts
+            f"{text}:s{styles.index(style)}:c{self.call_count}"
+            for text, style in pairs
         ]
         self.call_count += 1
         return result

@@ -145,11 +145,13 @@ A method is a subclass of
    class MyMethod(DiversificationMethod):
        name = "my_method"
 
-       def generate(self, texts, style_dict, *, max_new_tokens=None,
+       def generate(self, pairs, style_dict, *, max_new_tokens=None,
                     temperature=None, top_p=None, **kwargs):
+           # pairs holds each text with the name of the style to write it in,
+           # e.g. [("It was a dark and stormy night.", "scottish_english"), ...].
            # style_dict maps each target style name to its example texts,
            # e.g. {"scottish_english": ["The boat I had, was a seventy-two foot boat...", ...]}.
-           return [[f"{text} :: {name}" for name in style_dict] for text in texts]
+           return [f"{text} :: {name}" for text, name in pairs]
 
 
    results = Diversifier(method=MyMethod()).diversify(
@@ -163,13 +165,17 @@ A method is a subclass of
        {"style": "opinion", "text": "It was a dark and stormy night. :: opinion"},
    ]}]
 
-``generate`` receives ``texts`` (the input texts) and ``style_dict``
-(style name → example texts, built from the caller's ``styles`` and
-``style_texts``).  It returns, for each input text, one generated
-string per style in ``style_dict`` order (a ``list[list[str]]`` of
-shape ``len(texts)`` × ``len(style_dict)``).  The style labels are
-attached afterwards, and ``generate`` is called once per repeat, so a
-method does not need to handle ``repeats``.
+``generate`` receives ``pairs`` and ``style_dict``.  Each pair is an
+input text together with the name of the style to write it in.  A text
+can come with any number of the styles, so do not assume that every
+text appears with every style.  ``style_dict`` maps each style name to
+its example texts, built from the caller's ``styles`` and
+``style_texts``; every style name in ``pairs`` is one of its keys.
+``generate`` returns one generated string per
+pair, in the order of ``pairs`` (a ``list[str]`` as long as
+``pairs``).  The style labels are attached afterwards, and
+``generate`` is called once per repeat, so a method does not need to
+handle ``repeats``.
 
 ``max_new_tokens``, ``temperature`` and ``top_p`` are always passed as
 keyword arguments, so ``generate`` must accept them, but it may ignore

@@ -70,23 +70,18 @@ class CausalLMMethod(DiversificationMethod):
     def _compute_max_new_tokens(
         self,
         texts: list[str],
-        n: int,
         max_new_tokens: int | None,
     ) -> list[int | None]:
-        """Compute per-prompt max_new_tokens for the full n × texts grid.
+        """Compute max_new_tokens for each prompt.
 
-        When *max_new_tokens* is explicit, every prompt gets that value.
+        *texts* holds the input text of each prompt.  When
+        *max_new_tokens* is explicit, every prompt gets that value.
         Otherwise the backend chooses a default per text
         (:meth:`LLMBackend.default_token_budgets`).
-
-        Returns a flat list of length ``n * len(texts)`` in the same
-        order as the prompt loop: for each style index *i*, for each
-        text *j*.
         """
         if max_new_tokens is not None:
-            return [max_new_tokens] * (n * len(texts))
-        budgets = self._ensure_backend().default_token_budgets(texts)
-        return budgets * n
+            return [max_new_tokens] * len(texts)
+        return self._ensure_backend().default_token_budgets(texts)
 
     def _run_prompts(
         self,
@@ -96,18 +91,15 @@ class CausalLMMethod(DiversificationMethod):
         max_new_tokens: int | None,
         temperature: float | None,
         top_p: float | None,
-    ) -> list[list[str]]:
-        """Generate all prompts and reshape into one row per input text.
+    ) -> list[str]:
+        """Generate one output per prompt.
 
-        *all_prompts* must be built style by style, texts within each
-        style (so it holds ``n * len(texts)`` prompts for n styles).
-        Computes per-prompt token budgets, generates (the backend
-        fills in defaults for unset sampling parameters), and returns
-        for each input text one string per style, in prompt order.
+        *texts* holds the input text of each prompt, in the order of
+        *all_prompts*.  Computes per-prompt token budgets, generates
+        (the backend fills in defaults for unset sampling parameters),
+        and returns the outputs in prompt order.
         """
-        num_texts = len(texts)
-        n = len(all_prompts) // num_texts
-        all_max_new_tokens = self._compute_max_new_tokens(texts, n, max_new_tokens)
+        all_max_new_tokens = self._compute_max_new_tokens(texts, max_new_tokens)
         backend = self._ensure_backend()
 
         # Generate all prompts (each with its own max_new_tokens).
@@ -118,12 +110,5 @@ class CausalLMMethod(DiversificationMethod):
             top_p=top_p,
         )
 
-        # Reshape flat results back into list[list[str]] (len(texts) x n).
-        paraphrases_per_text: list[list[str]] = [[] for _ in texts]
-        for i in range(n):
-            for row_idx in range(num_texts):
-                # TODO: decide what to do with thinking models
-                paraphrases_per_text[row_idx].append(
-                    flat_results[i * num_texts + row_idx].strip()
-                )
-        return paraphrases_per_text
+        # TODO: decide what to do with thinking models
+        return [result.strip() for result in flat_results]

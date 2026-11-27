@@ -47,20 +47,24 @@ class TinyStylerMethod(DiversificationMethod):
 
     def generate(
         self,
-        texts: list[str],
+        pairs: list[tuple[str, str]],
         style_dict: dict[str, list[str]],
         *,
         max_new_tokens: int | None = None,
         temperature: float | None = None,
         top_p: float | None = None,
         **kwargs: Any,
-    ) -> list[list[str]]:
-        """Generate one paraphrase per style in *style_dict* for each text.
+    ) -> list[str]:
+        """Generate one paraphrase per (text, style name) pair.
+
+        The model is run once per style, with all texts paired with
+        that style.
 
         Parameters
         ----------
-        texts : list[str]
-            Input texts to paraphrase.
+        pairs : list[tuple[str, str]]
+            Each input text together with the name of the style to
+            paraphrase it in.
         style_dict : dict[str, list[str]]
             Maps each target style name to its example texts (as built
             by :func:`~diversify_text.styles.resolve_style_dict`).
@@ -69,9 +73,8 @@ class TinyStylerMethod(DiversificationMethod):
 
         Returns
         -------
-        list[list[str]]
-            For each input text, one generated string per style, in
-            *style_dict* order.
+        list[str]
+            One generated string per pair, in the order of *pairs*.
         """
         model = self._ensure_model()
 
@@ -86,7 +89,9 @@ class TinyStylerMethod(DiversificationMethod):
         if max_new_tokens is None:
             input_token_counts = [
                 len(ids)
-                for ids in model._tokenizer(texts, truncation=True)["input_ids"]
+                for ids in model._tokenizer(
+                    [text for text, _ in pairs], truncation=True
+                )["input_ids"]
             ]
             max_new_tokens = max(
                 _MAX_NEW_TOKENS_FLOOR,
@@ -96,16 +101,19 @@ class TinyStylerMethod(DiversificationMethod):
                 ),
             )
 
-        paraphrases_per_text = [[] for _ in texts]
+        paraphrases: list[str] = [""] * len(pairs)
 
-        for style_examples in style_dict.values():
+        # dict.fromkeys keeps each style once, in the order of first
+        # appearance in pairs.
+        for style in dict.fromkeys(style for _, style in pairs):
+            pair_indices = [i for i, (_, s) in enumerate(pairs) if s == style]
             batch = model.transfer(
-                texts,
-                style_examples,
+                [pairs[i][0] for i in pair_indices],
+                style_dict[style],
                 max_new_tokens=max_new_tokens,
                 temperature=temperature,
                 top_p=top_p,
             )
-            for row_idx, generated in enumerate(batch):
-                paraphrases_per_text[row_idx].append(generated)
-        return paraphrases_per_text
+            for i, generated in zip(pair_indices, batch):
+                paraphrases[i] = generated
+        return paraphrases

@@ -19,22 +19,27 @@ def _method_with_mock_model() -> TinyStylerMethod:
     return method
 
 
-class TestGenerateFromStyleDict(unittest.TestCase):
+class TestGenerateFromPairs(unittest.TestCase):
 
-    def test_one_output_per_style_per_text_in_dict_order(self):
+    def test_one_output_per_pair_in_pair_order(self):
         method = _method_with_mock_model()
         # Explicit max_new_tokens skips the automatic token budget,
         # which would otherwise need the model's tokenizer.
         result = method.generate(
-            ["text a", "text b"],
+            [
+                ("It was a dark and stormy night.", "casual"),
+                ("Call me Ishmael.", "formal"),
+                ("Call me Ishmael.", "casual"),
+            ],
             {"casual": ["hey there"], "formal": ["Good day."]},
             max_new_tokens=32,
         )
         self.assertEqual(
             result,
             [
-                ["text a|hey there", "text a|Good day."],
-                ["text b|hey there", "text b|Good day."],
+                "It was a dark and stormy night.|hey there",
+                "Call me Ishmael.|Good day.",
+                "Call me Ishmael.|hey there",
             ],
         )
 
