@@ -380,7 +380,6 @@ class Diversifier:
             **method_kwargs,
         )
         self._validate_paraphrases(paraphrases, pairs)
-        # One row per text, with one paraphrase per style.
         num_texts = len(batch_texts)
         return [paraphrases[text_idx::num_texts] for text_idx in range(num_texts)]
 
