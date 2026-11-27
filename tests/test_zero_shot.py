@@ -34,7 +34,7 @@ class TestFillInstruction(unittest.TestCase):
 
 class TestGenerate(unittest.TestCase):
 
-    def test_one_output_per_style_in_dict_order(self):
+    def test_one_output_per_pair_in_pair_order(self):
         method = ZeroShotMethod()
         mock_model = MagicMock()
 
@@ -53,7 +53,7 @@ class TestGenerate(unittest.TestCase):
         # Explicit max_new_tokens skips the automatic token budget,
         # which would otherwise need the model's tokenizer.
         result = method.generate(
-            ["my text"],
+            [("my text", "pirate"), ("my text", "formal")],
             {
                 "formal": ["Rewrite the text to be more formal."],
                 "pirate": ["Rewrite the text as a pirate."],
@@ -61,13 +61,13 @@ class TestGenerate(unittest.TestCase):
             max_new_tokens=32,
         )
 
-        # One text, two styles → one output per style, in dict order.
-        self.assertEqual(result, [["formal reply", "pirate reply"]])
+        # One text, two styles → one output per pair, in pair order.
+        self.assertEqual(result, ["pirate reply", "formal reply"])
 
     def test_more_than_one_instruction_raises(self):
         method = ZeroShotMethod()
         with self.assertRaises(ValueError) as cm:
-            method.generate(["text"], {"pirate": ["one", "two"]})
+            method.generate([("text", "pirate")], {"pirate": ["one", "two"]})
         self.assertEqual(
             str(cm.exception),
             "Style 'pirate' must have exactly one instruction, got 2.",

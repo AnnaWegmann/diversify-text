@@ -32,20 +32,21 @@ class ZeroShotMethod(CausalLMMethod):
 
     def generate(
         self,
-        texts: list[str],
+        pairs: list[tuple[str, str]],
         style_dict: dict[str, list[str]],
         *,
         max_new_tokens: int | None = None,
         temperature: float | None = None,
         top_p: float | None = None,
         **kwargs: Any,
-    ) -> list[list[str]]:
-        """Generate one rewrite per style in *style_dict* for each text.
+    ) -> list[str]:
+        """Generate one rewrite per (text, style name) pair.
 
         Parameters
         ----------
-        texts : list[str]
-            Input texts to rewrite.
+        pairs : list[tuple[str, str]]
+            Each input text together with the name of the style to
+            rewrite it in.
         style_dict : dict[str, list[str]]
             Maps each target style name to exactly one rewrite
             instruction (a longer list raises).
@@ -54,9 +55,8 @@ class ZeroShotMethod(CausalLMMethod):
 
         Returns
         -------
-        list[list[str]]
-            For each input text, one generated string per style, in
-            *style_dict* order.
+        list[str]
+            One generated string per pair, in the order of *pairs*.
         """
         for name, instructions in style_dict.items():
             if len(instructions) != 1:
@@ -66,15 +66,14 @@ class ZeroShotMethod(CausalLMMethod):
                 )
         logger.info("Using instruction style(s): %s", ", ".join(style_dict))
 
-        all_prompts: list[str] = []
-        for instructions in style_dict.values():
-            instruction = instructions[0]
-            for text in texts:
-                all_prompts.append(self._fill_instruction(instruction, text))
+        all_prompts = [
+            self._fill_instruction(style_dict[style][0], text)
+            for text, style in pairs
+        ]
 
         return self._run_prompts(
             all_prompts,
-            texts,
+            [text for text, _ in pairs],
             max_new_tokens=max_new_tokens,
             temperature=temperature,
             top_p=top_p,

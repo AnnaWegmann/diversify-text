@@ -54,19 +54,20 @@ class DiversificationMethod(ABC):
     @abstractmethod
     def generate(
         self,
-        texts: list[str],
+        pairs: list[tuple[str, str]],
         style_dict: dict[str, list[str]],
         *,
         max_new_tokens: int | None = None,
         temperature: float | None = None,
         top_p: float | None = None,
         **kwargs: Any,
-    ) -> list[list[str]]:
-        """Return paraphrases per input text.
+    ) -> list[str]:
+        """Return one paraphrase per (text, style name) pair.
 
-        *style_dict* maps each target style name to its example texts
-        (as built by :func:`~diversify_text.styles.resolve_style_dict`).
-        For each input text, return one generated string per style, in
-        *style_dict* order — output shape ``len(texts)`` x
-        ``len(style_dict)``.
+        Each pair in *pairs* holds an input text and the name of the
+        style to write it in.  The same text can appear with several
+        styles, and the same style with several texts.  *style_dict*
+        maps each style name to its example texts (as built by
+        :func:`~diversify_text.styles.resolve_style_dict`).  Return one
+        generated string per pair, in the order of *pairs*.
         """

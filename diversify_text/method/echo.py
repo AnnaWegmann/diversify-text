@@ -8,18 +8,18 @@ from diversify_text.method.base import DiversificationMethod
 
 
 class EchoMethod(DiversificationMethod):
-    """Echoes the input text for every requested style."""
+    """Echoes the input text of every pair."""
 
     name = "echo"
 
     def generate(
         self,
-        texts: list[str],
+        pairs: list[tuple[str, str]],
         style_dict: dict[str, list[str]],
         *,
         max_new_tokens: int | None = None,
         temperature: float | None = None,
         top_p: float | None = None,
         **kwargs: Any,
-    ) -> list[list[str]]:
-        return [[text for _ in style_dict] for text in texts]
+    ) -> list[str]:
+        return [text for text, _ in pairs]

@@ -34,7 +34,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
 
     def test_generate_leaves_unset_sampling_params_to_the_backend(self):
         method = self._make_method_with_mock_model(["out"])
-        method.generate(["text"], {"casual": ["hey there"]})
+        method.generate([("text", "casual")], {"casual": ["hey there"]})
         # .kwargs holds the keyword arguments of the generate_text call.
         call_kwargs = method._backend.generate_text.call_args.kwargs
         self.assertEqual(
@@ -43,14 +43,14 @@ class TestPromptingMethodGenerate(unittest.TestCase):
 
     def test_generate_uses_the_backend_default_token_budgets(self):
         method = self._make_method_with_mock_model(["out"])
-        method.generate(["text"], {"casual": ["hey there"]})
+        method.generate([("text", "casual")], {"casual": ["hey there"]})
         call_kwargs = method._backend.generate_text.call_args.kwargs
         self.assertEqual(call_kwargs["max_new_tokens_per_prompt"], [10])
 
     def test_generate_uses_selected_prompt_key(self):
         method = self._make_method_with_mock_model(["out"])
         method.generate(
-            ["text"],
+            [("text", "casual")],
             {"casual": ["hey there"]},
             prompt="humanize_transfer",
         )
@@ -66,7 +66,7 @@ class TestPromptingMethodGenerate(unittest.TestCase):
             "Rewrite the following text in that style: [DOCUMENT SEGMENT]"
         )
         method.generate(
-            ["my input"],
+            [("my input", "my_style")],
             {"my_style": ["style example a"]},
             prompt=custom_prompt,
         )
@@ -80,15 +80,15 @@ class TestPromptingMethodGenerate(unittest.TestCase):
         method = self._make_method_with_mock_model(["out"])
         with self.assertRaises(ValueError):
             method.generate(
-                ["text"],
+                [("text", "casual")],
                 {"casual": ["hey there"]},
                 prompt="Rewrite: [DOCUMENT SEGMENT]",
             )
 
 
-class TestGenerateFromStyleDict(unittest.TestCase):
+class TestGenerateFromPairs(unittest.TestCase):
 
-    def test_one_output_per_style_in_dict_order(self):
+    def test_one_output_per_pair_in_pair_order(self):
         method = PromptingMethod()
         mock_model = MagicMock()
 
@@ -106,13 +106,13 @@ class TestGenerateFromStyleDict(unittest.TestCase):
         # Explicit max_new_tokens skips the automatic token budget,
         # which would otherwise need the model's tokenizer.
         result = method.generate(
-            ["my text"],
+            [("my text", "formal"), ("my text", "casual")],
             {"casual": ["hey there"], "formal": ["Good day."]},
             max_new_tokens=32,
         )
 
-        # One text, two styles → one output per style, in dict order.
-        self.assertEqual(result, [["casual reply", "formal reply"]])
+        # One text, two styles → one output per pair, in pair order.
+        self.assertEqual(result, ["formal reply", "casual reply"])
 
 
 class TestTransformersBackend(unittest.TestCase):

@@ -370,37 +370,37 @@ class Diversifier:
         top_p: float | None,
         method_kwargs: Mapping[str, Any],
     ) -> list[list[str]]:
-        paraphrases_by_text = self._method.generate(
-            batch_texts,
+        # Every text in every style: style by style, the texts within
+        # each style.
+        pairs = [(text, style) for style in style_dict for text in batch_texts]
+        paraphrases = self._method.generate(
+            pairs,
             style_dict,
             max_new_tokens=max_new_tokens,
             temperature=temperature,
             top_p=top_p,
             **method_kwargs,
         )
-        self._validate_paraphrases(paraphrases_by_text, batch_texts)
-        return paraphrases_by_text
+        self._validate_paraphrases(paraphrases, pairs)
+        # One row per text, with one paraphrase per style.
+        num_texts = len(batch_texts)
+        return [paraphrases[text_idx::num_texts] for text_idx in range(num_texts)]
 
     @staticmethod
     def _validate_paraphrases(
-        incoming: list[list[str]],
-        source_texts: list[str],
+        incoming: list[str],
+        pairs: list[tuple[str, str]],
     ) -> None:
         """Validate the shape of a method's output."""
-        if len(incoming) != len(source_texts):
-            raise ValueError("Method returned invalid batch size.")
-        generated_styles: int | None = None
-        for group in incoming:
-            if not isinstance(group, list) or not all(
-                isinstance(item, str) for item in group
-            ):
-                raise TypeError("Method output must be list[list[str]].")
-            if generated_styles is None:
-                generated_styles = len(group)
-            elif len(group) != generated_styles:
-                raise ValueError(
-                    "Method must return the same number of styles for each text."
-                )
+        if not isinstance(incoming, list) or not all(
+            isinstance(item, str) for item in incoming
+        ):
+            raise TypeError("Method output must be list[str].")
+        if len(incoming) != len(pairs):
+            raise ValueError(
+                "Method must return one paraphrase per (text, style) pair: "
+                f"expected {len(pairs)}, got {len(incoming)}."
+            )
 
 
 # ------------------------------------------------------------------
